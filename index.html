@@ -1182,46 +1182,10 @@ function serialiseData(){
   return 'const DATA = '+JSON.stringify(DATA,null,2)+';\n\nconst PAGES = '+JSON.stringify(PAGES,null,2)+';';
 }
 function rebuildFile(sourceText){
-  // Structural splice: find the real data region by walking from the first
-  // `const DATA = {` to the end of the following `const PAGES = { ... };`,
-  // balancing braces while ignoring braces inside strings. No comment markers
-  // required, so nothing here can be broken by a hand edit or a stray copy of
-  // this source elsewhere in the file.
-  const anchor=sourceText.indexOf('const DATA = {');
-  if(anchor<0)throw new Error('Could not locate the data block in the file.');
-
-  function endOfObject(from){
-    // `from` points at the '{'; return index just past the matching '}'
-    let depth=0,inStr=false,q='',esc=false;
-    for(let i=from;i<sourceText.length;i++){
-      const c=sourceText[i];
-      if(inStr){
-        if(esc){esc=false;continue}
-        if(c==='\\'){esc=true;continue}
-        if(c===q){inStr=false}
-        continue;
-      }
-      if(c==='"'||c==="'"||c==='`'){inStr=true;q=c;continue}
-      if(c==='{')depth++;
-      else if(c==='}'){depth--; if(depth===0)return i+1;}
-    }
-    throw new Error('Unbalanced braces while parsing the data block.');
-  }
-
-  const dataBrace=sourceText.indexOf('{',anchor);
-  let cursor=endOfObject(dataBrace);            // past DATA's closing }
-  // consume the trailing ';' and any whitespace
-  cursor=sourceText.indexOf(';',cursor)+1;
-
-  // now the PAGES declaration should follow
-  const pagesDecl=sourceText.indexOf('const PAGES = {',cursor);
-  if(pagesDecl<0)throw new Error('Could not locate the PAGES block in the file.');
-  const pagesBrace=sourceText.indexOf('{',pagesDecl);
-  let pagesEnd=endOfObject(pagesBrace);
-  pagesEnd=sourceText.indexOf(';',pagesEnd)+1;  // past PAGES's ';'
-
-  const rebuilt=serialiseData();                // emits both DATA and PAGES
-  return sourceText.slice(0,anchor)+rebuilt+sourceText.slice(pagesEnd);
+  const start=sourceText.indexOf('const DATA = {');
+  const end=sourceText.indexOf('/* ========================= end data ========================= */');
+  if(start<0||end<0)throw new Error('Could not locate the data block in the file.');
+  return sourceText.slice(0,start)+serialiseData()+'\n'+sourceText.slice(end);
 }
 
 /* ---- download ---- */
@@ -1254,15 +1218,25 @@ function publishForm(){
     if(!tok){out.textContent='A token is required.';return}
     out.textContent='Publishing…';
     try{
-      const api=`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`;
+      const api=`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}?ref=main`;
       const h={Authorization:'Bearer '+tok,Accept:'application/vnd.github+json'};
+
+      // 1) Metadata call — used ONLY for the file's current sha.
+      //    For files over 1 MB the GitHub Contents API returns an EMPTY
+      //    content field, which is what previously produced the misleading
+      //    "could not locate the data block" error. We no longer read content here.
       const meta=await fetch(api,{headers:h});
-      if(!meta.ok)throw new Error('Could not read the file ('+meta.status+').');
+      if(!meta.ok)throw new Error('Could not read the file metadata ('+meta.status+').');
       const info=await meta.json();
-      const raw=atob(info.content.replace(/\n/g,''));
-      const arr=new Uint8Array(raw.length);
-      for(let i=0;i<raw.length;i++)arr[i]=raw.charCodeAt(i);
-      const current=new TextDecoder().decode(arr);
+
+      // 2) Fetch the ACTUAL current file via the raw media type, which works
+      //    for files up to 100 MB. This is the real fix.
+      const rawRes=await fetch(api,{headers:{Authorization:'Bearer '+tok,Accept:'application/vnd.github.raw'}});
+      if(!rawRes.ok)throw new Error('Could not read the file body ('+rawRes.status+').');
+      const current=await rawRes.text();
+      if(!current||current.indexOf('const DATA = {')<0)
+        throw new Error('Fetched file looks empty or wrong (got '+current.length+' chars).');
+
       const updated=rebuildFile(current);
       const bytes=new TextEncoder().encode(updated);
       let bin=''; const CH=0x8000;
