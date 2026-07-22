@@ -532,7 +532,7 @@ const DATA = {
         "name": "Lew",
         "eyebrow": "Human · Operative",
         "status": "Active",
-        "blurb": "Scoundrel in Tirotasus.",
+        "blurb": "",
         "stats": {
           "Level": "1"
         },
@@ -1198,6 +1198,78 @@ async function downloadFile(){
 }
 
 /* ---- publish straight to GitHub ---- */
+
+/* ============================================================
+   IMAGE EXTERNALISATION
+   Holograms used to be embedded as data: URLs inside the records,
+   which bloated index.html past GitHub's 1 MB inline limit. These
+   helpers move any embedded image out to an images/ file and leave
+   only a short path behind. Runs automatically at publish time, so
+   existing embedded holograms migrate themselves on the next publish.
+   ============================================================ */
+
+// base64 body <-> bytes, chunked so large images never overflow the call stack
+function b64ToBytes(b64){
+  const raw=atob(b64);
+  const arr=new Uint8Array(raw.length);
+  for(let i=0;i<raw.length;i++)arr[i]=raw.charCodeAt(i);
+  return arr;
+}
+function bytesToB64(bytes){
+  let bin=''; const CH=0x8000;
+  for(let i=0;i<bytes.length;i+=CH){bin+=String.fromCharCode.apply(null,bytes.subarray(i,i+CH))}
+  return btoa(bin);
+}
+
+// commit ONE binary file to the repo (create or update). Returns nothing on success.
+async function commitFile(tok,path,contentB64,message){
+  const api=`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`;
+  const h={Authorization:'Bearer '+tok,Accept:'application/vnd.github+json'};
+  // does it already exist? (need its sha to update)
+  let sha=null;
+  try{
+    const meta=await fetch(api+'?ref=main',{headers:h});
+    if(meta.ok){const j=await meta.json(); sha=j.sha||null;}
+  }catch(e){}
+  const body={message,content:contentB64};
+  if(sha)body.sha=sha;
+  const put=await fetch(api,{method:'PUT',headers:h,body:JSON.stringify(body)});
+  if(!put.ok){
+    let detail=''; try{detail=(await put.json()).message||''}catch(e){}
+    throw new Error(`Image upload failed for ${path} (${put.status}) ${detail}`);
+  }
+}
+
+// walk DATA, pull every embedded holo image out to images/, rewrite to a path.
+// mutates DATA in place; returns the list of {path, b64} files that must be committed.
+async function externaliseImages(tok,progress){
+  const files=[];
+  const seen=new Set();
+  let n=0;
+  for(const secKey of Object.keys(DATA)){
+    const sec=DATA[secKey];
+    if(!sec.items)continue;
+    for(const rec of sec.items){
+      const v=rec.holo;
+      if(typeof v!=='string')continue;
+      if(!v.startsWith('data:'))continue;               // already a path, skip
+      const m=v.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.*)$/s);
+      if(!m)continue;
+      const ext=({'image/png':'png','image/jpeg':'jpg','image/webp':'webp','image/gif':'gif'})[m[1]]||'png';
+      // stable, readable filename from the record name
+      let base=(rec.name||('holo'+(++n))).toLowerCase()
+        .replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,40)||'holo';
+      let path=`images/${base}.${ext}`, k=2;
+      while(seen.has(path)){path=`images/${base}-${k++}.${ext}`}
+      seen.add(path);
+      files.push({path, b64:m[2]});
+      rec.holo=path;                                    // record now points at the file
+      if(progress)progress(`Extracting ${path}…`);
+    }
+  }
+  return files;
+}
+
 function publishForm(){
   const saved=sessionStorage.getItem('ghToken')||'';
   openSheet(`
@@ -1264,17 +1336,28 @@ function publishForm(){
       if(!current||current.indexOf('const DATA = {')<0)
         throw new Error('Could not read a valid file from GitHub (got '+current.length+' chars). Check that index.html on GitHub is the full file.');
 
+      // 3) Move any embedded holograms out to images/ files first.
+      const imgFiles=await externaliseImages(tok,txt=>{out.textContent=txt});
+      for(let i=0;i<imgFiles.length;i++){
+        out.textContent=`Uploading image ${i+1} of ${imgFiles.length}…`;
+        await commitFile(tok,imgFiles[i].path,imgFiles[i].b64,msg+' (image)');
+      }
+
+      // 4) Now the records hold short paths, so the HTML is small again.
+      out.textContent='Committing index.html…';
       const updated=rebuildFile(current);
       const bytes=new TextEncoder().encode(updated);
-      let bin=''; const CH=0x8000;
-      for(let i=0;i<bytes.length;i+=CH){bin+=String.fromCharCode.apply(null,bytes.subarray(i,i+CH))}
-      const b64=btoa(bin);
+      const b64=bytesToB64(bytes);
       const put=await fetch(api,{method:'PUT',headers:h,
         body:JSON.stringify({message:msg,content:b64,sha:info.sha})});
-      if(!put.ok)throw new Error('Commit rejected ('+put.status+').');
+      if(!put.ok){
+        let detail=''; try{detail=(await put.json()).message||''}catch(e){}
+        throw new Error('Commit rejected ('+put.status+') '+detail);
+      }
       sessionStorage.setItem('ghToken',tok);
       dirty=false; dirtyFlag.textContent='Published';
-      out.innerHTML='Committed. The live site refreshes in about a minute.';
+      const moved=imgFiles.length?` Moved ${imgFiles.length} image${imgFiles.length>1?'s':''} to images/.`:'';
+      out.innerHTML='Committed. The live site refreshes in about a minute.'+moved;
     }catch(err){out.textContent=err.message}
   };
 }
