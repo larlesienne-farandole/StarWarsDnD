@@ -442,7 +442,6 @@ body.editing .card .rowtools,body.editing .entry .rowtools,body.editing .tile .r
 /* ============================================================
    CAMPAIGN DATA — edit below. Everything else is the interface.
    ============================================================ */
-/*DATA_BLOCK_START*/
 const DATA = {
   "home": {
     "label": "Home",
@@ -680,7 +679,6 @@ const PAGES = {
   }
 };
 /* ========================= end data ========================= */
-/*DATA_BLOCK_END*/
 
 const nav=document.getElementById('nav'), view=document.getElementById('view'),
       chips=document.getElementById('chips'), q=document.getElementById('q');
@@ -1181,31 +1179,49 @@ function deleteRecord(secKey,index){
 
 /* ---- serialise DATA back into the file ---- */
 function serialiseData(){
-  // JSON.stringify escapes any occurrence of the sentinel inside string data,
-  // so the block delimiters below can never collide with record content.
   return 'const DATA = '+JSON.stringify(DATA,null,2)+';\n\nconst PAGES = '+JSON.stringify(PAGES,null,2)+';';
 }
 function rebuildFile(sourceText){
-  const A='/*DATA_BLOCK_START*/', B='/*DATA_BLOCK_END*/';
-  let start=sourceText.indexOf(A), end=sourceText.indexOf(B);
-  if(start>=0&&end>start){
-    // preferred path: rewrite between the sentinels, keeping them in place
-    return sourceText.slice(0,start+A.length)+'\n'+serialiseData()+'\n'+sourceText.slice(end);
+  // Structural splice: find the real data region by walking from the first
+  // `const DATA = {` to the end of the following `const PAGES = { ... };`,
+  // balancing braces while ignoring braces inside strings. No comment markers
+  // required, so nothing here can be broken by a hand edit or a stray copy of
+  // this source elsewhere in the file.
+  const anchor=sourceText.indexOf('const DATA = {');
+  if(anchor<0)throw new Error('Could not locate the data block in the file.');
+
+  function endOfObject(from){
+    // `from` points at the '{'; return index just past the matching '}'
+    let depth=0,inStr=false,q='',esc=false;
+    for(let i=from;i<sourceText.length;i++){
+      const c=sourceText[i];
+      if(inStr){
+        if(esc){esc=false;continue}
+        if(c==='\\'){esc=true;continue}
+        if(c===q){inStr=false}
+        continue;
+      }
+      if(c==='"'||c==="'"||c==='`'){inStr=true;q=c;continue}
+      if(c==='{')depth++;
+      else if(c==='}'){depth--; if(depth===0)return i+1;}
+    }
+    throw new Error('Unbalanced braces while parsing the data block.');
   }
-  // migration path: an older file without sentinels. Find the ORIGINAL data block
-  // by locating the first top-level `const DATA = {` (not the one inside this
-  // function's own source) and the end comment, then wrap the replacement in
-  // sentinels so every future publish uses the safe path above.
-  const decl='const DATA = {';
-  start=sourceText.indexOf(decl);
-  end=sourceText.indexOf('/* ========================= end data ========================= */');
-  if(start<0||end<0)throw new Error('Could not locate the data block in the file.');
-  // advance end past the comment line
-  const endLineBreak=sourceText.indexOf('\n',end);
-  const after=endLineBreak<0?end:endLineBreak+1;
-  return sourceText.slice(0,start)
-       + A+'\n'+serialiseData()+'\n'+B+'\n'
-       + sourceText.slice(after);
+
+  const dataBrace=sourceText.indexOf('{',anchor);
+  let cursor=endOfObject(dataBrace);            // past DATA's closing }
+  // consume the trailing ';' and any whitespace
+  cursor=sourceText.indexOf(';',cursor)+1;
+
+  // now the PAGES declaration should follow
+  const pagesDecl=sourceText.indexOf('const PAGES = {',cursor);
+  if(pagesDecl<0)throw new Error('Could not locate the PAGES block in the file.');
+  const pagesBrace=sourceText.indexOf('{',pagesDecl);
+  let pagesEnd=endOfObject(pagesBrace);
+  pagesEnd=sourceText.indexOf(';',pagesEnd)+1;  // past PAGES's ';'
+
+  const rebuilt=serialiseData();                // emits both DATA and PAGES
+  return sourceText.slice(0,anchor)+rebuilt+sourceText.slice(pagesEnd);
 }
 
 /* ---- download ---- */
