@@ -184,13 +184,19 @@ body.editing .tile .aur{padding-right:0}
   background:#000;border:1px solid var(--edge);padding:26px;text-align:left;cursor:pointer;
   transition:border-color .14s,box-shadow .14s,background .14s;min-height:230px}
 .camps .home{grid-template-columns:1fr;margin-top:0}
-.camps .home .feature{grid-row:auto;min-height:300px}
 .tags{position:absolute;top:22px;right:26px;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
 
-/* campaigns tiles align their titles regardless of copy length */
-.camprow .aur{min-height:3em;margin-bottom:8px}
-.camprow p{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:3.1em;margin-bottom:22px}
-.camprow .foot{margin-top:auto}
+/* Campaigns page: every tile follows the same rules, feature included, so
+   titles line up and footers sit on a common baseline no matter the copy. */
+.camps .tile{justify-content:flex-start}
+.camps .aur{min-height:3em;margin-bottom:8px}
+.camps p{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+  overflow:hidden;min-height:3.1em;margin-bottom:22px;max-width:60ch}
+.camps .foot{margin-top:auto}
+/* the main-campaign tile reads as primary through width, not a jump in type scale */
+.camps .home .feature{grid-row:auto;min-height:250px}
+.camps .home .feature h3{font-size:34px}
+.camps .home .feature p{font-size:15px}
 
 /* ---------- detail view ---------- */
 .detail{margin-top:8px}
@@ -792,12 +798,13 @@ function tileHTML(t,isCampaigns,scope){
   const p=PAGES[t.pid]||{};
   const tags=[];
   if(isCampaigns&&p.featured)tags.push('Featured');
+  if(p.upcoming)tags.push('Upcoming');
   if(p.recruiting)tags.push('Recruiting');
   return `<button class="tile ${t.size==='feature'?'feature':''}" data-page="${t.pid}">
     ${p.img?`<span class="bgimg" style="background-image:url('${p.img}')"></span>`:''}
     <span class="tiletools rowtools"><span class="tbtn" data-act="page" data-pid="${t.pid}" data-scope="${scope||''}">Edit tile</span></span>
     ${tags.length?`<span class="tags">${tags.map(x=>`<span class="tag">${x}</span>`).join('')}</span>`:''}
-    <span class="aur">${p.title}</span>
+    <span class="aur">${p.aur||p.title}</span>
     <h3>${p.title}</h3>
     <span class="eyebrow">${p.eyebrow||''}</span>
     <p>${p.blurb||''}</p>
@@ -810,8 +817,8 @@ function renderPage(backLabel){
     <div class="detail">
       <button class="back" id="backBtn">${backLabel}</button>
       <div class="sheetview">
-        ${p.recruiting?`<div class="flag">Recruiting</div>`:''}
-        <span class="aur">${p.title}</span>
+        ${(p.upcoming||p.recruiting)?`<div class="flag">${p.upcoming?'Upcoming':'Recruiting'}</div>`:''}
+        <span class="aur">${p.aur||p.title}</span>
         <h2>${p.title}</h2>
         <span class="eyebrow">${p.eyebrow||''}</span>
         <p class="lede">${p.blurb||''}</p>
@@ -846,7 +853,7 @@ function render(){
         <button class="back" id="backBtn">← All ${sec.label}</button>
         <div class="sheetview">
           ${key2&&i[key2]?`<div class="flag ${flagClass(i[key2])}">${i[key2]}</div>`:''}
-          <span class="aur">${i.name}</span>
+          <span class="aur">${i.aur||i.name}</span>
           <h2>${i.name}</h2>
           ${i.eyebrow?`<span class="eyebrow">${i.eyebrow}</span>`:''}
           ${metaLine(i,tab)}
@@ -929,7 +936,7 @@ function render(){
       `<div class="stat">${k2}<b>${v}</b></div>`).join(''):'';
     return `<article class="card" data-i="${sec.items.indexOf(i)}" tabindex="0">
       ${f?`<div class="flag ${flagClass(f)}">${f}</div>`:''}
-      <span class="aur">${i.name}</span>
+      <span class="aur">${i.aur||i.name}</span>
       <h3>${i.name}</h3>
       <div class="eyebrow">${i.eyebrow||''}</div>
       ${metaLine(i,tab)}
@@ -1164,6 +1171,7 @@ function recordForm(secKey,index){
     `:`
       <div class="field"><label>Name</label><input id="f_name" value="${esc(it.name)}"></div>
       <div class="field"><label>Subtitle</label><input id="f_eyebrow" value="${esc(it.eyebrow)}" placeholder="Twi'lek · Scoundrel"></div>
+      <div class="field"><label>Aurebesh line</label><input id="f_aur" value="${esc(it.aur)}" placeholder="Defaults to the name"></div>
       ${key?`<div class="field"><label>Status</label><input id="f_key" list="statusList" value="${esc(it[key])}">
         <datalist id="statusList">${opts.map(o=>`<option value="${esc(o)}">`).join('')}</datalist></div>`:''}
       ${secKey==='characters'?`<div class="field"><label>Player</label><input id="f_player" value="${esc(it.player)}"></div>`:''}
@@ -1193,6 +1201,7 @@ function recordForm(secKey,index){
     }else{
       rec.name=val('f_name');
       if(val('f_eyebrow'))rec.eyebrow=val('f_eyebrow');
+      if(val('f_aur'))rec.aur=val('f_aur');
       if(key&&val('f_key'))rec[key]=val('f_key');
       if(val('f_player'))rec.player=val('f_player');
       rec.blurb=val('f_blurb');
@@ -1236,6 +1245,8 @@ function pageForm(pid,scope){
     <p class="hint">Shared by the home page and the campaigns list.</p>
     <div class="field"><label>Title</label><input id="p_title" value="${esc(p.title)}"></div>
     <div class="field"><label>Subtitle</label><input id="p_eyebrow" value="${esc(p.eyebrow)}"></div>
+    <div class="field"><label>Aurebesh line</label><input id="p_aur" value="${esc(p.aur)}" placeholder="Defaults to the title">
+      <p class="note">Written in Latin letters and displayed in Aurebesh. Leave blank to use the title.</p></div>
     <div class="field"><label>Description</label><textarea id="p_blurb">${esc(p.blurb)}</textarea></div>
     <div class="trio">
       <div class="field"><label>Footer left</label><input id="p_footL" value="${esc(tile.footL)}" placeholder="3 sessions"></div>
@@ -1246,6 +1257,7 @@ function pageForm(pid,scope){
     <div class="field"><label>Badges</label>
       <div class="toggles">
         <label class="tog"><input type="checkbox" id="p_feat" ${p.featured?'checked':''}> Featured</label>
+        <label class="tog"><input type="checkbox" id="p_up" ${p.upcoming?'checked':''}> Upcoming</label>
         <label class="tog"><input type="checkbox" id="p_rec" ${p.recruiting?'checked':''}> Recruiting</label>
       </div>
     </div>
@@ -1279,8 +1291,10 @@ function pageForm(pid,scope){
     const v=id=>document.getElementById(id).value.trim();
     PAGES[pid]={
       title:v('p_title'), eyebrow:v('p_eyebrow'), blurb:v('p_blurb'),
+      ...(v('p_aur')?{aur:v('p_aur')}:{}),
       ...(v('p_img')?{img:v('p_img')}:{}),
       ...(document.getElementById('p_feat').checked?{featured:true}:{}),
+      ...(document.getElementById('p_up').checked?{upcoming:true}:{}),
       ...(document.getElementById('p_rec').checked?{recruiting:true}:{})
     };
     const t=tileFromScope(scope);
