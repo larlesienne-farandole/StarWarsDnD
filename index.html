@@ -780,14 +780,22 @@ Object.entries(DATA).forEach(([k,s])=>{
   nav.appendChild(b);
 });
 
-function tileHTML(t,isCampaigns){
+// "Played by X" for a player character, "NPC" for one without a player.
+// Places have neither, so records outside the roster get no line at all.
+function metaLine(i,secKey){
+  if(i.player)return `<div class="meta">Played by ${i.player}</div>`;
+  if(secKey==='characters')return '<div class="meta">NPC</div>';
+  return '';
+}
+
+function tileHTML(t,isCampaigns,scope){
   const p=PAGES[t.pid]||{};
   const tags=[];
   if(isCampaigns&&p.featured)tags.push('Featured');
   if(p.recruiting)tags.push('Recruiting');
   return `<button class="tile ${t.size==='feature'?'feature':''}" data-page="${t.pid}">
     ${p.img?`<span class="bgimg" style="background-image:url('${p.img}')"></span>`:''}
-    <span class="tiletools rowtools"><span class="tbtn" data-act="page" data-pid="${t.pid}">Edit tile</span></span>
+    <span class="tiletools rowtools"><span class="tbtn" data-act="page" data-pid="${t.pid}" data-scope="${scope||''}">Edit tile</span></span>
     ${tags.length?`<span class="tags">${tags.map(x=>`<span class="tag">${x}</span>`).join('')}</span>`:''}
     <span class="aur">${p.title}</span>
     <h3>${p.title}</h3>
@@ -841,7 +849,7 @@ function render(){
           <span class="aur">${i.name}</span>
           <h2>${i.name}</h2>
           ${i.eyebrow?`<span class="eyebrow">${i.eyebrow}</span>`:''}
-          <div class="meta">${i.player?'Played by '+i.player:'NPC'}</div>
+          ${metaLine(i,tab)}
           <p class="lede">${i.blurb||''}</p>
           ${body?`<div class="body">${body}</div>`:''}
           ${st?`<div class="stats">${st}</div>`:''}
@@ -859,13 +867,13 @@ function render(){
     bar.style.display='none';
     document.querySelector('.editbar').style.visibility=page==null?'visible':'hidden';
     if(page!=null){renderPage('← All campaigns');return}
-    view.innerHTML='<div class="camps">'+sec.groups.map(g=>`
+    view.innerHTML='<div class="camps">'+sec.groups.map((g,gi)=>`
       <section class="group">
         <div class="grouphead">
           <h2>${g.title}</h2>
         </div>
         <div class="${g.entries.some(e=>e.size==='feature')?'home':'camprow'}">
-          ${g.entries.map(e=>tileHTML(e,true)).join('')}
+          ${g.entries.map((e,ei)=>tileHTML(e,true,'camp:'+gi+':'+ei)).join('')}
         </div>
       </section>`).join('')+'</div>';
     return;
@@ -881,7 +889,7 @@ function render(){
   if(sec.layout==='home'){
     bar.style.display='none';
     document.querySelector('.editbar').style.visibility='visible';
-    view.innerHTML='<div class="home">'+sec.tiles.map(t=>tileHTML(t,false)).join('')+'</div>';
+    view.innerHTML='<div class="home">'+sec.tiles.map((t,ti)=>tileHTML(t,false,'home:'+ti)).join('')+'</div>';
     return;
   }
   bar.style.display='flex';
@@ -924,7 +932,7 @@ function render(){
       <span class="aur">${i.name}</span>
       <h3>${i.name}</h3>
       <div class="eyebrow">${i.eyebrow||''}</div>
-      <div class="meta">${i.player?'Played by '+i.player:'NPC'}</div>
+      ${metaLine(i,tab)}
       <p>${i.blurb}</p>
       ${st?`<div class="stats">${st}</div>`:''}
       <div class="rowtools"><button class="tbtn" data-act="edit" data-i="${sec.items.indexOf(i)}">Edit</button><button class="tbtn" data-act="del" data-i="${sec.items.indexOf(i)}">Delete</button></div>
@@ -1205,14 +1213,34 @@ function recordForm(secKey,index){
   };
 }
 
-function pageForm(pid){
+// Resolve which tile object a scope string points at, so the footer text
+// (e.g. "1 session" / "3 seats open") can be edited per placement. The same
+// campaign can sit on the home page and in the campaigns list with different
+// footers, so they are stored on the tile, not on the shared page record.
+function tileFromScope(scope){
+  if(!scope)return null;
+  const p=scope.split(':');
+  if(p[0]==='home')return (DATA.home&&DATA.home.tiles||[])[+p[1]]||null;
+  if(p[0]==='camp'){
+    const g=(DATA.campaigns&&DATA.campaigns.groups||[])[+p[1]];
+    return g?(g.entries||[])[+p[2]]||null:null;
+  }
+  return null;
+}
+
+function pageForm(pid,scope){
   const p=PAGES[pid]||{};
+  const tile=tileFromScope(scope)||{};
   openSheet(`
     <h2>Edit tile</h2>
     <p class="hint">Shared by the home page and the campaigns list.</p>
     <div class="field"><label>Title</label><input id="p_title" value="${esc(p.title)}"></div>
     <div class="field"><label>Subtitle</label><input id="p_eyebrow" value="${esc(p.eyebrow)}"></div>
     <div class="field"><label>Description</label><textarea id="p_blurb">${esc(p.blurb)}</textarea></div>
+    <div class="trio">
+      <div class="field"><label>Footer left</label><input id="p_footL" value="${esc(tile.footL)}" placeholder="3 sessions"></div>
+      <div class="field"><label>Footer right</label><input id="p_footR" value="${esc(tile.footR)}" placeholder="2 seats open"></div>
+    </div>
     <div class="field"><label>Background image URL</label><input id="p_img" value="${esc(p.img)}" placeholder="https://…"></div>
     <div class="field"><label>Or upload an image</label><input type="file" id="p_file" accept="image/*"></div>
     <div class="field"><label>Badges</label>
@@ -1255,6 +1283,12 @@ function pageForm(pid){
       ...(document.getElementById('p_feat').checked?{featured:true}:{}),
       ...(document.getElementById('p_rec').checked?{recruiting:true}:{})
     };
+    const t=tileFromScope(scope);
+    if(t){
+      const L=v('p_footL'), R=v('p_footR');
+      if(L)t.footL=L; else delete t.footL;
+      if(R)t.footR=R; else delete t.footR;
+    }
     markDirty(); closeSheet(); render();
   };
 }
@@ -1469,7 +1503,7 @@ view.addEventListener('click',e=>{
   }
   if(tile&&!e.target.closest('.tbtn')){page=tile.dataset.page;render();window.scrollTo(0,0);return}
   const b=e.target.closest('.tbtn'); if(!b)return;
-  if(b.dataset.act==='page'){pageForm(b.dataset.pid);return}
+  if(b.dataset.act==='page'){pageForm(b.dataset.pid,b.dataset.scope);return}
   const i=+b.dataset.i;
   if(b.dataset.act==='edit')recordForm(tab,i); else deleteRecord(tab,i);
 });
