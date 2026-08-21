@@ -157,11 +157,12 @@ nav{display:flex;gap:4px;flex-wrap:wrap}
 .home .feature p{font-size:16px}
 
 /* ---------- tile background image (hover only) ---------- */
-.tile .bgimg{position:absolute;inset:0;background-size:cover;background-position:center;
+.tile .bgimg,.pc .bgimg{position:absolute;inset:0;background-size:cover;background-position:center;
   opacity:0;transition:opacity .18s;pointer-events:none;z-index:0}
-.tile .bgimg::after{content:"";position:absolute;inset:0;
+.tile .bgimg::after,.pc .bgimg::after{content:"";position:absolute;inset:0;
   background:linear-gradient(to top,#000 0%,rgba(0,0,0,.94) 28%,rgba(0,0,0,.62) 58%,rgba(0,0,0,.30) 100%)}
-.tile:hover .bgimg,.tile:focus-visible .bgimg{opacity:1}
+.tile:hover .bgimg,.tile:focus-visible .bgimg,
+.pc:hover .bgimg,.pc:focus-visible .bgimg{opacity:1}
 .tile .aur,.tile h3,.tile .eyebrow,.tile p,.tile .foot{position:relative;z-index:2}
 .tile .tags{z-index:3}
 .tile::after{z-index:1}
@@ -197,6 +198,78 @@ body.editing .tile .aur{padding-right:0}
 .camps .home .feature{grid-row:auto;min-height:250px}
 .camps .home .feature h3{font-size:34px}
 .camps .home .feature p{font-size:15px}
+
+/* ---------- roster (characters) ----------
+   Portrait-led cards. The old text cards left most of their box empty on
+   records that carry only a name and a species line, so the picture now
+   does the work and the type sits on top of it. */
+.roster{display:grid;grid-template-columns:repeat(auto-fill,minmax(212px,1fr));gap:8px}
+.pc{all:unset;box-sizing:border-box;position:relative;display:flex;flex-direction:column;
+  justify-content:flex-end;overflow:hidden;cursor:pointer;aspect-ratio:3/4;min-height:280px;
+  border:1px solid var(--edge);background:#000;
+  transition:border-color .14s,box-shadow .14s}
+.pc:hover,.pc:focus-visible{border-color:var(--gold);
+  box-shadow:0 0 0 1px var(--gold),0 0 26px rgba(255,176,32,.28)}
+/* The portrait is a tile thumbnail: same .bgimg fade, same scanline pass as
+   the campaign tiles, no extra motion of its own. */
+.pc::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .14s;z-index:2;
+  background:repeating-linear-gradient(to bottom,rgba(255,176,32,.07) 0 1px,transparent 1px 3px)}
+.pc:hover::after,.pc:focus-visible::after{opacity:1}
+.pc .txt{position:relative;z-index:3;padding:0 16px 15px}
+.pc .aur{font-family:'Aurebesh AF',sans-serif;font-size:11px;color:var(--dim);letter-spacing:.06em;
+  display:block;margin-bottom:4px;line-height:1.4;transition:color .14s;padding-right:0}
+.pc:hover .aur{color:var(--gold-hi);opacity:.8}
+.pc h3{font-family:'Barlow Semi Condensed',sans-serif;font-weight:700;font-size:23px;letter-spacing:.02em;
+  text-transform:uppercase;color:var(--white);margin:0;line-height:1.02;transition:color .14s,text-shadow .14s}
+.pc:hover h3,.pc:focus-visible h3{color:var(--gold);text-shadow:0 0 18px rgba(255,176,32,.55)}
+.pc .eyebrow{display:block;margin-top:6px;font-family:'Barlow Semi Condensed',sans-serif;font-size:12px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--dim);font-weight:500;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pc .flag{top:14px;right:14px;font-size:11px;z-index:3}
+.pc .lvl{position:absolute;top:14px;left:16px;z-index:3;font-family:'Barlow Semi Condensed',sans-serif;
+  font-weight:700;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+.pc:hover .lvl{color:var(--gold-hi)}
+.pc .rowtools{position:absolute;top:12px;left:14px;z-index:4;margin:0}
+body.editing .pc .lvl{display:none}
+.roster .rowtools .tbtn{background:#000}
+
+/* ---------- achievement badges ---------- */
+.badgebox{margin-top:30px;padding-top:24px;border-top:1px solid var(--edge)}
+.badgebox .cap{font-family:'Barlow Semi Condensed',sans-serif;font-size:12px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--dim);margin-bottom:12px}
+.badges{display:flex;gap:8px;flex-wrap:wrap}
+.badge{position:relative;width:54px;height:54px;border:1px solid var(--edge);background:#000;
+  background-size:cover;background-position:center;display:grid;place-items:center;
+  transition:border-color .14s,box-shadow .14s,transform .14s}
+.badge:hover{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold),0 0 20px rgba(255,176,32,.32);
+  transform:translateY(-2px)}
+.badge img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;
+  opacity:.82;transition:opacity .14s}
+.badge:hover img{opacity:1}
+.badge .tip{position:absolute;left:50%;top:calc(100% + 9px);transform:translateX(-50%);
+  background:#000;border:1px solid var(--gold);color:var(--gold-hi);padding:5px 10px;white-space:nowrap;
+  font-family:'Barlow Semi Condensed',sans-serif;font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+  opacity:0;pointer-events:none;transition:opacity .12s;z-index:6;
+  box-shadow:0 0 0 1px var(--gold),0 0 18px rgba(255,176,32,.28)}
+.badge:hover .tip{opacity:1}
+.badge.locked{opacity:.32}
+.badgepick{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px 14px;
+  padding-top:2px}
+/* ---------- badge library (edit mode) ---------- */
+.blib{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:8px;margin-top:26px}
+.bcard{border:1px solid var(--edge);background:#000;padding:22px 18px 18px;
+  display:flex;flex-direction:column;align-items:center;gap:12px;
+  transition:border-color .14s,box-shadow .14s}
+.bcard:hover{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold),0 0 22px rgba(255,176,32,.24)}
+.bcard .sq{position:relative;width:76px;height:76px;border:1px solid var(--edge);display:block;overflow:hidden}
+.bcard .sq img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.bcard .bname{font-family:'Barlow Semi Condensed',sans-serif;font-weight:600;font-size:15px;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--white);text-align:center;line-height:1.2}
+.bcard .rowtools{display:flex;margin-top:auto;padding-top:4px}
+.badgepick .tog{align-items:flex-start;line-height:1.3}
+.badgepick .tog input{margin-top:2px;flex:0 0 auto}
+
+.sheetview .maincol{min-width:0}
 
 /* ---------- detail view ---------- */
 .detail{margin-top:8px}
@@ -353,7 +426,8 @@ body.editing .editbar{display:flex}
   text-transform:uppercase;color:var(--gold);margin-left:auto}
 
 .rowtools{display:none;gap:6px;margin-top:16px}
-body.editing .card .rowtools,body.editing .entry .rowtools,body.editing .tile .rowtools{display:flex}
+body.editing .card .rowtools,body.editing .entry .rowtools,body.editing .tile .rowtools,
+body.editing .pc .rowtools,body.editing .sheetview .rowtools{display:flex}
 .tbtn{all:unset;cursor:pointer;padding:5px 12px;border:1px solid var(--edge);
   font-family:'Barlow Semi Condensed',sans-serif;font-size:11px;letter-spacing:.16em;
   text-transform:uppercase;color:var(--dim);transition:color .12s,border-color .12s}
@@ -402,6 +476,9 @@ body.editing .card .rowtools,body.editing .entry .rowtools,body.editing .tile .r
   .tab{padding:10px 16px;font-size:14px;white-space:nowrap}
   .tab .n{display:none}
   .grid,.camprow{grid-template-columns:1fr}
+  .roster{grid-template-columns:repeat(auto-fill,minmax(148px,1fr))}
+  .pc{min-height:0}
+  .pc h3{font-size:18px}
   .camps{gap:38px}
   .card{min-height:0;padding:24px}
   .card h3{font-size:26px}
@@ -432,6 +509,7 @@ body.editing .card .rowtools,body.editing .entry .rowtools,body.editing .tile .r
   <div class="editbar">
     <button class="ebtn" id="addBtn">+ New record</button>
     <button class="ebtn" id="addCampBtn">+ New campaign</button>
+    <button class="ebtn" id="addBadgeBtn">+ New badge</button>
     <button class="ebtn" id="pubBtn">Publish to GitHub</button>
     <button class="ebtn ghost" id="dlBtn">Download file</button>
     <button class="ebtn ghost" id="lockBtn">Lock</button>
@@ -518,6 +596,7 @@ const DATA = {
   },
   "characters": {
     "label": "Characters",
+    "layout": "roster",
     "filterKey": "status",
     "items": [
       {
@@ -761,6 +840,11 @@ const DATA = {
       }
     ]
   },
+  "badges": {
+    "label": "Badges",
+    "layout": "badges",
+    "editOnly": true
+  },
   "locations": {
     "label": "Locations",
     "filterKey": "state",
@@ -800,7 +884,10 @@ const PAGES = {
     "blurb": "Hunt the galaxy's most wanted in a one-shot anthology series.",
     "aur": "Bounty Hunter",
     "img": "images/bounty-hunter-missions-tile.jpg",
-    "featured": true
+    "featured": true,
+    "tags": [
+      "One shot"
+    ]
   },
   "kessa-descent": {
     "title": "Squadron Missions",
@@ -823,6 +910,9 @@ const PAGES = {
     "upcoming": true
   }
 };
+
+/* Badge library — made by hand from the Badges tab in edit mode. */
+const BADGES = [];
 /* ========================= end data ========================= */
 
 const nav=document.getElementById('nav'), view=document.getElementById('view'),
@@ -858,6 +948,8 @@ function tileHTML(t,isCampaigns,scope){
   if(isCampaigns&&p.featured)tags.push('Featured');
   if(p.upcoming)tags.push('Upcoming');
   if(p.recruiting)tags.push('Recruiting');
+  // free-text tags sit alongside the three built-ins, in the order they were typed
+  (p.tags||[]).forEach(x=>{if(x&&!tags.includes(x))tags.push(x)});
   return `<button class="tile ${t.size==='feature'?'feature':''}" data-page="${t.pid}">
     ${bg?`<span class="bgimg" style="background-image:url('${bg}')"></span>`:''}
     <span class="tiletools rowtools"><span class="tbtn" data-act="page" data-pid="${t.pid}" data-scope="${scope||''}">Edit tile</span></span>
@@ -869,6 +961,48 @@ function tileHTML(t,isCampaigns,scope){
     <span class="foot"><span>${t.footL||''}</span><span>${t.footR||''}</span></span>
   </button>`;
 }
+/* ============================================================
+   BADGES
+   Every badge is made by hand in the Badges tab, which is visible
+   in edit mode only. A character's `badges` is a list of badge ids.
+   Nothing is generated or inferred; a badge with no image is an
+   empty square. Hovering one shows its name.
+   ============================================================ */
+function badgeById(id){return BADGES.find(b=>b.id===id)||null}
+
+// Only badges that still exist are drawn, so deleting one from the library
+// clears it everywhere without leaving a stray square behind.
+function badgesHTML(list){
+  return (list||[]).map(id=>{
+    const b=badgeById(id); if(!b)return '';
+    return `<span class="badge">${b.img?`<img src="${b.img}" alt="">`:''}
+      <span class="tip">${esc(b.name)}</span></span>`;
+  }).join('');
+}
+function makeBadgeId(name){
+  let base=(name||'badge').toLowerCase()
+    .replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,40)||'badge';
+  let id=base,k=2;
+  while(BADGES.some(b=>b.id===id))id=`${base}-${k++}`;
+  return id;
+}
+
+function rosterCardHTML(i,n,sec){
+  const key=sec.filterKey, f=key?i[key]:null;
+  const lvl=i.stats&&(i.stats.Level||i.stats.level);
+  return `<button class="pc" data-i="${n}">
+    ${i.portrait?`<span class="bgimg" style="background-image:url('${i.portrait}')"></span>`:''}
+    ${f?`<span class="flag ${flagClass(f)}">${f}</span>`:''}
+    ${lvl?`<span class="lvl">LVL ${lvl}</span>`:''}
+    <span class="rowtools"><span class="tbtn" data-act="edit" data-i="${n}">Edit</span><span class="tbtn" data-act="del" data-i="${n}">Delete</span></span>
+    <span class="txt">
+      <span class="aur">${i.aur||i.name}</span>
+      <h3>${i.name}</h3>
+      ${i.eyebrow?`<span class="eyebrow">${i.eyebrow}</span>`:''}
+    </span>
+  </button>`;
+}
+
 function renderPage(backLabel){
   const p=PAGES[page]||{};
   view.innerHTML=`
@@ -887,9 +1021,24 @@ function renderPage(backLabel){
 }
 const flagClass=v=>['Missing','Deceased','Hostile','Uncharted','Lost'].includes(v)?'off':'';
 
+// Search reads the words on a record, not its pictures — an embedded image is
+// a wall of base64 that otherwise matches almost any query.
+const NOSEARCH=['holo','portrait','holoTune'];
+function searchText(i){
+  return Object.entries(i).filter(([k])=>!NOSEARCH.includes(k))
+    .map(([,v])=>typeof v==='string'?v:JSON.stringify(v)).join(' ').toLowerCase();
+}
+
 function render(){
+  const editing=document.body.classList.contains('editing');
+  // an edit-only section keeps its tab hidden while the archive is locked
+  if(DATA[tab]&&DATA[tab].editOnly&&!editing){tab=Object.keys(DATA)[0];detail=null;page=null}
+  [...nav.children].forEach(b=>{
+    b.setAttribute('aria-selected',b.dataset.k===tab);
+    const s=DATA[b.dataset.k];
+    b.style.display=(s&&s.editOnly&&!editing)?'none':'';
+  });
   syncAddBtn();
-  [...nav.children].forEach(b=>b.setAttribute('aria-selected',b.dataset.k===tab));
   const sec=DATA[tab], key=sec.filterKey;
 
   const bar=document.querySelector('.bar');
@@ -906,20 +1055,32 @@ function render(){
     const hasHolo=!!i.holo;
     const canHolo=hasHolo||document.body.classList.contains('editing');
     const appr=canHolo?`<button class="link" id="apprBtn">${hasHolo?'Appearance':'Add appearance'}</button>`:'';
+    const editing=document.body.classList.contains('editing');
+    const isRoster=sec.layout==='roster';
+    const hasBadges=!!(i.badges&&i.badges.length);
+    const badgebox=(isRoster&&(hasBadges||editing))?`
+      <div class="badgebox">
+        <div class="cap">Badges</div>
+        ${hasBadges?`<div class="badges">${badgesHTML(i.badges)}</div>`
+          :'<p class="note">No badges awarded yet. They are set from Edit.</p>'}
+      </div>`:'';
     view.innerHTML=`
       <div class="detail">
         <button class="back" id="backBtn">← All ${sec.label}</button>
         <div class="sheetview">
           ${key2&&i[key2]?`<div class="flag ${flagClass(i[key2])}">${i[key2]}</div>`:''}
-          <span class="aur">${i.aur||i.name}</span>
-          <h2>${i.name}</h2>
-          ${i.eyebrow?`<span class="eyebrow">${i.eyebrow}</span>`:''}
-          ${metaLine(i,tab)}
-          <p class="lede">${i.blurb||''}</p>
-          ${body?`<div class="body">${body}</div>`:''}
-          ${st?`<div class="stats">${st}</div>`:''}
-          ${(links||appr)?`<div class="links">${appr}${links}</div>`:''}
-          <div class="rowtools"><button class="tbtn" data-act="edit" data-i="${detail}">Edit</button><button class="tbtn" data-act="del" data-i="${detail}">Delete</button></div>
+          <div class="maincol">
+            <span class="aur">${i.aur||i.name}</span>
+            <h2>${i.name}</h2>
+            ${i.eyebrow?`<span class="eyebrow">${i.eyebrow}</span>`:''}
+            ${metaLine(i,tab)}
+            <p class="lede">${i.blurb||''}</p>
+            ${body?`<div class="body">${body}</div>`:''}
+            ${st?`<div class="stats">${st}</div>`:''}
+            ${badgebox}
+            ${(links||appr)?`<div class="links">${appr}${links}</div>`:''}
+            <div class="rowtools"><button class="tbtn" data-act="edit" data-i="${detail}">Edit</button><button class="tbtn" data-act="del" data-i="${detail}">Delete</button></div>
+          </div>
         </div>
         ${canHolo?`<div class="holostage" id="holoStage"></div>`:''}
       </div>`;
@@ -941,6 +1102,24 @@ function render(){
           ${g.entries.map((e,ei)=>tileHTML(e,true,'camp:'+gi+':'+ei)).join('')}
         </div>
       </section>`).join('')+'</div>';
+    return;
+  }
+
+  // Badge library. Edit mode only, so there is no viewer-facing version.
+  if(sec.layout==='badges'){
+    bar.style.display='none';
+    document.querySelector('.editbar').style.visibility='visible';
+    view.innerHTML=BADGES.length
+      ? '<div class="blib">'+BADGES.map((b,n)=>`
+          <div class="bcard">
+            <span class="sq">${b.img?`<img src="${b.img}" alt="">`:''}</span>
+            <span class="bname">${b.name}</span>
+            <span class="rowtools">
+              <button class="tbtn" data-act="bedit" data-i="${n}">Edit</button>
+              <button class="tbtn" data-act="bdel" data-i="${n}">Delete</button>
+            </span>
+          </div>`).join('')+'</div>'
+      : '<div class="empty">No badges yet — use + New badge</div>';
     return;
   }
 
@@ -973,7 +1152,7 @@ function render(){
   const term=q.value.toLowerCase();
   const rows=sec.items.filter(i=>
     (filter==='All'||i[key]===filter) &&
-    JSON.stringify(i).toLowerCase().includes(term));
+    searchText(i).includes(term));
 
   if(!rows.length){view.innerHTML='<div class="empty">No records match</div>';return}
 
@@ -985,6 +1164,19 @@ function render(){
         <div class="party">Party · ${i.party}</div>
         <div class="rowtools"><button class="tbtn" data-act="edit" data-i="${n}">Edit</button><button class="tbtn" data-act="del" data-i="${n}">Delete</button></div></div>
       </article>`}).join('')+'</div>';
+    return;
+  }
+
+  // Roster: player characters first, then everyone the table doesn't play,
+  // the same two-group shape the Campaigns tab uses.
+  if(sec.layout==='roster'){
+    const pcs=rows.filter(i=>i.player), npcs=rows.filter(i=>!i.player);
+    const grp=(title,list)=>!list.length?'':`
+      <section class="group">
+        <div class="grouphead"><h2>${title}</h2></div>
+        <div class="roster">${list.map(i=>rosterCardHTML(i,sec.items.indexOf(i),sec)).join('')}</div>
+      </section>`;
+    view.innerHTML='<div class="camps">'+grp('Player characters',pcs)+grp('Non-player characters',npcs)+'</div>';
     return;
   }
 
@@ -1206,6 +1398,7 @@ function promptUnlock(){
 /* ---- record form ---- */
 function recordForm(secKey,index){
   const sec=DATA[secKey], isLog=sec.layout==='log', key=sec.filterKey;
+  const isRoster=sec.layout==='roster';
   const it=index==null?{}:sec.items[index];
   const opts=key?[...new Set(sec.items.map(i=>i[key]).filter(Boolean))]:[];
   const st=it.stats?Object.entries(it.stats):[];
@@ -1218,6 +1411,19 @@ function recordForm(secKey,index){
       <div class="field"><label>Stat ${i+1} label</label><input id="sl${i}" value="${esc(st[i]?st[i][0]:'')}"></div>
       <div class="field"><label>Value</label><input id="sv${i}" value="${esc(st[i]?st[i][1]:'')}"></div>
     </div>`;
+  // Badges come from the library on the Badges tab, nowhere else.
+  const held=it.badges||[];
+  const badgeBlock=!isRoster?'':`
+    <div class="field"><label>Badges</label>
+      <div class="badgepick">${BADGES.map((b,n)=>
+        `<label class="tog"><input type="checkbox" id="bg${n}" ${held.includes(b.id)?'checked':''}> ${esc(b.name)}</label>`).join('')
+        ||'<span class="note">None made yet. They are created on the Badges tab.</span>'}</div>
+      <p class="note">Shown as squares on the record page. Hovering one names it.</p></div>`;
+  const portraitBlock=!isRoster?'':`
+    <div class="field"><label>Portrait</label>
+      <input id="f_portrait" value="${esc(it.portrait)}" placeholder="images/name-portrait.jpg — or upload below">
+      <p class="note">Appears on the Characters tab card on hover. Left blank, the card stays black.</p></div>
+    <div class="field"><label>Upload a portrait</label><input type="file" id="f_portfile" accept="image/*"></div>`;
   openSheet(`
     <h2>${index==null?'New':'Edit'} ${esc(sec.label)} record</h2>
     <p class="hint">Blank fields are simply left off the card.</p>
@@ -1232,23 +1438,47 @@ function recordForm(secKey,index){
       <div class="field"><label>Aurebesh line</label><input id="f_aur" value="${esc(it.aur)}" placeholder="Defaults to the name"></div>
       ${key?`<div class="field"><label>Status</label><input id="f_key" list="statusList" value="${esc(it[key])}">
         <datalist id="statusList">${opts.map(o=>`<option value="${esc(o)}">`).join('')}</datalist></div>`:''}
-      ${secKey==='characters'?`<div class="field"><label>Player</label><input id="f_player" value="${esc(it.player)}"></div>`:''}
+      ${isRoster?`<div class="field"><label>Player — leave blank for an NPC</label><input id="f_player" value="${esc(it.player)}"></div>`:''}
       <div class="field"><label>Description</label><textarea id="f_blurb">${esc(it.blurb)}</textarea></div>
       ${statRow(0)}${statRow(1)}${statRow(2)}
       <div class="field"><label>Full notes (blank line between paragraphs)</label><textarea id="f_notes">${esc(it.notes)}</textarea></div>
       ${linkRow(0)}${linkRow(1)}${linkRow(2)}
+      ${badgeBlock}
+      ${portraitBlock}
       <div class="field"><label>Hologram image ${it.holo?'· one loaded':''}</label>
         <input type="file" id="f_holo" accept="image/*"></div>
     `}
     <div class="actions">
       <button class="ebtn" id="recSave">Save record</button>
       <button class="ebtn ghost" id="recCancel">Cancel</button>
-    </div>`);
+    </div>
+    <p class="note" id="recMsg">Uploads are scaled down here and moved into images/ when you publish.</p>`);
   let pendingHolo=null;
   const holoInput=document.getElementById('f_holo');
   if(holoInput)holoInput.onchange=e=>{
     const f=e.target.files[0]; if(!f)return;
     holoProcess(f,data=>{pendingHolo=data});
+  };
+  // Portraits are photographs rather than cutouts, so they are flattened to
+  // JPEG — the same treatment the campaign thumbnails get.
+  const portInput=document.getElementById('f_portfile');
+  if(portInput)portInput.onchange=e=>{
+    const f=e.target.files[0]; if(!f)return;
+    const msg=document.getElementById('recMsg');
+    msg.textContent='Processing portrait…';
+    const img=new Image();
+    img.onload=()=>{
+      const max=900, sc=Math.min(1,max/img.width);
+      const c=document.createElement('canvas');
+      c.width=Math.round(img.width*sc); c.height=Math.round(img.height*sc);
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+      const data=c.toDataURL('image/jpeg',0.74);
+      document.getElementById('f_portrait').value=data;
+      msg.textContent='Portrait ready. '+Math.round(data.length/1400)+' KB once saved.';
+      URL.revokeObjectURL(img.src);
+    };
+    img.onerror=()=>{msg.textContent='That file could not be read as an image.'};
+    img.src=URL.createObjectURL(f);
   };
   document.getElementById('recCancel').onclick=closeSheet;
   document.getElementById('recSave').onclick=()=>{
@@ -1270,6 +1500,12 @@ function recordForm(secKey,index){
       const links=[];
       for(let i=0;i<3;i++){const l=val('ll'+i),u=val('lu'+i);if(l)links.push({label:l,url:u||'#'})}
       if(links.length)rec.links=links;
+      if(isRoster){
+        const badges=[];
+        BADGES.forEach((b,n)=>{const el=document.getElementById('bg'+n);if(el&&el.checked)badges.push(b.id)});
+        if(badges.length)rec.badges=badges;
+        if(val('f_portrait'))rec.portrait=val('f_portrait');
+      }
       const holo=pendingHolo||it.holo;
       if(holo)rec.holo=holo;
       if(it.holoTune)rec.holoTune=it.holoTune;
@@ -1323,12 +1559,14 @@ function newCampaignForm(){
       <div class="field"><label>Footer left</label><input id="n_footL" placeholder="1 session"></div>
       <div class="field"><label>Footer right</label><input id="n_footR" placeholder="3 seats open"></div>
     </div>
-    <div class="field"><label>Badges</label>
+    <div class="field"><label>Tags</label>
       <div class="toggles">
         <label class="tog"><input type="checkbox" id="n_up"> Upcoming</label>
         <label class="tog"><input type="checkbox" id="n_rec"> Recruiting</label>
       </div>
     </div>
+    <div class="field"><label>Custom tags — comma separated</label>
+      <input id="n_tags" placeholder="One shot, Tactical"></div>
     <div class="actions">
       <button class="ebtn" id="nSave">Create campaign</button>
       <button class="ebtn ghost" id="nCancel">Cancel</button>
@@ -1340,8 +1578,10 @@ function newCampaignForm(){
     const title=v('n_title');
     if(!title){alert('A title is required.');return}
     const pid=makePid(title);
+    const ntags=v('n_tags').split(',').map(s=>s.trim()).filter(Boolean);
     PAGES[pid]={
       title, eyebrow:v('n_eyebrow'), blurb:v('n_blurb'),
+      ...(ntags.length?{tags:ntags}:{}),
       ...(document.getElementById('n_up').checked?{upcoming:true}:{}),
       ...(document.getElementById('n_rec').checked?{recruiting:true}:{})
     };
@@ -1394,13 +1634,16 @@ function pageForm(pid,scope){
     <div class="field"><label>Upload a thumbnail for this placement</label><input type="file" id="p_file" accept="image/*"></div>
     <div class="field"><label>Shared thumbnail</label>
       <input id="p_img" value="${esc(p.img)}" placeholder="Used wherever no placement thumbnail is set"></div>
-    <div class="field"><label>Badges</label>
+    <div class="field"><label>Tags</label>
       <div class="toggles">
         <label class="tog"><input type="checkbox" id="p_feat" ${p.featured?'checked':''}> Featured</label>
         <label class="tog"><input type="checkbox" id="p_up" ${p.upcoming?'checked':''}> Upcoming</label>
         <label class="tog"><input type="checkbox" id="p_rec" ${p.recruiting?'checked':''}> Recruiting</label>
       </div>
     </div>
+    <div class="field"><label>Custom tags — comma separated</label>
+      <input id="p_tags" value="${esc((p.tags||[]).join(', '))}" placeholder="One shot, Tactical, Hutt Space">
+      <p class="note">Sit next to the built-in three, in the order typed.</p></div>
     <div class="actions">
       <button class="ebtn" id="pgSave">Save tile</button>
       <button class="ebtn ghost" id="pgClear">Clear thumbnail</button>
@@ -1435,10 +1678,12 @@ function pageForm(pid,scope){
   if(delBtn)delBtn.onclick=()=>removeCampaign(scope,pid);
   document.getElementById('pgSave').onclick=()=>{
     const v=id=>document.getElementById(id).value.trim();
+    const tags=v('p_tags').split(',').map(s=>s.trim()).filter(Boolean);
     PAGES[pid]={
       title:v('p_title'), eyebrow:v('p_eyebrow'), blurb:v('p_blurb'),
       ...(v('p_aur')?{aur:v('p_aur')}:{}),
       ...(v('p_img')?{img:v('p_img')}:{}),
+      ...(tags.length?{tags}:{}),
       ...(document.getElementById('p_feat').checked?{featured:true}:{}),
       ...(document.getElementById('p_up').checked?{upcoming:true}:{}),
       ...(document.getElementById('p_rec').checked?{recruiting:true}:{})
@@ -1456,6 +1701,71 @@ function pageForm(pid,scope){
   };
 }
 
+/* ---- badge library ---- */
+function badgeImgProcess(file,cb){
+  const r=new FileReader();
+  r.onload=()=>{
+    const img=new Image();
+    img.onload=()=>{
+      const max=320, sc=Math.min(1,max/Math.max(img.width,img.height));
+      const c=document.createElement('canvas');
+      c.width=Math.round(img.width*sc); c.height=Math.round(img.height*sc);
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+      cb(c.toDataURL('image/png'));   // PNG, so cut-out badges keep their edges
+    };
+    img.src=r.result;
+  };
+  r.readAsDataURL(file);
+}
+function badgeForm(index){
+  const b=index==null?{}:BADGES[index];
+  openSheet(`
+    <h2>${index==null?'New':'Edit'} badge</h2>
+    <p class="hint">Made here, awarded from a character's own record.</p>
+    <div class="field"><label>Name</label><input id="b_name" value="${esc(b.name)}" placeholder="First Blood"></div>
+    <div class="field"><label>Image</label>
+      <input id="b_img" value="${esc(b.img)}" placeholder="images/first-blood-badge.png"></div>
+    <div class="field"><label>Upload an image</label><input type="file" id="b_file" accept="image/*"></div>
+    <div class="actions">
+      <button class="ebtn" id="bSave">Save badge</button>
+      <button class="ebtn ghost" id="bClear">Clear image</button>
+      <button class="ebtn ghost" id="bCancel">Cancel</button>
+    </div>
+    <p class="note" id="bMsg">Square images sit best in the 54px square. Uploads move into images/ when you publish.</p>`);
+  const msg=document.getElementById('bMsg');
+  document.getElementById('b_file').onchange=e=>{
+    const f=e.target.files[0]; if(!f)return;
+    msg.textContent='Processing image…';
+    badgeImgProcess(f,data=>{
+      document.getElementById('b_img').value=data;
+      msg.textContent='Image ready. '+Math.round(data.length/1400)+' KB once saved.';
+    });
+  };
+  document.getElementById('bClear').onclick=()=>{
+    document.getElementById('b_img').value=''; msg.textContent='Image cleared. Save to apply.';
+  };
+  document.getElementById('bCancel').onclick=closeSheet;
+  document.getElementById('bSave').onclick=()=>{
+    const v=id=>document.getElementById(id).value.trim();
+    const name=v('b_name');
+    if(!name){alert('A name is required.');return}
+    if(index==null)BADGES.push({id:makeBadgeId(name),name,img:v('b_img')});
+    else BADGES[index]={...BADGES[index],name,img:v('b_img')};
+    markDirty(); closeSheet(); render();
+  };
+}
+function deleteBadge(index){
+  const b=BADGES[index]; if(!b)return;
+  if(!confirm(`Delete the badge "${b.name}"? It comes off every character that holds it.`))return;
+  BADGES.splice(index,1);
+  Object.values(DATA).forEach(s=>(s.items||[]).forEach(rec=>{
+    if(!rec.badges)return;
+    rec.badges=rec.badges.filter(x=>x!==b.id);
+    if(!rec.badges.length)delete rec.badges;
+  }));
+  markDirty(); render();
+}
+
 function deleteRecord(secKey,index){
   const sec=DATA[secKey];
   if(!confirm('Delete "'+sec.items[index].name+'"? This cannot be undone until you reload without publishing.'))return;
@@ -1464,7 +1774,9 @@ function deleteRecord(secKey,index){
 
 /* ---- serialise DATA back into the file ---- */
 function serialiseData(){
-  return 'const DATA = '+JSON.stringify(DATA,null,2)+';\n\nconst PAGES = '+JSON.stringify(PAGES,null,2)+';';
+  return 'const DATA = '+JSON.stringify(DATA,null,2)+';\n\nconst PAGES = '+JSON.stringify(PAGES,null,2)+';'
+    +'\n\n/* Badge library — made by hand from the Badges tab in edit mode. */\nconst BADGES = '
+    +JSON.stringify(BADGES,null,2)+';';
 }
 function rebuildFile(sourceText){
   const start=sourceText.indexOf('const DATA = {');
@@ -1556,7 +1868,15 @@ async function externaliseImages(tok,progress){
     for(const rec of sec.items){
       const p=extract(rec.holo, rec.name||'holo');
       if(p)rec.holo=p;
+      const q=extract(rec.portrait, (rec.name||'record')+'-portrait');
+      if(q)rec.portrait=q;
     }
+  }
+
+  // badge images
+  for(const b of BADGES){
+    const p=extract(b.img,(b.name||b.id||'badge')+'-badge');
+    if(p)b.img=p;
   }
 
   // shared tile thumbnails
@@ -1679,8 +1999,11 @@ function syncAddBtn(){
   // adding campaigns belongs to the Campaigns tab and nowhere else
   const camp=DATA[tab] && DATA[tab].layout==='campaigns' && page==null;
   document.getElementById('addCampBtn').style.display=camp?'':'none';
+  const bdg=DATA[tab] && DATA[tab].layout==='badges';
+  document.getElementById('addBadgeBtn').style.display=bdg?'':'none';
 }
 document.getElementById('addCampBtn').onclick=newCampaignForm;
+document.getElementById('addBadgeBtn').onclick=()=>badgeForm(null);
 document.getElementById('pubBtn').onclick=publishForm;
 document.getElementById('dlBtn').onclick=downloadFile;
 document.getElementById('lockBtn').onclick=()=>{
@@ -1689,7 +2012,7 @@ document.getElementById('lockBtn').onclick=()=>{
 };
 view.addEventListener('click',e=>{
   const tile=e.target.closest('.tile');
-  const hit=e.target.closest('.card');
+  const hit=e.target.closest('.card,.pc');
   if(hit&&!e.target.closest('.tbtn')){
     detail=+hit.dataset.i; render(); window.scrollTo(0,0); return;
   }
@@ -1697,6 +2020,8 @@ view.addEventListener('click',e=>{
   const b=e.target.closest('.tbtn'); if(!b)return;
   if(b.dataset.act==='page'){pageForm(b.dataset.pid,b.dataset.scope);return}
   const i=+b.dataset.i;
+  if(b.dataset.act==='bedit'){badgeForm(i);return}
+  if(b.dataset.act==='bdel'){deleteBadge(i);return}
   if(b.dataset.act==='edit')recordForm(tab,i); else deleteRecord(tab,i);
 });
 window.addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue=''}});
