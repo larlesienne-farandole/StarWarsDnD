@@ -2057,12 +2057,12 @@ function stopScramble(el){
   delete el.dataset.busy;
 }
 view.addEventListener('mouseover',e=>{
-  const card=e.target.closest('.card,.tile'); if(!card)return;
+  const card=e.target.closest('.card,.tile,.pc'); if(!card)return;
   if(card.contains(e.relatedTarget))return;
   const a=card.querySelector('.aur'); if(a)scramble(a);
 });
 view.addEventListener('mouseout',e=>{
-  const card=e.target.closest('.card,.tile'); if(!card)return;
+  const card=e.target.closest('.card,.tile,.pc'); if(!card)return;
   if(card.contains(e.relatedTarget))return;
   stopScramble(card.querySelector('.aur'));
 });
