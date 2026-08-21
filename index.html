@@ -951,7 +951,8 @@ const PAGES = {
   "the-archive": {
     "title": "The Archive",
     "eyebrow": "Records",
-    "blurb": "Characters, contacts, and charted worlds. Everything the table has established so far."
+    "blurb": "Characters, contacts, and charted worlds. Everything the table has established so far.",
+    "goto": "characters"
   },
   "peacekeeper": {
     "title": "Peacekeepers",
@@ -1017,7 +1018,8 @@ function tileHTML(t,isCampaigns,scope){
   if(p.recruiting)tags.push('Recruiting');
   // free-text tags sit alongside the three built-ins, in the order they were typed
   (p.tags||[]).forEach(x=>{if(x&&!tags.includes(x))tags.push(x)});
-  return `<button class="tile ${t.size==='feature'?'feature':''}" data-page="${t.pid}">
+  // a page carrying `goto` is a shortcut to a tab, not a page of its own
+  return `<button class="tile ${t.size==='feature'?'feature':''}" data-page="${t.pid}"${p.goto?` data-goto="${p.goto}"`:''}>
     ${bg?`<span class="bgimg" style="background-image:url('${bg}')"></span>`:''}
     <span class="tiletools rowtools"><span class="tbtn" data-act="page" data-pid="${t.pid}" data-scope="${scope||''}">Edit tile</span></span>
     ${tags.length?`<span class="tags">${tags.map(x=>`<span class="tag">${x}</span>`).join('')}</span>`:''}
@@ -1734,6 +1736,12 @@ function pageForm(pid,scope){
     <div class="field"><label>Aurebesh line</label><input id="p_aur" value="${esc(p.aur)}" placeholder="Defaults to the title">
       <p class="note">Written in Latin letters and displayed in Aurebesh. Leave blank to use the title.</p></div>
     <div class="field"><label>Description</label><textarea id="p_blurb">${esc(p.blurb)}</textarea></div>
+    <div class="field"><label>Clicking this tile</label>
+      <select id="p_goto">
+        <option value="" ${!p.goto?'selected':''}>Opens its own page</option>
+        ${Object.entries(DATA).filter(([,s])=>!s.editOnly).map(([k,s])=>
+          `<option value="${k}" ${p.goto===k?'selected':''}>Goes to the ${esc(s.label)} tab</option>`).join('')}
+      </select></div>
     <div class="field"><label>Corner label — this placement only</label>
       <input id="p_label" value="${esc(tile.label)}" placeholder="Leave blank for none">
       <p class="note">Small line above the aurebesh, in the tile's top corner.</p></div>
@@ -1794,9 +1802,12 @@ function pageForm(pid,scope){
     const v=id=>document.getElementById(id).value.trim();
     const tags=v('p_tags').split(',').map(s=>s.trim()).filter(Boolean);
     PAGES[pid]={
+      // sessions are edited on the page itself, so they survive a tile edit
+      ...(p.sessions?{sessions:p.sessions}:{}),
       title:v('p_title'), eyebrow:v('p_eyebrow'), blurb:v('p_blurb'),
       ...(v('p_aur')?{aur:v('p_aur')}:{}),
       ...(v('p_img')?{img:v('p_img')}:{}),
+      ...(v('p_goto')?{goto:v('p_goto')}:{}),
       ...(tags.length?{tags}:{}),
       ...(document.getElementById('p_feat').checked?{featured:true}:{}),
       ...(document.getElementById('p_up').checked?{upcoming:true}:{}),
@@ -2216,7 +2227,12 @@ view.addEventListener('click',e=>{
   if(hit&&hit.dataset.i!==undefined&&!e.target.closest('.tbtn')){
     detail=+hit.dataset.i; render(); window.scrollTo(0,0); return;
   }
-  if(tile&&!e.target.closest('.tbtn')){page=tile.dataset.page;render();window.scrollTo(0,0);return}
+  if(tile&&!e.target.closest('.tbtn')){
+    const to=tile.dataset.goto;
+    if(to&&DATA[to]){tab=to;filter='All';detail=null;page=null;q.value=''}
+    else page=tile.dataset.page;
+    render();window.scrollTo(0,0);return;
+  }
   const b=e.target.closest('.tbtn'); if(!b)return;
   if(b.dataset.act==='page'){pageForm(b.dataset.pid,b.dataset.scope);return}
   const i=+b.dataset.i;
