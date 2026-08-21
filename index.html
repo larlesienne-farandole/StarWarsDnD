@@ -192,6 +192,12 @@ body.editing .tile .aur{padding-right:0}
   transition:border-color .14s,box-shadow .14s,background .14s;min-height:230px}
 .camps .home{grid-template-columns:1fr;margin-top:0}
 .tags{position:absolute;top:22px;right:26px;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+/* optional corner label, per placement. Sits in the flow above the aurebesh,
+   so it never collides with the tags or the edit control. */
+.tile .tlabel{display:block;font-family:'Barlow Semi Condensed',sans-serif;font-weight:600;font-size:12px;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--dim);margin-bottom:9px;line-height:1.5;
+  position:relative;z-index:2;transition:color .14s}
+.tile:hover .tlabel,.tile:focus-visible .tlabel{color:var(--gold-hi)}
 
 /* Campaigns page: every tile follows the same rules, feature included, so
    titles line up and footers sit on a common baseline no matter the copy. */
@@ -567,8 +573,7 @@ const DATA = {
       {
         "pid": "kessa-descent",
         "footL": "1 session",
-        "footR": "1st - 3rd level",
-        "img": "images/the-mando-ade-campaign.jpg"
+        "footR": "1st - 3rd level"
       },
       {
         "pid": "the-archive",
@@ -596,12 +601,17 @@ const DATA = {
         "title": "Side campaigns",
         "entries": [
           {
-            "pid": "kessa-descent",
-            "footL": "1 session",
-            "footR": "1st - 5th level"
-          },
-          {
             "pid": "ghosts-of-utapau",
+            "footL": "1 session",
+            "footR": "1st - 3rd level"
+          }
+        ]
+      },
+      {
+        "title": "Upcoming",
+        "entries": [
+          {
+            "pid": "kessa-descent",
             "footL": "1 session",
             "footR": "1st - 3rd level"
           },
@@ -909,28 +919,15 @@ const PAGES = {
     "aur": "Bounty Hunter",
     "img": "images/bounty-hunter-missions-tile.jpg",
     "featured": true,
-    "sessions": [
-      {
-        "name": "Bounty Hunter I",
-        "eyebrow": "Session I",
-        "img": "images/bounty-hunter-i-session.jpg"
-      },
-      {
-        "name": "Bounty Hunter II",
-        "eyebrow": "Session II",
-        "img": "images/bounty-hunter-ii-session.jpg"
-      },
-      {
-        "name": "Bounty Hunter III",
-        "eyebrow": "Session III",
-        "img": "images/bounty-hunter-iii-session.jpg"
-      }
+    "tags": [
+      "One shot"
     ]
   },
   "kessa-descent": {
-    "title": "The Mando'ade",
+    "title": "Squadron Missions",
     "eyebrow": "Anthology · Upcoming",
-    "blurb": "Take the creed to every corner of the galaxy in a one-shot anthology series.",
+    "blurb": "Master the skies in a one-shot anthology series",
+    "img": "images/squadron-missions-tile.jpg",
     "featured": true,
     "upcoming": true
   },
@@ -1007,6 +1004,7 @@ function tileHTML(t,isCampaigns,scope){
     ${bg?`<span class="bgimg" style="background-image:url('${bg}')"></span>`:''}
     <span class="tiletools rowtools"><span class="tbtn" data-act="page" data-pid="${t.pid}" data-scope="${scope||''}">Edit tile</span></span>
     ${tags.length?`<span class="tags">${tags.map(x=>`<span class="tag">${x}</span>`).join('')}</span>`:''}
+    ${t.label?`<span class="tlabel">${t.label}</span>`:''}
     <span class="aur">${p.aur||p.title}</span>
     <h3>${p.title}</h3>
     <span class="eyebrow">${p.eyebrow||''}</span>
@@ -1177,14 +1175,16 @@ function render(){
     bar.style.display='none';
     document.querySelector('.editbar').style.visibility='visible';
     if(page!=null){renderPage('← All campaigns');return}
-    view.innerHTML='<div class="camps">'+sec.groups.map((g,gi)=>`
+    // an empty heading is only shown to an editor, who may be about to fill it
+    view.innerHTML='<div class="camps">'+sec.groups.map((g,gi)=>
+      (!g.entries.length&&!editing)?'':`
       <section class="group">
         <div class="grouphead">
           <h2>${g.title}</h2>
         </div>
-        <div class="${g.entries.some(e=>e.size==='feature')?'home':'camprow'}">
+        ${g.entries.length?`<div class="${g.entries.some(e=>e.size==='feature')?'home':'camprow'}">
           ${g.entries.map((e,ei)=>tileHTML(e,true,'camp:'+gi+':'+ei)).join('')}
-        </div>
+        </div>`:'<div class="empty">Nothing in this group yet</div>'}
       </section>`).join('')+'</div>';
     return;
   }
@@ -1700,6 +1700,15 @@ function removeCampaign(scope,pid){
 function pageForm(pid,scope){
   const p=PAGES[pid]||{};
   const tile=tileFromScope(scope)||{};
+  // a campaign placement can be moved between the groups on the Campaigns tab
+  const parts=String(scope||'').split(':');
+  const cgroups=(DATA.campaigns&&DATA.campaigns.groups)||[];
+  const inCamp=parts[0]==='camp';
+  const groupSel=!inCamp?'':`
+    <div class="field"><label>Group</label>
+      <select id="p_group">${cgroups.map((g,i)=>
+        `<option value="${i}" ${i===+parts[1]?'selected':''}>${esc(g.title)}</option>`).join('')}</select>
+      <p class="note">Moves this campaign to another heading on the Campaigns tab.</p></div>`;
   openSheet(`
     <h2>Edit tile</h2>
     <p class="hint">Shared by the home page and the campaigns list.</p>
@@ -1708,6 +1717,10 @@ function pageForm(pid,scope){
     <div class="field"><label>Aurebesh line</label><input id="p_aur" value="${esc(p.aur)}" placeholder="Defaults to the title">
       <p class="note">Written in Latin letters and displayed in Aurebesh. Leave blank to use the title.</p></div>
     <div class="field"><label>Description</label><textarea id="p_blurb">${esc(p.blurb)}</textarea></div>
+    <div class="field"><label>Corner label — this placement only</label>
+      <input id="p_label" value="${esc(tile.label)}" placeholder="Leave blank for none">
+      <p class="note">Small line above the aurebesh, in the tile's top corner.</p></div>
+    ${groupSel}
     <div class="trio">
       <div class="field"><label>Footer left</label><input id="p_footL" value="${esc(tile.footL)}" placeholder="3 sessions"></div>
       <div class="field"><label>Footer right</label><input id="p_footR" value="${esc(tile.footR)}" placeholder="2 seats open"></div>
@@ -1777,9 +1790,21 @@ function pageForm(pid,scope){
       const L=v('p_footL'), R=v('p_footR');
       if(L)t.footL=L; else delete t.footL;
       if(R)t.footR=R; else delete t.footR;
+      const lb=v('p_label');
+      if(lb)t.label=lb; else delete t.label;
       // an empty placement field means "inherit the shared thumbnail"
       const ti=v('p_timg');
       if(ti)t.img=ti; else delete t.img;
+      // moving groups is a splice out and a push in, so the tile keeps
+      // its own footers and thumbnail
+      const gsel=document.getElementById('p_group');
+      if(gsel&&+gsel.value!==+parts[1]){
+        const from=cgroups[+parts[1]], to=cgroups[+gsel.value];
+        if(from&&to){
+          const moved=from.entries.splice(+parts[2],1)[0];
+          if(moved)to.entries.push(moved);
+        }
+      }
     }
     markDirty(); closeSheet(); render();
   };
