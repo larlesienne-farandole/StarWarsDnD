@@ -600,13 +600,29 @@ const DATA = {
     "filterKey": "status",
     "items": [
       {
-        "name": "Qull Ko",
+        "name": "Gremik",
+        "eyebrow": "Devaronian · Fighter",
+        "status": "Active",
+        "player": "felipemontecinos",
+        "blurb": "",
+        "stats": {
+          "Level": "3",
+          "Sessions": "1"
+        },
+        "badges": [
+          "bh3"
+        ],
+        "portrait": "images/gremik-portrait.jpg"
+      },
+      {
+        "name": "Quill Ko",
         "eyebrow": "Human · Berserker",
         "status": "Active",
         "player": "lightknight4048",
         "blurb": "",
         "stats": {
-          "Level": "3"
+          "Level": "3",
+          "Sessions": "1"
         },
         "links": [
           {
@@ -654,13 +670,12 @@ const DATA = {
       },
       {
         "name": "Tak Durin",
-        "eyebrow": "Ardennian · Scout · Pirate",
+        "eyebrow": "Ardennian · Scout",
         "status": "Active",
         "player": "Sean",
         "blurb": "",
         "stats": {
           "Level": "3",
-          "Credits": "?",
           "Sessions": "1"
         },
         "notes": "Ardennian bounty hunter, and ace pilot.",
@@ -785,7 +800,6 @@ const DATA = {
         "blurb": "",
         "stats": {
           "Level": "1",
-          "Credits": "0",
           "Sessions": "1"
         },
         "holo": "images/r2-v7.png",
@@ -812,7 +826,6 @@ const DATA = {
         "blurb": "",
         "stats": {
           "Level": "1",
-          "Credits": "38",
           "Sessions": "1"
         },
         "notes": "Aleena bounty hunter.",
@@ -912,7 +925,13 @@ const PAGES = {
 };
 
 /* Badge library — made by hand from the Badges tab in edit mode. */
-const BADGES = [];
+const BADGES = [
+  {
+    "id": "bh3",
+    "name": "BH3",
+    "img": "images/bh3-badge.png"
+  }
+];
 /* ========================= end data ========================= */
 
 const nav=document.getElementById('nav'), view=document.getElementById('view'),
