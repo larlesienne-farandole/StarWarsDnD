@@ -267,6 +267,19 @@ body.editing .tile .aur{padding-right:0}
 .badgepick .tog input{margin-top:2px;flex:0 0 auto}
 
 .sheetview .maincol{min-width:0}
+/* Record header: the tile's portrait at the tile's proportions, with the
+   name block beside it. Everything below the header stays full width. */
+.sheetview .head{display:grid;grid-template-columns:214px minmax(0,1fr);gap:36px;align-items:start}
+.sheetview .head.solo{display:block}
+.sheetview .headtext{min-width:0}
+.portcol{position:relative;aspect-ratio:3/4;border:1px solid var(--edge);background:#000;overflow:hidden}
+.portcol img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.portcol::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(to bottom,rgba(255,176,32,.07) 0 1px,transparent 1px 3px)}
+@media(max-width:860px){
+  .sheetview .head{grid-template-columns:1fr;gap:22px}
+  .portcol{max-width:200px}
+}
 
 /* ---------- detail view ---------- */
 .detail{margin-top:8px}
@@ -1071,6 +1084,8 @@ function render(){
     const appr=canHolo?`<button class="link" id="apprBtn">${hasHolo?'Appearance':'Add appearance'}</button>`:'';
     const editing=document.body.classList.contains('editing');
     const isRoster=sec.layout==='roster';
+    // the record page uses the card's own portrait, at the card's proportions
+    const port=isRoster&&i.portrait?i.portrait:'';
     const hasBadges=!!(i.badges&&i.badges.length);
     const badgebox=(isRoster&&(hasBadges||editing))?`
       <div class="badgebox">
@@ -1084,12 +1099,17 @@ function render(){
         <div class="sheetview">
           ${key2&&i[key2]?`<div class="flag ${flagClass(i[key2])}">${i[key2]}</div>`:''}
           <div class="maincol">
-            <span class="aur">${i.aur||i.name}</span>
-            <h2>${i.name}</h2>
-            ${i.eyebrow?`<span class="eyebrow">${i.eyebrow}</span>`:''}
-            ${metaLine(i,tab)}
-            <p class="lede">${i.blurb||''}</p>
-            ${body?`<div class="body">${body}</div>`:''}
+            <div class="head${port?'':' solo'}">
+              ${port?`<div class="portcol"><img src="${port}" alt=""></div>`:''}
+              <div class="headtext">
+                <span class="aur">${i.aur||i.name}</span>
+                <h2>${i.name}</h2>
+                ${i.eyebrow?`<span class="eyebrow">${i.eyebrow}</span>`:''}
+                ${metaLine(i,tab)}
+                <p class="lede">${i.blurb||''}</p>
+                ${body?`<div class="body">${body}</div>`:''}
+              </div>
+            </div>
             ${st?`<div class="stats">${st}</div>`:''}
             ${badgebox}
             ${(links||appr)?`<div class="links">${appr}${links}</div>`:''}
