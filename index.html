@@ -177,13 +177,16 @@ body:not(.editing) .tile .tiletools{display:none}
 body.editing .tile{padding-top:72px}
 body.editing .tile .aur{padding-right:0}
 
-/* ---------- home grid: each tile sized on its own ----------
-   Eight columns and a fixed row unit, so a tile's width and height are its
-   own business. Nothing spans "the rest of the column" any more, which is
-   what used to tie the small tiles to whatever the feature was doing. */
-.home.hgrid{grid-template-columns:repeat(8,1fr);grid-auto-rows:minmax(92px,auto)}
-.home.hgrid .tile{min-height:0}
-.home.hgrid .tile.feature{grid-row:auto;min-height:0}
+/* ---------- home grid ----------
+   A small tile is never shorter than it would be carrying two lines of blurb:
+   26 padding, the aurebesh line, the title, the subtitle, two lines of copy
+   and the footer rule. Shorter copy leaves the extra room empty rather than
+   pulling the tile up out of line with its neighbours. */
+.home.hgrid .tile:not(.feature){min-height:238px;justify-content:flex-start}
+/* the text stacks down from the top, the footer sits on the bottom edge, and
+   whatever room is left over opens up between the blurb and the footer rule */
+.home.hgrid .tile:not(.feature) .foot{margin-top:auto}
+.home.hgrid .tile:not(.feature) p{margin-bottom:20px}
 body.editing .home.hgrid .tile{cursor:grab}
 body.editing .home.hgrid .tile.dragging{opacity:.35;cursor:grabbing}
 .home.hgrid .tile.dropL{box-shadow:inset 4px 0 0 var(--gold),0 0 0 1px var(--gold)}
@@ -601,7 +604,7 @@ body.editing .pc .rowtools,body.editing .sheetview .rowtools{display:flex}
   .card .aur{padding-right:92px}
   .flag{top:24px;right:24px}
   .entry{grid-template-columns:1fr;gap:8px}
-  .home.hgrid{grid-template-columns:repeat(4,1fr)}
+  .home.hgrid .tile:not(.feature){min-height:0}
   .cal{overflow-x:auto}
   .calhead,.calbody{min-width:760px}
 }
@@ -656,31 +659,23 @@ const DATA = {
       {
         "pid": "outer-rim-tales",
         "size": "feature",
-        "w": 5,
-        "h": 6,
         "footL": "Upcoming",
         "footR": "1st - 5th level",
         "img": "images/outer-rim-tales-home.jpg"
       },
       {
         "pid": "kessa-descent",
-        "w": 3,
-        "h": 2,
         "footL": "1 session",
         "footR": "1st - 3rd level",
         "img": "images/the-mando-ade-campaign.jpg"
       },
       {
         "pid": "schedule",
-        "w": 3,
-        "h": 2,
         "footL": "Calendar",
         "footR": "Browse"
       },
       {
         "pid": "the-archive",
-        "w": 3,
-        "h": 2,
         "footL": "Database",
         "footR": "Browse"
       }
@@ -1117,12 +1112,6 @@ function metaLine(i,secKey){
   return '';
 }
 
-// A home tile's footprint. Eight columns across, rows of 92px. Missing values
-// fall back to the old shapes so an untouched tile looks exactly as it did.
-const clampi=(v,lo,hi)=>Math.max(lo,Math.min(hi,Math.round(+v||0)));
-function tileW(t){return t&&t.w?clampi(t.w,1,8):(t&&t.size==='feature'?5:3)}
-function tileH(t){return t&&t.h?clampi(t.h,1,12):(t&&t.size==='feature'?6:2)}
-
 // A placement may carry its own `img`, which wins over the shared PAGES image.
 // `t.img === ''` is meaningful: it means "show no image in this spot".
 function tileImage(t,p){
@@ -1138,12 +1127,9 @@ function tileHTML(t,isCampaigns,scope){
   if(p.recruiting)tags.push('Recruiting');
   // free-text tags sit alongside the three built-ins, in the order they were typed
   (p.tags||[]).forEach(x=>{if(x&&!tags.includes(x))tags.push(x)});
-  // Every home tile carries its own footprint, so nothing it does is worked
-  // out from what sits next to it. The campaigns list keeps its old flow.
   const home=String(scope||'').startsWith('home:');
-  const span=home?`style="grid-column:span ${tileW(t)};grid-row:span ${tileH(t)}"`:'';
   // a page carrying `goto` is a shortcut to a tab, not a page of its own
-  return `<button class="tile ${t.size==='feature'?'feature':''}" ${span} data-page="${t.pid}"${p.goto?` data-goto="${p.goto}"`:''}>
+  return `<button class="tile ${t.size==='feature'?'feature':''}" data-page="${t.pid}"${p.goto?` data-goto="${p.goto}"`:''}>
     ${bg?`<span class="bgimg" style="background-image:url('${bg}')"></span>`:''}
     <span class="tiletools rowtools"><span class="tbtn" data-act="page" data-pid="${t.pid}" data-scope="${scope||''}">Edit tile</span>${home?'<span class="tbtn grip" title="Drag to rearrange">Move</span>':''}</span>
     ${tags.length?`<span class="tags">${tags.map(x=>`<span class="tag">${x}</span>`).join('')}</span>`:''}
@@ -2247,18 +2233,6 @@ function pageForm(pid,scope){
   const parts=String(scope||'').split(':');
   const cgroups=(DATA.campaigns&&DATA.campaigns.groups)||[];
   const inCamp=parts[0]==='camp';
-  // a home tile owns its footprint, so the size lives on the placement
-  const inHome=parts[0]==='home';
-  const sizeSel=!inHome?'':`
-    <div class="trio">
-      <div class="field"><label>Width \u2014 columns of 8</label>
-        <select id="p_w">${[1,2,3,4,5,6,7,8].map(n=>
-          `<option value="${n}" ${n===tileW(tile)?'selected':''}>${n}</option>`).join('')}</select></div>
-      <div class="field"><label>Minimum height \u2014 rows of 92px</label>
-        <select id="p_h">${[1,2,3,4,5,6,7,8,9,10,11,12].map(n=>
-          `<option value="${n}" ${n===tileH(tile)?'selected':''}>${n}</option>`).join('')}</select></div>
-    </div>
-    <p class="note">Each home tile is sized on its own, so changing one leaves the rest where they are. Height is a floor \u2014 a tile grows if its copy needs the room. Drag a tile in edit mode to move it.</p>`;
   const groupSel=!inCamp?'':`
     <div class="field"><label>Group</label>
       <select id="p_group">${cgroups.map((g,i)=>
@@ -2282,7 +2256,6 @@ function pageForm(pid,scope){
       <input id="p_label" value="${esc(tile.label)}" placeholder="Leave blank for none">
       <p class="note">Small line above the aurebesh, in the tile's top corner.</p></div>
     ${groupSel}
-    ${sizeSel}
     <div class="trio">
       <div class="field"><label>Footer left</label><input id="p_footL" value="${esc(tile.footL)}" placeholder="3 sessions"></div>
       <div class="field"><label>Footer right</label><input id="p_footR" value="${esc(tile.footR)}" placeholder="2 seats open"></div>
@@ -2360,9 +2333,6 @@ function pageForm(pid,scope){
       // an empty placement field means "inherit the shared thumbnail"
       const ti=v('p_timg');
       if(ti)t.img=ti; else delete t.img;
-      const wEl=document.getElementById('p_w'), hEl=document.getElementById('p_h');
-      if(wEl)t.w=+wEl.value;
-      if(hEl)t.h=+hEl.value;
       // moving groups is a splice out and a push in, so the tile keeps
       // its own footers and thumbnail
       const gsel=document.getElementById('p_group');
