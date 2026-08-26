@@ -224,6 +224,9 @@ body.editing .home.hgrid .tile.dragging{opacity:.35;cursor:grabbing}
 .calgut .hl,.caldy .hl{position:absolute;left:0;right:0;height:1px;background:var(--edge);opacity:.5}
 .caldy .hl.half{opacity:.2}
 body.editing .caldy{cursor:crosshair}
+.tblock .rowtools{position:absolute;top:6px;right:7px;left:auto;z-index:5;margin:0;gap:4px}
+.tblock .rowtools .tbtn{background:#000;padding:2px 7px;font-size:10px;letter-spacing:.14em}
+body.editing .tblock .rowtools{display:flex}
 .nowline{position:absolute;left:0;right:0;height:0;border-top:1px solid var(--gold);
   z-index:4;pointer-events:none;box-shadow:0 0 12px rgba(255,176,32,.55)}
 .nowline::before{content:"";position:absolute;left:-4px;top:-4px;width:7px;height:7px;
@@ -232,16 +235,16 @@ body.editing .caldy{cursor:crosshair}
   font-family:'Barlow Semi Condensed',sans-serif;font-size:11px;letter-spacing:.16em;
   color:var(--gold);background:#000;padding:2px 0 2px 4px}
 .tblock{position:absolute;box-sizing:border-box;overflow:hidden;background:#000;
-  border:1px solid var(--edge);padding:7px 9px;text-align:left;cursor:pointer;z-index:2;
+  border:1px solid var(--edge);padding:7px 9px;text-align:left;cursor:default;z-index:2;
   display:flex;flex-direction:column;justify-content:flex-end;
   transition:border-color .14s,box-shadow .14s;font:inherit}
 .tblock .bgimg{position:absolute;inset:0;background-size:cover;background-position:center;
-  opacity:.42;transition:opacity .18s;pointer-events:none;z-index:0}
+  opacity:0;transition:opacity .18s;pointer-events:none;z-index:0}
 .tblock .bgimg::after{content:"";position:absolute;inset:0;
-  background:linear-gradient(to top,#000 0%,rgba(0,0,0,.9) 35%,rgba(0,0,0,.5) 100%)}
+  background:linear-gradient(to top,#000 0%,rgba(0,0,0,.72) 30%,rgba(0,0,0,.34) 62%,rgba(0,0,0,.10) 100%)}
 .tblock:hover,.tblock:focus-visible{border-color:var(--gold);outline:none;
   box-shadow:0 0 0 1px var(--gold),0 0 22px rgba(255,176,32,.28)}
-.tblock:hover .bgimg,.tblock:focus-visible .bgimg{opacity:.72}
+.tblock:hover .bgimg,.tblock:focus-visible .bgimg{opacity:1}
 .tblock .bt,.tblock .bn{position:relative;z-index:2;display:block}
 .tblock .bt{font-family:'Barlow Semi Condensed',sans-serif;font-size:11px;letter-spacing:.16em;
   text-transform:uppercase;color:var(--dim);margin-bottom:3px}
@@ -1003,29 +1006,6 @@ const DATA = {
     "label": "Badges",
     "layout": "badges",
     "editOnly": true
-  },
-  "locations": {
-    "label": "Locations",
-    "filterKey": "state",
-    "items": [
-      {
-        "name": "Tirotasus",
-        "eyebrow": "Alba-16",
-        "state": "Charted",
-        "blurb": "Spaceport on the Outer Rim planet of Alba-16.",
-        "stats": {
-          "Sector": "Belsmuth",
-          "Danger": "2"
-        },
-        "notes": "Tirotasus is a lawless settlement full of scoundrels, gangsters, and fugitives. Allegedly has awful landing administrative services.",
-        "links": [
-          {
-            "label": "Sector map",
-            "url": "#"
-          }
-        ]
-      }
-    ]
   }
 };
 
@@ -1426,12 +1406,13 @@ function renderSchedule(){
       const wpc=100/sg.lanes, left=sg.lane*wpc;
       const img=blockImg(b);
       const t1=hm(zoneParts(sg.r.a,z)), t2=hm(zoneParts(sg.r.z,z));
-      return `<button class="tblock ${sg.cut?'cut':''}" data-bi="${sg.r.bi}"
+      return `<div class="tblock ${sg.cut?'cut':''}" data-bi="${sg.r.bi}"
         style="top:${top}px;height:${h}px;left:calc(${left}% + 3px);width:calc(${wpc}% - 6px)">
         ${img?`<span class="bgimg" style="background-image:url('${img}')"></span>`:''}
+        <span class="rowtools"><span class="tbtn" data-act="blkedit" data-i="${sg.r.bi}">Edit</span><span class="tbtn" data-act="blkdel" data-i="${sg.r.bi}">Delete</span></span>
         <span class="bt">${t1}&ndash;${t2}</span>
         <span class="bn">${esc(blockName(b))}</span>
-      </button>`;
+      </div>`;
     }).join('');
     const now=Date.now();
     const live=(civKey(c)===todayKey&&now>=ds&&now<de)
@@ -1529,58 +1510,6 @@ function scheduleForm(){
     if(tb)tb.textContent=p.label;
     markDirty(); closeSheet(); render();
   };
-}
-
-/* ---- a block, read side ---- */
-function blockDetail(bi){
-  const p=schedPage(), b=(p.blocks||[])[bi]; if(!b)return;
-  const editing=document.body.classList.contains('editing');
-  const z=schedViewTZ(), base=schedBaseTZ();
-  const bc=parseCiv(b.date), st=parseHM(b.start), en=parseHM(b.end);
-  let when='Times not set';
-  if(bc&&st&&en){
-    // show the occurrence in the week on screen, so the date matches the column
-    const days=schedDays();
-    let c=days.find(d=>b.repeat?civDow(d)===civDow(bc):civKey(d)===civKey(bc))||bc;
-    const a=wallToMs(c.y,c.m,c.d,st.hh,st.mm,base);
-    const nx=civAdd(c,1);
-    let zz=wallToMs(c.y,c.m,c.d,en.hh,en.mm,base);
-    if(zz<=a)zz=wallToMs(nx.y,nx.m,nx.d,en.hh,en.mm,base);
-    const A=zoneParts(a,z), Z=zoneParts(zz,z);
-    const dayA={y:A.y,m:A.m,d:A.d}, dayZ={y:Z.y,m:Z.m,d:Z.d};
-    const same=civKey(dayA)===civKey(dayZ);
-    when=`${DOWS[civDow(dayA)]}, ${MONTHS[dayA.m-1]} ${dayA.d} ${dayA.y} \u00b7 ${hm(A)} \u2013 `
-       +(same?'':`${DOWS[civDow(dayZ)]} `)+`${hm(Z)}`;
-  }
-  const camp=(PAGES[b.pid]||{}).title||b.name||'\u2014';
-  const img=blockImg(b);
-  const players=(b.players||[]).filter(Boolean);
-  openSheet(`
-    <h2>${esc(blockName(b))}</h2>
-    <p class="hint">${esc(b.repeat?'Repeats every week':'One-off block')} \u00b7 stored in ${esc(base)}</p>
-    <div class="bdet">
-      ${img?`<div class="row"><span class="thumb" style="background-image:url('${img}')"></span></div>`:''}
-      <div class="row"><span class="k">Time block</span><span class="v">${esc(when)}</span>
-        ${z!==base?`<span class="v" style="color:var(--dim);font-size:13px">Shown in ${esc(z)}</span>`:''}</div>
-      <div class="row"><span class="k">Campaign</span><span class="v">${esc(camp)}</span></div>
-      <div class="row"><span class="k">Dungeon master</span><span class="v">${esc(b.dm||'Unassigned')}</span></div>
-      <div class="row"><span class="k">Players</span>
-        ${players.length?`<span class="plist">${players.map(x=>`<span>${esc(x)}</span>`).join('')}</span>`
-          :'<span class="v" style="color:var(--dim)">No seats filled yet</span>'}</div>
-      ${b.notes?`<div class="row"><span class="k">Notes</span><span class="v">${esc(b.notes)}</span></div>`:''}
-    </div>
-    <div class="actions">
-      ${editing?`<button class="ebtn" id="bdEdit">Edit block</button>
-        <button class="ebtn ghost" id="bdDel">Delete block</button>`:''}
-      ${b.pid&&PAGES[b.pid]&&!PAGES[b.pid].goto?'<button class="ebtn ghost" id="bdGo">Open campaign</button>':''}
-      <button class="ebtn ghost" id="bdClose">Close</button>
-    </div>`);
-  document.getElementById('bdClose').onclick=closeSheet;
-  const eb=document.getElementById('bdEdit'); if(eb)eb.onclick=()=>blockForm(bi);
-  const db=document.getElementById('bdDel'); if(db)db.onclick=()=>deleteBlock(bi);
-  const gb=document.getElementById('bdGo');
-  if(gb)gb.onclick=()=>{closeSheet();tab='campaigns';filter='All';detail=null;
-    page=b.pid;render();window.scrollTo(0,0)};
 }
 
 /* ---- a block, write side ---- */
@@ -2845,12 +2774,13 @@ document.getElementById('lockBtn').onclick=()=>{
 view.addEventListener('click',e=>{
   const tile=e.target.closest('.tile');
   const editingNow=document.body.classList.contains('editing');
-  // a time block opens its own sheet rather than a record page
+  // a time block is a record on the grid, so it stays inert. Its controls,
+  // which live on the block itself, are picked up further down.
   const blk=e.target.closest('.tblock');
-  if(blk){blockDetail(+blk.dataset.bi);return}
+  if(blk&&!e.target.closest('.tbtn'))return;
   // in edit mode, empty space in a day column starts a block at that hour
   const cell=e.target.closest('.caldy');
-  if(cell&&editingNow){
+  if(cell&&editingNow&&!blk){
     const days=schedDays(), c=days[+cell.dataset.day];
     const r=cell.getBoundingClientRect();
     const h=Math.max(0,Math.min(23,Math.floor((e.clientY-r.top)/HOURPX)));
@@ -2871,6 +2801,8 @@ view.addEventListener('click',e=>{
   const b=e.target.closest('.tbtn'); if(!b)return;
   if(b.dataset.act==='page'){pageForm(b.dataset.pid,b.dataset.scope);return}
   if(b.dataset.act==='schedset'){scheduleForm();return}
+  if(b.dataset.act==='blkedit'){blockForm(+b.dataset.i);return}
+  if(b.dataset.act==='blkdel'){deleteBlock(+b.dataset.i);return}
   if(b.classList.contains('grip'))return;   // the grip only exists to be dragged
   const i=+b.dataset.i;
   if(b.dataset.act==='bedit'){badgeForm(i);return}
