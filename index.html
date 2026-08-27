@@ -1368,10 +1368,34 @@ function laneOut(segs){
   segs.forEach(sg=>sg.lanes=n);
 }
 
+// The week resolved into columns of drawable segments. Shared by the live grid
+// and the export, so the two can never drift apart.
+function schedColumns(days,z){
+  const ranges=blockRanges(days);
+  return days.map(c=>{
+    const ds=wallToMs(c.y,c.m,c.d,0,0,z);
+    const nx=civAdd(c,1), de=wallToMs(nx.y,nx.m,nx.d,0,0,z);
+    const segs=[];
+    ranges.forEach(r=>{
+      const a=Math.max(r.a,ds), zz=Math.min(r.z,de);
+      if(zz<=a)return;
+      segs.push({r,a,z:zz,cut:r.a<ds||r.z>de});
+    });
+    laneOut(segs);
+    return {c,ds,de,segs};
+  });
+}
+
+// the seven dates as one readable line: "Aug 24 - Aug 30 2026"
+function schedWeekLabel(days){
+  const a=days[0], b=days[6];
+  return `${MONTHS[a.m-1]} ${a.d} \u2013 ${MONTHS[b.m-1]} ${b.d} ${b.y}`;
+}
+
 function renderSchedule(){
   const p=schedPage();
   const editing=document.body.classList.contains('editing');
-  const z=schedViewTZ(), days=schedDays(), ranges=blockRanges(days);
+  const z=schedViewTZ(), days=schedDays();
   const nowP=zoneParts(Date.now(),z), todayKey=civKey({y:nowP.y,m:nowP.m,d:nowP.d});
 
   const head=days.map(c=>`<div class="dh ${civKey(c)===todayKey?'today':''}">
@@ -1387,16 +1411,8 @@ function renderSchedule(){
   const gut=[];
   for(let h=0;h<24;h++)gut.push(`<span style="top:${h*HOURPX}px">${pad2(h)}:00</span>`);
 
-  const cols=days.map((c,ci)=>{
-    const ds=wallToMs(c.y,c.m,c.d,0,0,z);
-    const nx=civAdd(c,1), de=wallToMs(nx.y,nx.m,nx.d,0,0,z);
-    const segs=[];
-    ranges.forEach(r=>{
-      const a=Math.max(r.a,ds), zz=Math.min(r.z,de);
-      if(zz<=a)return;
-      segs.push({r,a,z:zz,cut:r.a<ds||r.z>de});
-    });
-    laneOut(segs);
+  const cols=schedColumns(days,z).map((col,ci)=>{
+    const {c,ds,de,segs}=col;
     const html=segs.map(sg=>{
       const b=sg.r.b;
       const top=(sg.a-ds)/60000/60*HOURPX;
@@ -1427,8 +1443,7 @@ function renderSchedule(){
     : '';
 
   const zones=[...new Set([schedBaseTZ(),localTZ(),...TZ_LIST])];
-  const w0=days[0], w6=days[6];
-  const wlabel=`${MONTHS[w0.m-1]} ${w0.d} \u2013 ${MONTHS[w6.m-1]} ${w6.d} ${w6.y}`;
+  const wlabel=schedWeekLabel(days);
 
   view.innerHTML=`
     <div class="detail">
@@ -1444,6 +1459,7 @@ function renderSchedule(){
             <button class="ebtn ghost" id="wThis" style="display:inline-block">This week</button>
             <button class="ebtn ghost" id="wNext" style="display:inline-block">Week &rarr;</button>
             <span class="wlabel">${wlabel}</span>
+            <button class="ebtn" id="calExport" style="display:inline-block">Export image</button>
           </div>
           <div class="tzbox">
             <label for="tzSel">Timezone</label>
@@ -1465,6 +1481,7 @@ function renderSchedule(){
   document.getElementById('wNext').onclick=()=>{schedWeek++;render()};
   document.getElementById('wThis').onclick=()=>{schedWeek=0;render()};
   document.getElementById('tzSel').onchange=e=>{schedTZ=e.target.value;render()};
+  document.getElementById('calExport').onclick=e=>exportSchedule(e.currentTarget);
 
   if(nowTimer)clearInterval(nowTimer);
   if(onScreen)nowTimer=setInterval(()=>{
@@ -1474,6 +1491,230 @@ function renderSchedule(){
     if(line)line.style.top=t+'px';
     if(tag){tag.style.top=t+'px';tag.textContent=hm(zoneParts(Date.now(),z))}
   },30000);
+}
+
+/* ============================================================
+   EXPORT THE WEEK AS AN IMAGE
+   Draws the grid onto a canvas rather than screenshotting the page, so it
+   works with no extra library and no server. Thumbnails are painted at full
+   strength, the way a block looks under the cursor.
+   ============================================================ */
+const EXP={S:2,W:1680,PAD:46,GUT:86,HOUR:64};
+
+// ctx.letterSpacing is recent; where it is missing the text just sits tighter
+function setLS(ctx,v){try{ctx.letterSpacing=v}catch(e){}}
+
+function loadImage(src){
+  return new Promise(res=>{
+    if(!src)return res(null);
+    const im=new Image();
+    if(/^https?:/i.test(src))im.crossOrigin='anonymous';
+    im.onload=()=>res(im);
+    im.onerror=()=>res(null);
+    im.src=src;
+  });
+}
+
+// fill a box with an image, cropping the overflow rather than squashing it
+function coverDraw(ctx,im,x,y,w,h){
+  const sc=Math.max(w/im.naturalWidth,h/im.naturalHeight);
+  const dw=im.naturalWidth*sc, dh=im.naturalHeight*sc;
+  ctx.drawImage(im,x+(w-dw)/2,y+(h-dh)/2,dw,dh);
+}
+
+function wrapText(ctx,text,maxW,maxLines){
+  const words=String(text).split(/\s+/), out=[];
+  let line='';
+  for(const wd of words){
+    const t=line?line+' '+wd:wd;
+    if(ctx.measureText(t).width<=maxW||!line){line=t}
+    else{out.push(line);line=wd;if(out.length===maxLines-1)break}
+  }
+  if(line&&out.length<maxLines)out.push(line);
+  if(out.length===maxLines){
+    let last=out[maxLines-1];
+    while(last.length>1&&ctx.measureText(last+'\u2026').width>maxW)last=last.slice(0,-1);
+    if(ctx.measureText(out[maxLines-1]).width>maxW)out[maxLines-1]=last+'\u2026';
+  }
+  return out;
+}
+
+async function exportSchedule(btn){
+  const p=schedPage(), z=schedViewTZ(), days=schedDays();
+  const cols=schedColumns(days,z);
+  const was=btn?btn.textContent:'';
+  if(btn){btn.textContent='Rendering\u2026';btn.disabled=true}
+  try{
+    // the webfonts have to be resident before canvas can draw with them
+    try{
+      await Promise.all([
+        document.fonts.load('700 44px "Barlow Semi Condensed"'),
+        document.fonts.load('600 15px "Barlow Semi Condensed"'),
+        document.fonts.load('700 22px "Barlow Semi Condensed"'),
+        document.fonts.load('700 15px "Aurebesh AF"'),
+        document.fonts.load('400 17px "Barlow"')
+      ]);
+      await document.fonts.ready;
+    }catch(e){}
+
+    // crop to the hours that carry something, with an hour of air either side
+    let lo=24, hi=0;
+    cols.forEach(col=>col.segs.forEach(sg=>{
+      lo=Math.min(lo,Math.floor((sg.a-col.ds)/3600000));
+      hi=Math.max(hi,Math.ceil((sg.z-col.ds)/3600000));
+    }));
+    if(lo>hi){lo=8;hi=23}
+    lo=Math.max(0,lo-1); hi=Math.min(24,hi+1);
+    if(hi-lo<7){hi=Math.min(24,lo+7); lo=Math.max(0,hi-7)}
+
+    const {S,W,PAD,GUT,HOUR}=EXP;
+    const HEAD=126, DAYH=66;
+    const gridW=W-PAD*2, colW=(gridW-GUT)/7;
+    const calLeft=PAD, calRight=W-PAD;
+    const calTop=PAD+HEAD, gridTop=calTop+DAYH;
+    const bodyH=(hi-lo)*HOUR, calBot=gridTop+bodyH;
+    const H=calBot+PAD;
+
+    const cv=document.createElement('canvas');
+    cv.width=W*S; cv.height=H*S;
+    const ctx=cv.getContext('2d');
+    ctx.scale(S,S);
+    ctx.textBaseline='alphabetic';
+
+    const cs=getComputedStyle(document.documentElement);
+    const C=k=>(cs.getPropertyValue('--'+k).trim()||'#fff');
+    const line=(x1,y1,x2,y2)=>{ctx.beginPath();ctx.moveTo(x1+.5,y1+.5);ctx.lineTo(x2+.5,y2+.5);ctx.stroke()};
+
+    ctx.fillStyle=C('bg'); ctx.fillRect(0,0,W,H);
+
+    /* ---- header ---- */
+    setLS(ctx,'1px');
+    ctx.font='700 15px "Aurebesh AF", sans-serif';
+    ctx.fillStyle=C('dim');
+    ctx.fillText(p.aur||p.title||'Schedule',PAD,PAD+16);
+
+    setLS(ctx,'1.5px');
+    ctx.font='700 44px "Barlow Semi Condensed", sans-serif';
+    ctx.fillStyle=C('white');
+    ctx.fillText(String(p.title||'Schedule').toUpperCase(),PAD,PAD+62);
+
+    setLS(ctx,'2.6px');
+    ctx.font='600 15px "Barlow Semi Condensed", sans-serif';
+    ctx.fillStyle=C('dim');
+    ctx.fillText(('Week of '+schedWeekLabel(days)).toUpperCase(),PAD,PAD+90);
+
+    ctx.textAlign='right';
+    setLS(ctx,'2.6px');
+    ctx.font='600 13px "Barlow Semi Condensed", sans-serif';
+    ctx.fillStyle=C('dim');
+    ctx.fillText('TIMEZONE',calRight,PAD+16);
+    setLS(ctx,'0px');
+    ctx.font='400 17px "Barlow", sans-serif';
+    ctx.fillStyle=C('gray');
+    ctx.fillText(z,calRight,PAD+42);
+    ctx.textAlign='left';
+
+    /* ---- frame, day headers, hour rules ---- */
+    const nowP=zoneParts(Date.now(),z), todayKey=civKey({y:nowP.y,m:nowP.m,d:nowP.d});
+    ctx.lineWidth=1; ctx.strokeStyle=C('edge');
+    ctx.strokeRect(calLeft+.5,calTop+.5,gridW-1,DAYH+bodyH-1);
+    line(calLeft,gridTop,calRight,gridTop);
+    line(calLeft+GUT,calTop,calLeft+GUT,calBot);
+
+    days.forEach((c,i)=>{
+      const x=calLeft+GUT+i*colW;
+      if(i)line(x,calTop,x,calBot);
+      const today=civKey(c)===todayKey;
+      setLS(ctx,'2.4px');
+      ctx.font='600 13px "Barlow Semi Condensed", sans-serif';
+      ctx.fillStyle=today?C('gold-hi'):C('dim');
+      ctx.fillText(DOWS[civDow(c)].toUpperCase(),x+16,calTop+26);
+      setLS(ctx,'.6px');
+      ctx.font='700 22px "Barlow Semi Condensed", sans-serif';
+      ctx.fillStyle=today?C('gold'):C('white');
+      ctx.fillText((MONTHS[c.m-1]+' '+c.d).toUpperCase(),x+16,calTop+52);
+    });
+
+    for(let h=lo;h<=hi;h++){
+      const y=gridTop+(h-lo)*HOUR;
+      if(h>lo&&h<hi){ctx.globalAlpha=.5;line(calLeft+GUT,y,calRight,y)}
+      if(h<hi){ctx.globalAlpha=.2;line(calLeft+GUT,y+HOUR/2,calRight,y+HOUR/2)}
+      ctx.globalAlpha=1;
+      if(h<24){
+        ctx.textAlign='right';
+        setLS(ctx,'1.8px');
+        ctx.font='600 12px "Barlow Semi Condensed", sans-serif';
+        ctx.fillStyle=C('dim');
+        ctx.fillText(pad2(h)+':00',calLeft+GUT-14,y+4);
+        ctx.textAlign='left';
+      }
+    }
+
+    /* ---- blocks, thumbnails at full strength ---- */
+    const srcs=[...new Set(cols.flatMap(col=>col.segs.map(sg=>blockImg(sg.r.b))).filter(Boolean))];
+    const loaded=await Promise.all(srcs.map(loadImage));
+    const imgs={}; srcs.forEach((src,i)=>imgs[src]=loaded[i]);
+
+    cols.forEach((col,ci)=>{
+      col.segs.forEach(sg=>{
+        const b=sg.r.b;
+        const top=gridTop+((sg.a-col.ds)/3600000-lo)*HOUR;
+        const hgt=Math.max((sg.z-sg.a)/3600000*HOUR,36);
+        const laneW=(colW-8)/sg.lanes;
+        const x=calLeft+GUT+ci*colW+4+sg.lane*laneW;
+        const w=laneW-(sg.lanes>1?4:0);
+
+        ctx.save();
+        ctx.beginPath(); ctx.rect(x,top,w,hgt); ctx.clip();
+        ctx.fillStyle='#000'; ctx.fillRect(x,top,w,hgt);
+        const im=imgs[blockImg(b)];
+        if(im)coverDraw(ctx,im,x,top,w,hgt);
+        const g=ctx.createLinearGradient(0,top,0,top+hgt);
+        g.addColorStop(0,'rgba(0,0,0,.10)');
+        g.addColorStop(.38,'rgba(0,0,0,.34)');
+        g.addColorStop(.70,'rgba(0,0,0,.72)');
+        g.addColorStop(1,'rgba(0,0,0,1)');
+        ctx.fillStyle=g; ctx.fillRect(x,top,w,hgt);
+
+        const inset=10;
+        setLS(ctx,'.5px');
+        ctx.font='700 15px "Barlow Semi Condensed", sans-serif';
+        const lines=wrapText(ctx,blockName(b).toUpperCase(),w-inset*2,hgt>78?3:2);
+        let ty=top+hgt-inset-1;
+        ctx.fillStyle=C('gold');
+        for(let i=lines.length-1;i>=0;i--){ctx.fillText(lines[i],x+inset,ty);ty-=17}
+        setLS(ctx,'1.8px');
+        ctx.font='600 11px "Barlow Semi Condensed", sans-serif';
+        ctx.fillStyle=C('gold-hi');
+        ctx.fillText(hm(zoneParts(sg.r.a,z))+' \u2013 '+hm(zoneParts(sg.r.z,z)),x+inset,ty-1);
+        ctx.restore();
+
+        ctx.save();
+        ctx.shadowColor='rgba(255,176,32,.30)'; ctx.shadowBlur=18;
+        ctx.strokeStyle=C('gold'); ctx.lineWidth=1;
+        if(sg.cut)ctx.setLineDash([5,4]);
+        ctx.strokeRect(x+.5,top+.5,w-1,hgt-1);
+        ctx.restore();
+      });
+    });
+
+
+    /* ---- hand it over ---- */
+    const blob=await new Promise((res,rej)=>{
+      try{cv.toBlob(bl=>bl?res(bl):rej(new Error('Canvas produced nothing.')),'image/png')}
+      catch(err){rej(err)}
+    });
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download=`schedule-${civKey(days[0])}.png`;
+    a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+  }catch(err){
+    alert('The export could not be drawn.\n\n'+(err&&err.message||err)+
+      '\n\nIf the page is open from a file:// path, the browser blocks reading the thumbnails back off the canvas. Serving the site over http fixes it.');
+  }finally{
+    if(btn){btn.textContent=was;btn.disabled=false}
+  }
 }
 
 /* ---- the schedule's own record ---- */
