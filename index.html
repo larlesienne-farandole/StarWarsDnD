@@ -3081,6 +3081,30 @@ view.addEventListener('mouseout',e=>{
   stopScramble(card.querySelector('.aur'));
 });
 
+// ---------- shareable URLs (each tab / item / page gets its own #hash) ----------
+function syncHash(){
+  const parts=['tab='+encodeURIComponent(tab)];
+  if(page!=null) parts.push('page='+encodeURIComponent(page));
+  else if(detail!=null) parts.push('i='+detail);
+  const h='#'+parts.join('&');
+  if(location.hash!==h) history.replaceState(null,'',h);
+}
+function applyHash(){
+  const params=new URLSearchParams(location.hash.slice(1));
+  const t=params.get('tab');
+  if(t&&DATA[t]) tab=t;
+  const p=params.get('page');
+  page=p||null;
+  const i=params.get('i');
+  detail=(i!=null&&i!==''&&!isNaN(+i))?+i:null;
+}
+// any time render() rewrites #view, grab the current state and reflect it in the URL
+new MutationObserver(syncHash).observe(view,{childList:true});
+// read the URL back into state on load and whenever the user hits back/forward
+// or opens a link that only changes the hash
+window.addEventListener('hashchange',()=>{applyHash();render()});
+applyHash();
+
 render();
 
 const total=Object.values(DATA).reduce((n,s)=>n+(s.items?s.items.length:0),0);
