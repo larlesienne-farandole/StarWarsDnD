@@ -2505,7 +2505,16 @@ function pageForm(pid,scope){
         <option value="" ${!p.goto?'selected':''}>Opens its own page</option>
         ${Object.entries(DATA).filter(([,s])=>!s.editOnly).map(([k,s])=>
           `<option value="${k}" ${p.goto===k?'selected':''}>Goes to the ${esc(s.label)} tab</option>`).join('')}
+        <optgroup label="Pages">
+          ${Object.entries(PAGES).filter(([k])=>k!==pid).map(([k,pg])=>
+            `<option value="page:${k}" ${p.goto==='page:'+k?'selected':''}>Opens the "${esc(pg.title||k)}" page</option>`).join('')}
+        </optgroup>
+        <option value="link" ${p.goto&&p.goto.startsWith('link:')?'selected':''}>Opens a link</option>
       </select></div>
+    <div class="field" id="p_linkWrap" ${p.goto&&p.goto.startsWith('link:')?'':'style="display:none"'}>
+      <label>Link URL</label>
+      <input id="p_link" value="${p.goto&&p.goto.startsWith('link:')?esc(p.goto.slice(5)):''}" placeholder="https://example.com">
+      <p class="note">Opens in a new tab.</p></div>
     <div class="field"><label>Corner label — this placement only</label>
       <input id="p_label" value="${esc(tile.label)}" placeholder="Leave blank for none">
       <p class="note">Small line above the aurebesh, in the tile's top corner.</p></div>
@@ -2538,6 +2547,9 @@ function pageForm(pid,scope){
     </div>
     <p class="note" id="pgMsg">Uploaded thumbnails are scaled down, then moved into images/ when you publish.</p>`);
   const msg=document.getElementById('pgMsg');
+  document.getElementById('p_goto').onchange=e=>{
+    document.getElementById('p_linkWrap').style.display=e.target.value==='link'?'':'none';
+  };
   document.getElementById('p_file').onchange=e=>{
     const f=e.target.files[0]; if(!f)return;
     msg.textContent='Processing image…';
@@ -2571,7 +2583,7 @@ function pageForm(pid,scope){
       title:v('p_title'), eyebrow:v('p_eyebrow'), blurb:v('p_blurb'),
       ...(v('p_aur')?{aur:v('p_aur')}:{}),
       ...(v('p_img')?{img:v('p_img')}:{}),
-      ...(v('p_goto')?{goto:v('p_goto')}:{}),
+      ...(v('p_goto')==='link'?(v('p_link')?{goto:'link:'+v('p_link')}:{}):(v('p_goto')?{goto:v('p_goto')}:{})),
       ...(tags.length?{tags}:{}),
       ...(document.getElementById('p_feat').checked?{featured:true}:{}),
       ...(document.getElementById('p_up').checked?{upcoming:true}:{}),
@@ -3019,7 +3031,14 @@ view.addEventListener('click',e=>{
   }
   if(tile&&!e.target.closest('.tbtn')&&!tile.classList.contains('dragging')){
     const to=tile.dataset.goto;
-    if(to&&DATA[to]){tab=to;filter='All';detail=null;page=null;q.value=''}
+    if(to&&to.startsWith('link:')){
+      window.open(to.slice(5),'_blank','noopener');
+      return;
+    }
+    if(to&&to.startsWith('page:')&&PAGES[to.slice(5)]){
+      tab='home';filter='All';detail=null;page=to.slice(5);q.value='';
+    }
+    else if(to&&DATA[to]){tab=to;filter='All';detail=null;page=null;q.value=''}
     else page=tile.dataset.page;
     render();window.scrollTo(0,0);return;
   }
