@@ -307,14 +307,14 @@ body.editing .addcard{display:flex}
     <nav role="tablist" id="nav"></nav>
     <label class="imgtoggle">
       <span>Images</span>
-      <span class="swtrack"><input type="checkbox" id="imgToggle" checked><span class="swpill"></span></span>
+      <span class="swtrack"><input type="checkbox" id="imgToggle" checked=""><span class="swpill"></span></span>
     </label>
   </header>
 
   <div class="editbar">
     <span class="editflag" id="editFlag"></span>
     <form id="pubForm" class="pubform" method="post" action="#" autocomplete="on">
-      <input class="sr" type="text" name="username" autocomplete="username" value="GitHub token" tabindex="-1" aria-hidden="true" readonly>
+      <input class="sr" type="text" name="username" autocomplete="username" value="GitHub token" tabindex="-1" aria-hidden="true" readonly="">
       <input type="password" id="tok" name="password" placeholder="GitHub token" autocomplete="current-password">
       <button class="ebtn" id="pubBtn" type="submit">Publish</button>
     </form>
@@ -355,22 +355,19 @@ const SITE = {
       "title": "Campaigns",
       "eyebrow": "",
       "img": "images/campaigns-img-mwfr59z60.jpg",
-      "footL": "database",
       "imgPos": "50% 69.5%"
     },
     "characters": {
       "title": "Characters",
       "eyebrow": "",
       "img": "images/characters-img-mwfr59z61.jpg",
-      "footL": "database",
       "imgPos": "50% 48.5%"
     },
     "discord": {
       "title": "Discord",
       "eyebrow": "Join the server",
       "url": "https://discord.gg/9Tt7AvPhfK",
-      "img": "images/discord-img-mwfp2g9c0.jpg",
-      "footL": "socials"
+      "img": "images/discord-img-mwfp2g9c0.jpg"
     },
     "order": [
       "campaigns",
@@ -380,50 +377,126 @@ const SITE = {
   },
   "campaigns": {
     "bounty-hunter-missions": {
-      "title": "Bounty Hunter Missions",
+      "title": "Bounty Hunters",
       "status": "ongoing",
-      "eyebrow": "Anthology · Ongoing",
       "blurb": "Hunt the galaxy's most wanted in a one-shot anthology series.",
       "tag": "",
-      "footL": "1 session",
-      "footR": "1st - 5th level",
       "img": "images/bounty-hunter-missions-campaign.jpg",
       "homeImg": "images/bounty-hunter-missions-home.jpg",
       "sessions": [
-        { "name": "Bounty Hunter I", "eyebrow": "Session I", "img": "images/bounty-hunter-i-session.jpg" },
-        { "name": "Bounty Hunter II", "eyebrow": "Session II", "img": "images/bounty-hunter-ii-session.jpg" },
-        { "name": "Bounty Hunter III", "eyebrow": "Session III", "img": "images/bounty-hunter-iii-session.jpg" },
-        { "name": "Bounty Hunter IV", "eyebrow": "Session IV", "img": "images/bounty-hunter-iv-session.jpg" },
-        { "name": "Bounty Hunter V", "eyebrow": "Session V", "img": "images/bounty-hunter-v-session.jpg" },
-        { "name": "Bounty Hunter VI", "eyebrow": "Session VI", "img": "images/bounty-hunter-vi-session.jpg" },
-        { "name": "Bounty Hunter VII", "eyebrow": "Session VII", "img": "images/bounty-hunter-vii-session.jpg" },
-        { "name": "Bounty Hunter VIII", "eyebrow": "Session VIII", "img": "images/bounty-hunter-viii-session.jpg" }
+        {
+          "name": "Bounty Hunter I",
+          "eyebrow": "Session I",
+          "img": "images/bounty-hunter-i-session.jpg"
+        },
+        {
+          "name": "Bounty Hunter II",
+          "eyebrow": "Session II",
+          "img": "images/bounty-hunter-ii-session.jpg"
+        },
+        {
+          "name": "Bounty Hunter III",
+          "eyebrow": "Session III",
+          "img": "images/bounty-hunter-iii-session.jpg"
+        },
+        {
+          "name": "Bounty Hunter IV",
+          "eyebrow": "Session IV",
+          "img": "images/bounty-hunter-iv-session.jpg"
+        },
+        {
+          "name": "Bounty Hunter V",
+          "eyebrow": "Session V",
+          "img": "images/bounty-hunter-v-session.jpg"
+        },
+        {
+          "name": "Bounty Hunter VI",
+          "eyebrow": "Session VI",
+          "img": "images/bounty-hunter-vi-session.jpg"
+        },
+        {
+          "name": "Bounty Hunter VII",
+          "eyebrow": "Session VII",
+          "img": "images/bounty-hunter-vii-session.jpg"
+        },
+        {
+          "name": "Bounty Hunter VIII",
+          "eyebrow": "Session VIII",
+          "img": "images/bounty-hunter-viii-session.jpg"
+        }
+      ],
+      "levels": "1st - 5th",
+      "gms": [
+        {
+          "img": "images/gms-img-mwfxcdbz0.png",
+          "imgPos": ""
+        }
       ]
     },
     "the-mando-ade": {
       "title": "The Mando'ade",
       "status": "ongoing",
-      "eyebrow": "Anthology · Upcoming",
       "blurb": "Take the creed to every corner of the galaxy in an anthology series.",
       "tag": "",
-      "footL": "Upcoming",
-      "footR": "3rd - 5th level",
       "img": "images/the-mando-ade-campaign.jpg",
       "homeImg": "images/the-mando-ade-campaign.jpg",
       "sessions": [],
-      "imgPos": "50% 16%"
+      "imgPos": "50% 16%",
+      "levels": "3rd - 5th",
+      "gms": [
+        {
+          "img": "images/gms-img-mwfxcdbz1.png",
+          "imgPos": ""
+        }
+      ]
     }
   },
   "characters": [
-    { "name": "Gremik", "eyebrow": "Devaronian · Fighter", "portrait": "images/gremik-portrait.jpg" },
-    { "name": "Quill Ko", "eyebrow": "Human · fighter", "portrait": "images/quill-ko-portrait.jpg" },
-    { "name": "Tak Durin", "eyebrow": "Ardennian · Scout", "portrait": "images/tak-durin-portrait.jpg" },
-    { "name": "Rakka Orrek", "eyebrow": "Aleena · Scout", "portrait": "images/rakka-orrek-portrait.jpg" },
-    { "name": "Arx", "eyebrow": "Human · Fighter", "portrait": "images/arx-portrait.jpg" },
-    { "name": "Niks", "eyebrow": "Human · Operative", "portrait": "images/niks-portrait.jpg" },
-    { "name": "Varek Ko", "eyebrow": "Human · Berserker", "portrait": "images/varek-ko-portrait-mwfp2g9c1.jpg" },
-    { "name": "T7-M3", "eyebrow": "t7-series astromech droid", "portrait": "images/t7-m3-portrait-mwfp2g9c2.jpg" },
-    { "name": "Ig-j4k", "eyebrow": "Ig-86 sentinel droid", "portrait": "images/ig-j4k-portrait-mwfp2g9d3.jpg" }
+    {
+      "name": "Gremik",
+      "eyebrow": "Devaronian · Fighter",
+      "portrait": "images/gremik-portrait.jpg"
+    },
+    {
+      "name": "Quill Ko",
+      "eyebrow": "Human · fighter",
+      "portrait": "images/quill-ko-portrait.jpg"
+    },
+    {
+      "name": "Tak Durin",
+      "eyebrow": "Ardennian · Scout",
+      "portrait": "images/tak-durin-portrait.jpg"
+    },
+    {
+      "name": "Rakka Orrek",
+      "eyebrow": "Aleena · Scout",
+      "portrait": "images/rakka-orrek-portrait.jpg"
+    },
+    {
+      "name": "Arx",
+      "eyebrow": "Human · Fighter",
+      "portrait": "images/arx-portrait.jpg"
+    },
+    {
+      "name": "Niks",
+      "eyebrow": "Human · Operative",
+      "portrait": "images/niks-portrait.jpg"
+    },
+    {
+      "name": "Varek Ko",
+      "eyebrow": "Human · Berserker",
+      "portrait": "images/varek-ko-portrait-mwfp2g9c1.jpg"
+    },
+    {
+      "name": "T7-M3",
+      "eyebrow": "t7-series astromech droid",
+      "portrait": "images/t7-m3-portrait-mwfp2g9c2.jpg"
+    },
+    {
+      "name": "Ig-j4k",
+      "eyebrow": "Ig-86 sentinel droid",
+      "portrait": "images/ig-j4k-portrait-mwfp2g9d3.jpg"
+    }
   ],
   "footer": ""
 };
