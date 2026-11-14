@@ -284,7 +284,7 @@ body.editing .addcard{display:flex}
     <nav role="tablist" id="nav"></nav>
     <label class="imgtoggle">
       <span>Images</span>
-      <span class="swtrack"><input type="checkbox" id="imgToggle" checked=""><span class="swpill"></span></span>
+      <span class="swtrack"><input type="checkbox" id="imgToggle" checked><span class="swpill"></span></span>
     </label>
   </header>
 
@@ -321,6 +321,7 @@ const SITE = {
     "campaign": "bounty-hunter-missions",
     "date": "2026-11-19",
     "time": "18:00",
+    "end": "21:00",
     "tz": "America/Los_Angeles"
   },
   "home": {
@@ -362,46 +363,14 @@ const SITE = {
       "img": "images/bounty-hunter-missions-campaign.jpg",
       "homeImg": "images/bounty-hunter-missions-home.jpg",
       "sessions": [
-        {
-          "name": "Bounty Hunter I",
-          "eyebrow": "Session I",
-          "img": "images/bounty-hunter-i-session.jpg"
-        },
-        {
-          "name": "Bounty Hunter II",
-          "eyebrow": "Session II",
-          "img": "images/bounty-hunter-ii-session.jpg"
-        },
-        {
-          "name": "Bounty Hunter III",
-          "eyebrow": "Session III",
-          "img": "images/bounty-hunter-iii-session.jpg"
-        },
-        {
-          "name": "Bounty Hunter IV",
-          "eyebrow": "Session IV",
-          "img": "images/bounty-hunter-iv-session.jpg"
-        },
-        {
-          "name": "Bounty Hunter V",
-          "eyebrow": "Session V",
-          "img": "images/bounty-hunter-v-session.jpg"
-        },
-        {
-          "name": "Bounty Hunter VI",
-          "eyebrow": "Session VI",
-          "img": "images/bounty-hunter-vi-session.jpg"
-        },
-        {
-          "name": "Bounty Hunter VII",
-          "eyebrow": "Session VII",
-          "img": "images/bounty-hunter-vii-session.jpg"
-        },
-        {
-          "name": "Bounty Hunter VIII",
-          "eyebrow": "Session VIII",
-          "img": "images/bounty-hunter-viii-session.jpg"
-        }
+        { "name": "Bounty Hunter I", "eyebrow": "Session I", "img": "images/bounty-hunter-i-session.jpg" },
+        { "name": "Bounty Hunter II", "eyebrow": "Session II", "img": "images/bounty-hunter-ii-session.jpg" },
+        { "name": "Bounty Hunter III", "eyebrow": "Session III", "img": "images/bounty-hunter-iii-session.jpg" },
+        { "name": "Bounty Hunter IV", "eyebrow": "Session IV", "img": "images/bounty-hunter-iv-session.jpg" },
+        { "name": "Bounty Hunter V", "eyebrow": "Session V", "img": "images/bounty-hunter-v-session.jpg" },
+        { "name": "Bounty Hunter VI", "eyebrow": "Session VI", "img": "images/bounty-hunter-vi-session.jpg" },
+        { "name": "Bounty Hunter VII", "eyebrow": "Session VII", "img": "images/bounty-hunter-vii-session.jpg" },
+        { "name": "Bounty Hunter VIII", "eyebrow": "Session VIII", "img": "images/bounty-hunter-viii-session.jpg" }
       ]
     },
     "the-mando-ade": {
@@ -418,51 +387,15 @@ const SITE = {
     }
   },
   "characters": [
-    {
-      "name": "Gremik",
-      "eyebrow": "Devaronian · Fighter",
-      "portrait": "images/gremik-portrait.jpg"
-    },
-    {
-      "name": "Quill Ko",
-      "eyebrow": "Human · fighter",
-      "portrait": "images/quill-ko-portrait.jpg"
-    },
-    {
-      "name": "Tak Durin",
-      "eyebrow": "Ardennian · Scout",
-      "portrait": "images/tak-durin-portrait.jpg"
-    },
-    {
-      "name": "Rakka Orrek",
-      "eyebrow": "Aleena · Scout",
-      "portrait": "images/rakka-orrek-portrait.jpg"
-    },
-    {
-      "name": "Arx",
-      "eyebrow": "Human · Fighter",
-      "portrait": "images/arx-portrait.jpg"
-    },
-    {
-      "name": "Niks",
-      "eyebrow": "Human · Operative",
-      "portrait": "images/niks-portrait.jpg"
-    },
-    {
-      "name": "Varek Ko",
-      "eyebrow": "Human · Berserker",
-      "portrait": "images/varek-ko-portrait-mwfp2g9c1.jpg"
-    },
-    {
-      "name": "T7-M3",
-      "eyebrow": "t7-series astromech droid",
-      "portrait": "images/t7-m3-portrait-mwfp2g9c2.jpg"
-    },
-    {
-      "name": "Ig-j4k",
-      "eyebrow": "Ig-86 sentinel droid",
-      "portrait": "images/ig-j4k-portrait-mwfp2g9d3.jpg"
-    }
+    { "name": "Gremik", "eyebrow": "Devaronian · Fighter", "portrait": "images/gremik-portrait.jpg" },
+    { "name": "Quill Ko", "eyebrow": "Human · fighter", "portrait": "images/quill-ko-portrait.jpg" },
+    { "name": "Tak Durin", "eyebrow": "Ardennian · Scout", "portrait": "images/tak-durin-portrait.jpg" },
+    { "name": "Rakka Orrek", "eyebrow": "Aleena · Scout", "portrait": "images/rakka-orrek-portrait.jpg" },
+    { "name": "Arx", "eyebrow": "Human · Fighter", "portrait": "images/arx-portrait.jpg" },
+    { "name": "Niks", "eyebrow": "Human · Operative", "portrait": "images/niks-portrait.jpg" },
+    { "name": "Varek Ko", "eyebrow": "Human · Berserker", "portrait": "images/varek-ko-portrait-mwfp2g9c1.jpg" },
+    { "name": "T7-M3", "eyebrow": "t7-series astromech droid", "portrait": "images/t7-m3-portrait-mwfp2g9c2.jpg" },
+    { "name": "Ig-j4k", "eyebrow": "Ig-86 sentinel droid", "portrait": "images/ig-j4k-portrait-mwfp2g9d3.jpg" }
   ],
   "footer": ""
 };
@@ -521,9 +454,23 @@ function sessionMs(){
   try { for (let i = 0; i < 3; i++) g = want - zoneOffset(g, n.tz || 'UTC'); } catch(e) {}
   return g;
 }
+function endMs(){
+  const s = sessionMs(), m = /^(\d\d):(\d\d)$/.exec(SITE.next.end || ''), t = /^(\d\d):(\d\d)$/.exec(SITE.next.time || '');
+  if (isNaN(s) || !m || !t) return NaN;
+  let mins = (+m[1]*60 + +m[2]) - (+t[1]*60 + +t[2]);
+  if (mins <= 0) mins += 24*60;                     // runs past midnight
+  return s + mins * 60000;
+}
 function zoneName(){
   try { return new Intl.DateTimeFormat('en-US', {timeZone:SITE.next.tz, timeZoneName:'short'})
     .formatToParts(new Date(sessionMs() || Date.now())).find(p => p.type === 'timeZoneName').value } catch(e) { return SITE.next.tz }
+}
+
+// "6:00 PM – 9:00 PM PST", in the viewer's own zone
+function timeRange(ms){
+  const t = (x, z) => new Date(x).toLocaleTimeString(undefined, {hour:'numeric', minute:'2-digit', ...(z ? {timeZoneName:'short'} : {})});
+  const e = endMs();
+  return isNaN(e) ? t(ms, true) : `${t(ms)} \u2013 ${t(e, true)}`;
 }
 
 /* ---------- routing: #campaigns, #campaigns/<id>, #characters ---------- */
@@ -543,14 +490,16 @@ TABS.forEach(([k,label]) => {
 /* ---------- views ---------- */
 function homeView(){
   const id = SITE.next.campaign, c = SITE.campaigns[id] || {}, h = SITE.home;
-  const ms = sessionMs(), live = !isNaN(ms) && ms > Date.now() - 6*3600e3;
+  const ms = sessionMs(), live = !isNaN(ms) && (isNaN(endMs()) ? ms + 6*3600e3 : endMs()) > Date.now();
   const when = editing()
     ? `<div class="whenedit">
         <input class="ein" type="date" data-v="next.date" value="${esc(SITE.next.date)}">
         <input class="ein" type="time" data-v="next.time" value="${esc(SITE.next.time)}">
+        <small>to</small>
+        <input class="ein" type="time" data-v="next.end" value="${esc(SITE.next.end || '')}">
         <small>${esc(zoneName())}</small></div>`
     : `<span class="when">${live
-        ? `${esc(new Date(ms).toLocaleDateString(undefined, {weekday:'long', month:'short', day:'numeric'}))}<small>${esc(new Date(ms).toLocaleTimeString(undefined, {hour:'numeric', minute:'2-digit', timeZoneName:'short'}))}</small>`
+        ? `${esc(new Date(ms).toLocaleDateString(undefined, {weekday:'long', month:'short', day:'numeric'}))}<small>${esc(timeRange(ms))}</small>`
         : 'Date TBA'}</span>`;
   const picker = editing()
     ? `<select class="tag" data-v="next.campaign">${Object.entries(SITE.campaigns).map(([k,v]) =>
@@ -571,7 +520,7 @@ function homeView(){
         ${F(`home.${k}.title`, t.title, 'h3', '', 'Title')}
         ${F(`home.${k}.eyebrow`, t.eyebrow, 'span', 'eyebrow', 'Subtitle')}
         ${k === 'discord' ? `<span class="urlrow"><input class="ein" data-v="home.discord.url" value="${esc(t.url)}" placeholder="Discord invite link"></span>` : ''}
-        ${foot(`home.${k}`, t)}`;
+`;
       return k === 'discord'
         ? `<a class="tile" ${dz} href="${esc(t.url)}" target="_blank" rel="noopener">${body}</a>`
         : `<div class="tile" ${dz} tabindex="0" data-go="${k}">${body}</div>`;
@@ -588,7 +537,6 @@ function campaignsView(){
       ${F(`campaigns.${id}.title`, c.title, 'h3', '', 'Title')}
       ${F(`campaigns.${id}.eyebrow`, c.eyebrow, 'span', 'eyebrow', 'Subtitle')}
       ${F(`campaigns.${id}.blurb`, c.blurb, 'p', '', 'Description')}
-      ${foot(`campaigns.${id}`, c)}
     </div>`).join('')}</div>`;
 }
 
