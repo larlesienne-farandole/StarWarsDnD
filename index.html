@@ -284,7 +284,7 @@ body.editing .addcard{display:flex}
     <nav role="tablist" id="nav"></nav>
     <label class="imgtoggle">
       <span>Images</span>
-      <span class="swtrack"><input type="checkbox" id="imgToggle" checked><span class="swpill"></span></span>
+      <span class="swtrack"><input type="checkbox" id="imgToggle" checked=""><span class="swpill"></span></span>
     </label>
   </header>
 
@@ -326,20 +326,30 @@ const SITE = {
   "home": {
     "campaigns": {
       "title": "Campaigns",
-      "eyebrow": "Bounty Hunter Missions · The Mando'ade",
-      "img": ""
+      "eyebrow": "",
+      "img": "images/campaigns-img-mwfr59z60.jpg",
+      "footL": "database",
+      "imgPos": "50% 69.5%"
     },
     "characters": {
       "title": "Characters",
-      "eyebrow": "Player characters",
-      "img": ""
+      "eyebrow": "",
+      "img": "images/characters-img-mwfr59z61.jpg",
+      "footL": "database",
+      "imgPos": "50% 48.5%"
     },
     "discord": {
       "title": "Discord",
       "eyebrow": "Join the server",
       "url": "https://discord.gg/9Tt7AvPhfK",
-      "img": "images/discord-img-mwfp2g9c0.jpg"
-    }
+      "img": "images/discord-img-mwfp2g9c0.jpg",
+      "footL": "socials"
+    },
+    "order": [
+      "campaigns",
+      "characters",
+      "discord"
+    ]
   },
   "campaigns": {
     "bounty-hunter-missions": {
@@ -403,7 +413,8 @@ const SITE = {
       "footR": "3rd - 5th level",
       "img": "images/the-mando-ade-campaign.jpg",
       "homeImg": "images/the-mando-ade-campaign.jpg",
-      "sessions": []
+      "sessions": [],
+      "imgPos": "50% 16%"
     }
   },
   "characters": [
@@ -452,7 +463,8 @@ const SITE = {
       "eyebrow": "Ig-86 sentinel droid",
       "portrait": "images/ig-j4k-portrait-mwfp2g9d3.jpg"
     }
-  ]
+  ],
+  "footer": ""
 };
 /*END DATA*/
 
