@@ -47,6 +47,7 @@ nav{display:flex;gap:4px;flex-wrap:wrap}
 .tab .n{font-family:'Barlow',sans-serif;font-weight:500;font-size:12px;color:var(--dim);margin-left:9px;letter-spacing:.04em}
 .tab[aria-selected="true"] .n,.tab:hover .n{color:var(--gold)}
 
+
 /* images switch */
 .imgtoggle{margin-left:auto;display:flex;align-items:center;gap:11px;
   font-family:'Barlow Semi Condensed',sans-serif;font-weight:600;font-size:13px;
@@ -261,6 +262,17 @@ body.editing .addcard{display:flex}
 .dropB{box-shadow:inset 0 -4px 0 var(--gold),0 0 0 1px var(--gold)!important}
 .prompt [data-f]{min-width:12ch}
 .tile .foot{min-height:31px}
+/* crop mode: the picture at full strength, everything else stands aside */
+.cropping{cursor:move!important}
+.cropping .bgimg{opacity:1!important}
+.cropping .bgimg::after,.cropping::after{opacity:0!important}
+.cropping > :not(.bgimg):not(.tools){visibility:hidden}
+.cropping .tools{display:flex}
+.cropping .tools .tbtn:not([data-crop]){display:none}
+.cropping [data-crop]{color:var(--gold-hi);border-color:var(--gold)}
+.crophint{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);z-index:6;pointer-events:none;
+  font-family:'Barlow Semi Condensed',sans-serif;font-size:12px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--gold-hi);background:#000;border:1px solid var(--gold);padding:4px 10px;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -272,7 +284,7 @@ body.editing .addcard{display:flex}
     <nav role="tablist" id="nav"></nav>
     <label class="imgtoggle">
       <span>Images</span>
-      <span class="swtrack"><input type="checkbox" id="imgToggle"><span class="swpill"></span></span>
+      <span class="swtrack"><input type="checkbox" id="imgToggle" checked><span class="swpill"></span></span>
     </label>
   </header>
 
@@ -315,28 +327,19 @@ const SITE = {
     "campaigns": {
       "title": "Campaigns",
       "eyebrow": "Bounty Hunter Missions · The Mando'ade",
-      "img": "",
-      "footR": "",
-      "footL": "database"
+      "img": ""
     },
     "characters": {
       "title": "Characters",
       "eyebrow": "Player characters",
-      "img": "",
-      "footL": "database"
+      "img": ""
     },
     "discord": {
       "title": "Discord",
       "eyebrow": "Join the server",
       "url": "https://discord.gg/9Tt7AvPhfK",
-      "img": "images/discord-img-mwfp2g9c0.jpg",
-      "footL": "social"
-    },
-    "order": [
-      "discord",
-      "campaigns",
-      "characters"
-    ]
+      "img": "images/discord-img-mwfp2g9c0.jpg"
+    }
   },
   "campaigns": {
     "bounty-hunter-missions": {
@@ -449,8 +452,7 @@ const SITE = {
       "eyebrow": "Ig-86 sentinel droid",
       "portrait": "images/ig-j4k-portrait-mwfp2g9d3.jpg"
     }
-  ],
-  "footer": ""
+  ]
 };
 /*END DATA*/
 
@@ -460,7 +462,16 @@ const REPO = "larlesienne-farandole/StarWarsDnD", FILE_PATH = "index.html", BRAN
 const view = document.getElementById('view'), nav = document.getElementById('nav');
 const TABS = [['home','Home'],['campaigns','Campaigns'],['characters','Characters']];
 const esc = t => String(t == null ? '' : t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-const bg = src => src ? `<span class="bgimg" style="background-image:url('${src}')"></span>` : '';
+// a tile picture. `path` is where it lives in SITE; its crop sits beside it as <path>Pos
+function imgSrc(path){
+  const v = getAt(path);
+  return v || (path.endsWith('.homeImg') ? getAt(path.replace(/homeImg$/, 'img')) : '');
+}
+function bg(path){
+  const src = imgSrc(path); if (!src) return '';
+  const pos = getAt(path + 'Pos') || 'center';
+  return `<span class="bgimg" data-src="${path}" style="background-image:url('${src}');background-position:${pos}"></span>`;
+}
 const editing = () => document.body.classList.contains('editing');
 let dirty = false;
 
@@ -470,6 +481,7 @@ function F(path, value, tag, cls, ph){
   return `<${tag}${cls ? ` class="${cls}"` : ''}${ed ? ` data-f="${path}" data-ph="${esc(ph || '')}" contenteditable="plaintext-only" spellcheck="false"` : ''}>${esc(value)}</${tag}>`;
 }
 const tools = (img, del, drag) => `<span class="tools">
+  ${img && imgSrc(img) ? `<span class="tbtn" data-crop>Crop</span>` : ''}
   ${drag ? `<span class="tbtn grip" data-grip draggable="true" title="Drag to reorder">Move</span>` : ''}
   ${img ? `<span class="tbtn" data-img="${img}">Image</span>` : ''}
   ${del ? `<span class="tbtn" data-del="${del}">Remove</span>` : ''}</span>`;
@@ -534,7 +546,7 @@ function homeView(){
     : '<span class="tag">Next session</span>';
   return `<div class="home">
     <div class="tile feature" tabindex="0" data-go="campaigns/${id}">
-      ${bg(c.homeImg || c.img)}${tools(`campaigns.${id}.homeImg`)}
+      ${bg(`campaigns.${id}.homeImg`)}${tools(`campaigns.${id}.homeImg`)}
       <span class="tags">${picker}</span>
       <span class="aur">${esc(c.title)}</span>
       <h3>${esc(c.title)}</h3>
@@ -542,7 +554,7 @@ function homeView(){
     </div>
     ${h.order.map((k,n) => {
       const t = h[k], dz = `data-drag="home.order|${n}"`;
-      const body = `${bg(t.img)}${tools(`home.${k}.img`, null, true)}
+      const body = `${bg(`home.${k}.img`)}${tools(`home.${k}.img`, null, true)}
         <span class="aur">${esc(t.title)}</span>
         ${F(`home.${k}.title`, t.title, 'h3', '', 'Title')}
         ${F(`home.${k}.eyebrow`, t.eyebrow, 'span', 'eyebrow', 'Subtitle')}
@@ -558,7 +570,7 @@ function homeView(){
 function campaignsView(){
   return `<div class="camprow">${Object.entries(SITE.campaigns).map(([id,c],n) => `
     <div class="tile" tabindex="0" data-go="campaigns/${id}" data-drag="campaigns|${n}">
-      ${bg(c.img)}${tools(`campaigns.${id}.img`, null, true)}
+      ${bg(`campaigns.${id}.img`)}${tools(`campaigns.${id}.img`, null, true)}
       <span class="tags">${F(`campaigns.${id}.tag`, c.tag, 'span', 'tag', 'Tag')}</span>
       <span class="aur">${esc(c.title)}</span>
       ${F(`campaigns.${id}.title`, c.title, 'h3', '', 'Title')}
@@ -571,7 +583,7 @@ function campaignsView(){
 function card(path, name, eyebrow, img, imgKey, delPath){
   const i = path.lastIndexOf('.'), list = path.slice(0, i), n = path.slice(i + 1);
   return `<div class="pc still" data-drag="${list}|${n}">
-    ${bg(img)}${tools(`${path}.${imgKey}`, delPath, true)}
+    ${bg(`${path}.${imgKey}`)}${tools(`${path}.${imgKey}`, delPath, true)}
     <span class="txt">
       <span class="aur">${esc(name)}</span>
       ${F(`${path}.name`, name, 'h3', '', 'Name')}
@@ -643,6 +655,9 @@ const root = document.querySelector('.wrap');
 root.addEventListener('click', e => {
   const t = e.target;
   if (editing()){
+    const cb = t.closest('[data-crop]');
+    if (cb){ e.preventDefault(); toggleCrop(cb.closest('.tile,.pc')); return; }
+    if (t.closest('.cropping')){ e.preventDefault(); return; }
     const img = t.closest('[data-img]');
     if (img){ e.preventDefault(); pickImage(img.dataset.img); return; }
     const del = t.closest('[data-del]');
@@ -692,6 +707,47 @@ root.addEventListener('change', e => {
   if (e.target.matches('select[data-v]')) render();
   if (e.target.matches('[data-v="home.discord.url"]')) e.target.closest('a').href = e.target.value;
 });
+
+/* ---------- crop: drag the picture inside its frame ---------- */
+function toggleCrop(card){
+  const on = !card.classList.contains('cropping');
+  view.querySelectorAll('.cropping').forEach(c => { c.classList.remove('cropping'); c.querySelector('.crophint')?.remove();
+    const b = c.querySelector('[data-crop]'); if (b) b.textContent = 'Crop'; });
+  if (!on) return;
+  card.classList.add('cropping');
+  card.querySelector('[data-crop]').textContent = 'Done';
+  card.insertAdjacentHTML('beforeend', '<span class="crophint">Drag to position</span>');
+}
+let crop = null;
+view.addEventListener('pointerdown', e => {
+  const card = e.target.closest('.cropping'); if (!card || e.target.closest('.tools')) return;
+  const layer = card.querySelector('.bgimg'); if (!layer) return;
+  e.preventDefault();
+  const m = /url\(["']?(.*?)["']?\)/.exec(layer.style.backgroundImage);
+  const im = new Image(); im.src = m ? m[1] : '';
+  const [px, py] = (layer.style.backgroundPosition || '50% 50%').split(' ').map(v => v === 'center' ? 50 : parseFloat(v));
+  crop = { layer, im, x: e.clientX, y: e.clientY, px: isNaN(px) ? 50 : px, py: isNaN(py) ? 50 : py };
+  card.setPointerCapture(e.pointerId);
+});
+view.addEventListener('pointermove', e => {
+  if (!crop) return;
+  const { layer, im } = crop;
+  const W = layer.clientWidth, H = layer.clientHeight;
+  const iw = im.naturalWidth || W, ih = im.naturalHeight || H;
+  const sc = Math.max(W / iw, H / ih);                 // background-size: cover
+  const spareX = iw * sc - W, spareY = ih * sc - H;    // how far the picture can travel
+  const nx = spareX > 1 ? crop.px - (e.clientX - crop.x) / spareX * 100 : 50;
+  const ny = spareY > 1 ? crop.py - (e.clientY - crop.y) / spareY * 100 : 50;
+  const cl = v => Math.max(0, Math.min(100, Math.round(v * 10) / 10));
+  layer.style.backgroundPosition = `${cl(nx)}% ${cl(ny)}%`;
+});
+const endCrop = () => {
+  if (!crop) return;
+  setAt(crop.layer.dataset.src + 'Pos', crop.layer.style.backgroundPosition);
+  crop = null; markDirty();
+};
+view.addEventListener('pointerup', endCrop);
+view.addEventListener('pointercancel', endCrop);
 
 /* ---------- drag to reorder: grab a card by its Move button ---------- */
 let dragFrom = null, justDropped = false;
@@ -758,6 +814,7 @@ imgPick.onchange = () => {
     c.width = Math.round(im.width * sc); c.height = Math.round(im.height * sc);
     c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
     setAt(imgTarget, c.toDataURL('image/jpeg', .82));
+    setAt(imgTarget + 'Pos', '');
     URL.revokeObjectURL(im.src); markDirty(); render();
   };
   im.src = URL.createObjectURL(f);
@@ -894,7 +951,9 @@ view.addEventListener('mouseout', e => {
   stopScramble(c.querySelector('.aur'));
 });
 
-document.getElementById('imgToggle').addEventListener('change', e => document.body.classList.toggle('images-on', e.target.checked));
+const imgToggle = document.getElementById('imgToggle');
+document.body.classList.toggle('images-on', imgToggle.checked);
+imgToggle.addEventListener('change', e => document.body.classList.toggle('images-on', e.target.checked));
 window.addEventListener('hashchange', render);
 render();
 </script></body></html>
