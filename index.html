@@ -17,8 +17,6 @@
 }
 :root{
   --bg:#000000;
-  --panel:#000000;
-  --panel-hi:#000000;
   --edge:rgba(255,255,255,.22);
   --white:#ffffff;
   --gray:#b9bcbe;
@@ -33,7 +31,6 @@ body{
   font-family:'Barlow',system-ui,sans-serif;font-size:15px;line-height:1.5;
   -webkit-font-smoothing:antialiased;min-height:100vh;position:relative;overflow-x:hidden;
 }
-/* ambient vertical light columns */
 .wrap{position:relative;z-index:2;max-width:1560px;margin:0 auto;padding:0 34px 70px}
 
 /* top bar */
@@ -46,90 +43,12 @@ nav{display:flex;gap:4px;flex-wrap:wrap}
   font-family:'Barlow Semi Condensed',sans-serif;font-weight:600;font-size:16px;letter-spacing:.13em;
   text-transform:uppercase;color:var(--gray);transition:background .12s,color .12s,border-color .12s,box-shadow .12s;
 }
-.tab:hover{background:rgba(255,176,32,.07);color:var(--gold-hi);border-color:var(--gold);box-shadow:0 0 0 1px var(--gold),0 0 22px rgba(255,176,32,.28),inset 0 0 26px rgba(255,176,32,.10)}
+.tab:hover,.tab[aria-selected="true"]{background:rgba(255,176,32,.07);color:var(--gold-hi);border-color:var(--gold);box-shadow:0 0 0 1px var(--gold),0 0 22px rgba(255,176,32,.28),inset 0 0 26px rgba(255,176,32,.10)}
 .tab:focus-visible{outline:1px solid var(--gold-hi);outline-offset:2px}
-.tab[aria-selected="true"]{background:rgba(255,176,32,.07);color:var(--gold-hi);border-color:var(--gold);box-shadow:0 0 0 1px var(--gold),0 0 22px rgba(255,176,32,.28),inset 0 0 26px rgba(255,176,32,.10)}
 .tab .n{font-family:'Barlow',sans-serif;font-weight:500;font-size:12px;color:var(--dim);margin-left:9px;letter-spacing:.04em}
-.tab[aria-selected="true"] .n{color:var(--gold)}
-.tab:hover .n{color:var(--gold)}
+.tab[aria-selected="true"] .n,.tab:hover .n{color:var(--gold)}
 
-/* filter row */
-.bar{display:flex;gap:12px;align-items:stretch;flex-wrap:wrap;margin:26px 0 20px}
-.search{flex:1;min-width:240px;display:flex;align-items:center;gap:11px;padding:10px 16px;
-  background:transparent;border:1px solid var(--edge);border:1px solid transparent;transition:border-color .12s}
-.search:hover,.search:focus-within{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold),0 0 22px rgba(255,176,32,.24)}
-.search input{all:unset;flex:1;color:var(--white);font-family:'Barlow',sans-serif;font-size:15px}
-.search input::placeholder{color:var(--dim)}
-.search span{color:var(--gold);font-family:'Barlow Semi Condensed',sans-serif;font-weight:700}
-.chips{display:flex;gap:4px;flex-wrap:wrap}
-.chip{all:unset;cursor:pointer;padding:10px 20px;background:transparent;border:1px solid var(--edge);
-  font-family:'Barlow Semi Condensed',sans-serif;font-weight:600;font-size:14px;letter-spacing:.13em;
-  text-transform:uppercase;color:var(--dim);transition:background .12s,color .12s,border-color .12s,box-shadow .12s}
-.chip:hover{background:rgba(255,176,32,.07);color:var(--gold-hi);border-color:var(--gold);box-shadow:0 0 0 1px var(--gold),0 0 22px rgba(255,176,32,.28),inset 0 0 26px rgba(255,176,32,.10)}
-.chip:focus-visible{outline:1px solid var(--gold-hi);outline-offset:2px}
-.chip[aria-pressed="true"]{background:rgba(255,176,32,.07);color:var(--gold-hi);border-color:var(--gold);box-shadow:0 0 0 1px var(--gold),0 0 22px rgba(255,176,32,.28),inset 0 0 26px rgba(255,176,32,.10)}
-
-/* card grid — Battlefront panel treatment */
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(390px,1fr));gap:8px}
-.card{
-  position:relative;background:#000;min-height:330px;
-  border:1px solid var(--edge);padding:30px 30px 26px;display:flex;flex-direction:column;
-  transition:border-color .14s,box-shadow .14s,background .14s;
-}
-.card::after{
-  content:"";position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .14s;
-  background:repeating-linear-gradient(to bottom,rgba(255,176,32,.07) 0 1px,transparent 1px 3px);
-}
-.card:hover{
-  border-color:var(--gold);background:rgba(255,176,32,.07);
-  box-shadow:0 0 0 1px var(--gold),0 0 26px rgba(255,176,32,.28),inset 0 0 34px rgba(255,176,32,.10);
-}
-.card:hover::after{opacity:1}
-.card:hover h3{color:var(--gold);text-shadow:0 0 18px rgba(255,176,32,.55)}
-.card:hover .flag{color:var(--gold-hi)}
-.card:hover .aur{color:var(--gold-hi);opacity:.75}
-.card:hover .stat b{color:var(--gold-hi)}
-.card .aur{font-family:'Aurebesh AF',sans-serif;font-size:12px;color:var(--dim);letter-spacing:.06em;
-  display:block;margin-bottom:5px;padding-right:104px;line-height:1.5;transition:color .14s}
-.card h3{font-family:'Barlow Semi Condensed',sans-serif;font-weight:700;font-size:32px;letter-spacing:.02em;
-  text-transform:uppercase;color:var(--white);margin:0 0 8px;line-height:1.04;transition:color .14s,text-shadow .14s}
-.card .eyebrow{font-family:'Barlow Semi Condensed',sans-serif;font-size:13px;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--dim);font-weight:500}
-.card .meta{font-size:13.5px;color:var(--dim);margin-top:8px}
-.card p{margin:18px 0 0;font-size:15px;color:var(--gray);line-height:1.6}
-.stats{display:flex;gap:30px;margin-top:auto;padding-top:26px;flex-wrap:wrap}
-.stat{font-family:'Barlow Semi Condensed',sans-serif;font-size:12px;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--dim);font-weight:500}
-.stat b{display:block;font-weight:700;font-size:17px;letter-spacing:.06em;color:var(--white);
-  border-bottom:1px solid var(--edge);padding-bottom:3px;margin-top:3px;transition:color .14s}
-.flag{position:absolute;top:30px;right:30px;font-family:'Barlow Semi Condensed',sans-serif;font-weight:600;
-  font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);transition:color .14s}
-.flag.off{color:var(--white)}
-.empty{padding:80px 0;text-align:center;color:var(--dim);font-family:'Barlow Semi Condensed',sans-serif;
-  font-size:16px;letter-spacing:.2em;text-transform:uppercase}
-
-/* session log */
-.log{display:flex;flex-direction:column;gap:8px}
-.entry{position:relative;display:grid;grid-template-columns:150px 1fr;gap:28px;padding:22px 26px;
-  background:#000;border:1px solid var(--edge);transition:border-color .14s,box-shadow .14s,background .14s}
-.entry:hover{border-color:var(--gold);background:rgba(255,176,32,.07);
-  box-shadow:0 0 0 1px var(--gold),0 0 26px rgba(255,176,32,.28)}
-.entry:hover h3{color:var(--gold);text-shadow:0 0 18px rgba(255,176,32,.55)}
-.entry .date{font-family:'Barlow Semi Condensed',sans-serif;font-weight:600;font-size:14px;
-  letter-spacing:.14em;color:var(--dim)}
-.entry h3{font-family:'Barlow Semi Condensed',sans-serif;font-weight:700;font-size:26px;letter-spacing:.02em;
-  text-transform:uppercase;color:var(--white);margin:0 0 8px;line-height:1;transition:color .14s,text-shadow .14s}
-.entry .party{font-family:'Barlow Semi Condensed',sans-serif;font-size:12px;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--dim);margin-top:12px;border-top:1px solid var(--edge);padding-top:10px;display:inline-block}
-
-/* footer prompt bar, like the console hint row */
-.prompt{display:flex;align-items:center;gap:12px;margin-top:26px;padding-top:16px;border-top:1px solid var(--edge);
-  font-family:'Barlow Semi Condensed',sans-serif;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
-.prompt i{font-style:normal;display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;
-  border:1px solid var(--edge);border-radius:50%;font-size:11px;color:var(--gray)}
-
-
-/* ---------- always-show-images switch, top right of the tab row ---------- */
+/* images switch */
 .imgtoggle{margin-left:auto;display:flex;align-items:center;gap:11px;
   font-family:'Barlow Semi Condensed',sans-serif;font-weight:600;font-size:13px;
   letter-spacing:.15em;text-transform:uppercase;color:var(--dim);user-select:none;cursor:pointer}
@@ -142,193 +61,64 @@ nav{display:flex;gap:4px;flex-wrap:wrap}
 .swtrack input:checked+.swpill{border-color:var(--gold);box-shadow:0 0 10px rgba(255,176,32,.35)}
 .swtrack input:checked+.swpill::before{transform:translateX(19px);background:var(--gold-hi)}
 .swtrack input:focus-visible+.swpill{outline:1px solid var(--gold-hi);outline-offset:2px}
-/* toggling this on shows every tile/portrait image without hovering — the gold
-   glow, scanlines and aurebesh scramble are separate hover effects and are
-   untouched by this class */
-body.images-on .tile .bgimg,body.images-on .pc .bgimg,body.images-on .tblock .bgimg{opacity:1}
+body.images-on .tile .bgimg,body.images-on .pc .bgimg{opacity:1}
 
-/* ---------- home ---------- */
+/* ---------- tiles (home + campaigns) ---------- */
 .home{display:grid;grid-template-columns:1.6fr 1fr;gap:8px;margin-top:26px}
-.home .tile{position:relative;display:flex;flex-direction:column;justify-content:flex-end;
-  background:#000;border:1px solid var(--edge);padding:26px;text-align:left;cursor:pointer;
-  transition:border-color .14s,box-shadow .14s,background .14s;min-height:180px}
-.home .tile::after,.camprow .tile::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .14s;
+.camprow{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:26px}
+.tile{all:unset;box-sizing:border-box;position:relative;display:flex;flex-direction:column;justify-content:flex-start;
+  background:#000;border:1px solid var(--edge);padding:26px;text-align:left;cursor:pointer;overflow:hidden;
+  transition:border-color .14s,box-shadow .14s,background .14s;min-height:238px}
+.tile::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .14s;z-index:1;
   background:repeating-linear-gradient(to bottom,rgba(255,176,32,.07) 0 1px,transparent 1px 3px)}
-.home .tile:hover,.home .tile:focus-visible,.camprow .tile:hover,.camprow .tile:focus-visible{border-color:var(--gold);background:rgba(255,176,32,.07);
+.tile:hover,.tile:focus-visible{border-color:var(--gold);background:rgba(255,176,32,.07);
   box-shadow:0 0 0 1px var(--gold),0 0 26px rgba(255,176,32,.28),inset 0 0 34px rgba(255,176,32,.10);outline:none}
-.home .tile:hover::after,.home .tile:focus-visible::after,.camprow .tile:hover::after,.camprow .tile:focus-visible::after{opacity:1}
-.home .tile:hover h3,.home .tile:focus-visible h3,.camprow .tile:hover h3,.camprow .tile:focus-visible h3{color:var(--gold);text-shadow:0 0 18px rgba(255,176,32,.55)}
-.home .tile:hover .aur,.home .tile:focus-visible .aur,.camprow .tile:hover .aur,.camprow .tile:focus-visible .aur{color:var(--gold-hi);opacity:.75}
-.home .tile:hover .foot,.home .tile:focus-visible .foot,.camprow .tile:hover .foot,.camprow .tile:focus-visible .foot{color:var(--gold-hi);border-color:var(--gold)}
-.home .aur,.camprow .aur{font-family:'Aurebesh AF',sans-serif;font-size:12px;color:var(--dim);letter-spacing:.06em;
-  display:block;margin-bottom:5px;padding-right:230px;line-height:1.5;transition:color .14s}
-.home .eyebrow,.camprow .eyebrow{font-family:'Barlow Semi Condensed',sans-serif;font-size:13px;letter-spacing:.16em;
+.tile:hover::after,.tile:focus-visible::after{opacity:1}
+.tile:hover h3,.tile:focus-visible h3{color:var(--gold);text-shadow:0 0 18px rgba(255,176,32,.55)}
+.tile:hover .aur,.tile:focus-visible .aur{color:var(--gold-hi);opacity:.75}
+.tile:hover .foot,.tile:focus-visible .foot{color:var(--gold-hi);border-color:var(--gold)}
+.tile:hover .when,.tile:focus-visible .when{color:var(--gold-hi)}
+.tile .aur{font-family:'Aurebesh AF',sans-serif;font-size:12px;color:var(--dim);letter-spacing:.06em;
+  display:block;margin-bottom:5px;padding-right:230px;line-height:1.5;min-height:1.5em;transition:color .14s}
+.tile h3{font-family:'Barlow Semi Condensed',sans-serif;font-weight:700;letter-spacing:.02em;
+  text-transform:uppercase;color:var(--white);margin:0;line-height:1;transition:color .14s,text-shadow .14s;font-size:30px}
+.tile .eyebrow{font-family:'Barlow Semi Condensed',sans-serif;font-size:13px;letter-spacing:.16em;
   text-transform:uppercase;color:var(--dim);font-weight:500;display:block;margin-top:6px}
+.tile p{margin:12px 0 20px;font-size:14.5px;color:var(--gray);line-height:1.55;max-width:46ch}
+.tile .foot{font-family:'Barlow Semi Condensed',sans-serif;font-size:12px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--dim);border-top:1px solid var(--edge);padding-top:9px;margin-top:auto;
+  display:flex;justify-content:space-between;gap:14px;transition:color .14s,border-color .14s}
+.tile .aur,.tile h3,.tile .eyebrow,.tile p,.tile .foot,.tile .when{position:relative;z-index:2}
+.tags{position:absolute;top:22px;right:26px;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;z-index:3}
 .tag{font-family:'Barlow Semi Condensed',sans-serif;font-weight:600;
   font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);
   border:1px solid var(--gold);padding:3px 10px;white-space:nowrap}
-.home h3,.camprow h3{font-family:'Barlow Semi Condensed',sans-serif;font-weight:700;letter-spacing:.02em;
-  text-transform:uppercase;color:var(--white);margin:0;line-height:1;transition:color .14s,text-shadow .14s;font-size:30px}
-.home p,.camprow p{margin:12px 0 0;font-size:14.5px;color:var(--gray);line-height:1.55;max-width:46ch}
-.home .foot,.camprow .foot{font-family:'Barlow Semi Condensed',sans-serif;font-size:12px;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--dim);border-top:1px solid var(--edge);padding-top:9px;margin-top:20px;
-  display:flex;justify-content:space-between;gap:14px;transition:color .14s,border-color .14s}
-.home .feature{grid-row:span 3;min-height:420px}
+
+/* the next-session tile */
+.home .feature{grid-row:span 3;min-height:420px;justify-content:flex-end}
 .home .feature h3{font-size:44px}
 .home .feature p{font-size:16px}
+.home .feature .foot{margin-top:20px}
+.when{display:block;margin-top:18px;font-family:'Barlow Semi Condensed',sans-serif;font-weight:700;
+  font-size:26px;letter-spacing:.06em;text-transform:uppercase;color:var(--white);line-height:1.15;transition:color .14s}
+.when small{display:block;font-weight:600;font-size:15px;letter-spacing:.16em;color:var(--dim);margin-top:4px}
 
-/* ---------- tile background image (hover only) ---------- */
+/* tile background image (hover only) */
 .tile .bgimg,.pc .bgimg{position:absolute;inset:0;background-size:cover;background-position:center;
   opacity:0;transition:opacity .18s;pointer-events:none;z-index:0}
 .tile .bgimg::after,.pc .bgimg::after{content:"";position:absolute;inset:0;
   background:linear-gradient(to top,#000 0%,rgba(0,0,0,.94) 28%,rgba(0,0,0,.62) 58%,rgba(0,0,0,.30) 100%)}
-.tile:hover .bgimg,.tile:focus-visible .bgimg,
-.pc:hover .bgimg,.pc:focus-visible .bgimg{opacity:1}
-.tile .aur,.tile h3,.tile .eyebrow,.tile p,.tile .foot{position:relative;z-index:2}
-.tile .tags{z-index:3}
-.tile::after{z-index:1}
-.tile .tiletools{position:absolute;top:22px;left:26px;z-index:4;display:none}
-body:not(.editing) .tile .tiletools{display:none}
-.tile .tiletools .tbtn{background:#000;padding:3px 10px;font-size:12px;letter-spacing:.18em;
-  line-height:1.5;border-color:var(--edge);color:var(--dim)}
-.tile .tiletools .tbtn:hover{color:var(--gold-hi);border-color:var(--gold)}
-body.editing .tile{padding-top:72px}
-body.editing .tile .aur{padding-right:0}
+.tile:hover .bgimg,.tile:focus-visible .bgimg,.pc:hover .bgimg,.pc:focus-visible .bgimg{opacity:1}
 
-/* ---------- home grid ----------
-   A small tile is never shorter than it would be carrying two lines of blurb:
-   26 padding, the aurebesh line, the title, the subtitle, two lines of copy
-   and the footer rule. Shorter copy leaves the extra room empty rather than
-   pulling the tile up out of line with its neighbours. */
-.home.hgrid .tile:not(.feature){min-height:238px;justify-content:flex-start}
-/* the text stacks down from the top, the footer sits on the bottom edge, and
-   whatever room is left over opens up between the blurb and the footer rule */
-.home.hgrid .tile:not(.feature) .foot{margin-top:auto}
-.home.hgrid .tile:not(.feature) p{margin-bottom:20px}
-body.editing .home.hgrid .tile{cursor:grab}
-body.editing .home.hgrid .tile.dragging{opacity:.35;cursor:grabbing}
-.home.hgrid .tile.dropL{box-shadow:inset 4px 0 0 var(--gold),0 0 0 1px var(--gold)}
-.home.hgrid .tile.dropR{box-shadow:inset -4px 0 0 var(--gold),0 0 0 1px var(--gold)}
-.tile .tiletools .grip{cursor:grab;color:var(--dim);border-color:var(--edge)}
-.tile .tiletools .grip:hover{color:var(--gold-hi);border-color:var(--gold)}
-
-/* ---------- schedule ---------- */
-.schedbar{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;
-  flex-wrap:wrap;margin-top:22px}
-.weeknav{display:flex;align-items:center;gap:8px}
-.weeknav .wlabel{font-family:'Barlow Semi Condensed',sans-serif;font-size:13px;
-  letter-spacing:.18em;text-transform:uppercase;color:var(--dim);min-width:190px}
-.tzbox{display:flex;flex-direction:column;gap:5px;min-width:250px}
-.tzbox label{font-family:'Barlow Semi Condensed',sans-serif;font-size:12px;
-  letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
-.tzbox select{background:#000;border:1px solid var(--edge);color:var(--white);
-  font-family:'Barlow',sans-serif;font-size:15px;padding:9px 12px;outline:none}
-.tzbox select:focus{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}
-.tzbox select option{background:#000}
-.cal{margin-top:20px;border:1px solid var(--edge)}
-.calhead,.calbody{display:grid;grid-template-columns:70px repeat(7,1fr)}
-.calhead{border-bottom:1px solid var(--edge)}
-.calhead .gut{border-right:1px solid var(--edge)}
-.calhead .dh{padding:13px 0 13px 14px;border-right:1px solid var(--edge)}
-.calhead .dh:last-child{border-right:none}
-.calhead .dw{display:block;font-family:'Barlow Semi Condensed',sans-serif;font-size:12px;
-  letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
-.calhead .dd{display:block;font-family:'Barlow Semi Condensed',sans-serif;font-weight:700;
-  font-size:20px;letter-spacing:.04em;text-transform:uppercase;color:var(--white);line-height:1.2}
-.calhead .dh.today .dd{color:var(--gold)}
-.calhead .dh.today .dw{color:var(--gold-hi)}
-.calgut{position:relative;border-right:1px solid var(--edge)}
-.calgut span{position:absolute;right:11px;transform:translateY(-50%);
-  font-family:'Barlow Semi Condensed',sans-serif;font-size:11px;letter-spacing:.16em;color:var(--dim)}
-.caldy{position:relative;border-right:1px solid var(--edge)}
-.caldy:last-child{border-right:none}
-.calgut .hl,.caldy .hl{position:absolute;left:0;right:0;height:1px;background:var(--edge);opacity:.5}
-.caldy .hl.half{opacity:.2}
-body.editing .caldy{cursor:crosshair}
-.tblock .rowtools{position:absolute;top:6px;right:7px;left:auto;z-index:5;margin:0;gap:4px}
-.tblock .rowtools .tbtn{background:#000;padding:2px 7px;font-size:10px;letter-spacing:.14em}
-body.editing .tblock .rowtools{display:flex}
-.nowline{position:absolute;left:0;right:0;height:0;border-top:1px solid var(--gold);
-  z-index:4;pointer-events:none;box-shadow:0 0 12px rgba(255,176,32,.55)}
-.nowline::before{content:"";position:absolute;left:-4px;top:-4px;width:7px;height:7px;
-  background:var(--gold);border-radius:50%;box-shadow:0 0 8px rgba(255,176,32,.9)}
-.calgut .nowtag{position:absolute;right:11px;transform:translateY(-50%);z-index:5;
-  font-family:'Barlow Semi Condensed',sans-serif;font-size:11px;letter-spacing:.16em;
-  color:var(--gold);background:#000;padding:2px 0 2px 4px}
-.tblock{position:absolute;box-sizing:border-box;overflow:hidden;background:#000;
-  border:1px solid var(--edge);padding:7px 9px;text-align:left;cursor:default;z-index:2;
-  display:flex;flex-direction:column;justify-content:flex-end;
-  transition:border-color .14s,box-shadow .14s;font:inherit}
-.tblock .bgimg{position:absolute;inset:0;background-size:cover;background-position:center;
-  opacity:0;transition:opacity .18s;pointer-events:none;z-index:0}
-.tblock .bgimg::after{content:"";position:absolute;inset:0;
-  background:linear-gradient(to top,#000 0%,rgba(0,0,0,.72) 30%,rgba(0,0,0,.34) 62%,rgba(0,0,0,.10) 100%)}
-.tblock:hover,.tblock:focus-visible{border-color:var(--gold);outline:none;
-  box-shadow:0 0 0 1px var(--gold),0 0 22px rgba(255,176,32,.28)}
-.tblock:hover .bgimg,.tblock:focus-visible .bgimg{opacity:1}
-.tblock .bt,.tblock .bn{position:relative;z-index:2;display:block}
-.tblock .bt{font-family:'Barlow Semi Condensed',sans-serif;font-size:11px;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--dim);margin-bottom:3px}
-.tblock .bn{font-family:'Barlow Semi Condensed',sans-serif;font-weight:700;font-size:15px;
-  letter-spacing:.03em;text-transform:uppercase;color:var(--white);line-height:1.15}
-.tblock:hover .bn,.tblock:focus-visible .bn{color:var(--gold)}
-.tblock:hover .bt,.tblock:focus-visible .bt{color:var(--gold-hi)}
-.tblock.cut{border-style:dashed}
-.bdet{margin:0 0 18px;display:flex;flex-direction:column;gap:12px}
-.bdet .row{border-top:1px solid var(--edge);padding-top:9px}
-.bdet .row:first-child{border-top:none;padding-top:0}
-.bdet .k{display:block;font-family:'Barlow Semi Condensed',sans-serif;font-size:12px;
-  letter-spacing:.18em;text-transform:uppercase;color:var(--dim);margin-bottom:3px}
-.bdet .v{display:block;color:var(--white);font-size:15px;line-height:1.5}
-.bdet .plist{display:flex;flex-wrap:wrap;gap:6px;margin-top:3px}
-.bdet .plist span{font-family:'Barlow Semi Condensed',sans-serif;font-size:12px;
-  letter-spacing:.14em;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold);padding:3px 9px}
-.bdet .thumb{width:100%;height:150px;background-size:cover;background-position:center;
-  border:1px solid var(--edge)}
-
-/* ---------- campaigns ---------- */
-.camps,.groups{margin-top:26px;display:flex;flex-direction:column;gap:54px}
-/* Sessions sit inside the page panel rather than under it, so the panel's
-   own heading and aurebesh sizes have to be handed back to the cards. */
+/* ---------- groups ---------- */
+.groups{margin-top:26px;display:flex;flex-direction:column;gap:54px}
 .sheetview .groups{margin-top:34px}
-.sheetview .grouphead h2{font-size:22px;letter-spacing:.18em}
-.sheetview .pc .aur{font-size:11px;margin-bottom:5px;padding-right:0}
-.sheetview .pc .eyebrow{font-size:12px;margin-top:6px;letter-spacing:.14em}
-.group{display:block}
 .grouphead{border-bottom:1px solid var(--edge);padding-bottom:11px;margin-bottom:14px}
 .grouphead h2{font-family:'Barlow Semi Condensed',sans-serif;font-weight:700;font-size:22px;
   letter-spacing:.18em;text-transform:uppercase;color:var(--white);margin:0}
-.camprow{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-.camprow .tile{position:relative;display:flex;flex-direction:column;justify-content:flex-start;
-  background:#000;border:1px solid var(--edge);padding:26px;text-align:left;cursor:pointer;
-  transition:border-color .14s,box-shadow .14s,background .14s;min-height:230px}
-.camps .home{grid-template-columns:1fr;margin-top:0}
-.tags{position:absolute;top:22px;right:26px;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
-/* optional corner label, per placement. Sits in the flow above the aurebesh,
-   so it never collides with the tags or the edit control. */
-.tile .tlabel{display:block;font-family:'Barlow Semi Condensed',sans-serif;font-weight:600;font-size:12px;
-  letter-spacing:.18em;text-transform:uppercase;color:var(--dim);margin-bottom:9px;line-height:1.5;
-  position:relative;z-index:2;transition:color .14s}
-.tile:hover .tlabel,.tile:focus-visible .tlabel{color:var(--gold-hi)}
+.sheetview .grouphead h2{font-size:22px;letter-spacing:.18em}
 
-/* Campaigns page: every tile follows the same rules, feature included, so
-   titles line up and footers sit on a common baseline no matter the copy. */
-.camps .tile{justify-content:flex-start}
-/* one line's worth, so single-line tiles keep a common baseline without
-   opening up a gap under the aurebesh */
-.camps .tile .aur{min-height:1.5em;margin-bottom:5px}
-.camps p{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
-  overflow:hidden;min-height:3.1em;margin-bottom:22px;max-width:60ch}
-.camps .foot{margin-top:auto}
-/* the main-campaign tile reads as primary through width, not a jump in type scale */
-.camps .home .feature{grid-row:auto;min-height:250px}
-.camps .home .feature h3{font-size:34px}
-.camps .home .feature p{font-size:15px}
-
-/* ---------- roster (characters) ----------
-   Portrait-led cards. The old text cards left most of their box empty on
-   records that carry only a name and a species line, so the picture now
-   does the work and the type sits on top of it. */
+/* ---------- portrait cards (characters + sessions) ---------- */
 .roster{display:grid;grid-template-columns:repeat(auto-fill,minmax(212px,1fr));gap:8px}
 .pc{all:unset;box-sizing:border-box;position:relative;display:flex;flex-direction:column;
   justify-content:flex-end;overflow:hidden;cursor:pointer;aspect-ratio:3/4;min-height:280px;
@@ -336,8 +126,6 @@ body.editing .tblock .rowtools{display:flex}
   transition:border-color .14s,box-shadow .14s}
 .pc:hover,.pc:focus-visible{border-color:var(--gold);
   box-shadow:0 0 0 1px var(--gold),0 0 26px rgba(255,176,32,.28)}
-/* The portrait is a tile thumbnail: same .bgimg fade, same scanline pass as
-   the campaign tiles, no extra motion of its own. */
 .pc::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .14s;z-index:2;
   background:repeating-linear-gradient(to bottom,rgba(255,176,32,.07) 0 1px,transparent 1px 3px)}
 .pc:hover::after,.pc:focus-visible::after{opacity:1}
@@ -351,65 +139,12 @@ body.editing .tblock .rowtools{display:flex}
 .pc .eyebrow{display:block;margin-top:6px;font-family:'Barlow Semi Condensed',sans-serif;font-size:12px;
   letter-spacing:.14em;text-transform:uppercase;color:var(--dim);font-weight:500;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pc .rowtools{position:absolute;top:12px;left:14px;z-index:4;margin:0}
-/* a session card lights up but goes nowhere */
 .pc.still{cursor:default}
-body.editing .pc.still .rowtools{display:flex}
-.roster .rowtools .tbtn{background:#000}
+.sheetview .pc .aur{font-size:11px;margin-bottom:5px;padding-right:0}
+.sheetview .pc .eyebrow{font-size:12px;margin-top:6px;letter-spacing:.14em}
 
-/* ---------- achievement badges ---------- */
-.badgebox{margin-top:30px;padding-top:24px;border-top:1px solid var(--edge)}
-.badgebox .cap{font-family:'Barlow Semi Condensed',sans-serif;font-size:12px;letter-spacing:.18em;
-  text-transform:uppercase;color:var(--dim);margin-bottom:12px}
-.badges{display:flex;gap:8px;flex-wrap:wrap}
-.badge{position:relative;width:54px;height:54px;border:1px solid var(--edge);background:#000;
-  background-size:cover;background-position:center;display:grid;place-items:center;
-  transition:border-color .14s,box-shadow .14s,transform .14s}
-.badge:hover{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold),0 0 20px rgba(255,176,32,.32);
-  transform:translateY(-2px)}
-.badge img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;
-  opacity:.82;transition:opacity .14s}
-.badge:hover img{opacity:1}
-.badge .tip{position:absolute;left:50%;top:calc(100% + 9px);transform:translateX(-50%);
-  background:#000;border:1px solid var(--gold);color:var(--gold-hi);padding:5px 10px;white-space:nowrap;
-  font-family:'Barlow Semi Condensed',sans-serif;font-size:12px;letter-spacing:.14em;text-transform:uppercase;
-  opacity:0;pointer-events:none;transition:opacity .12s;z-index:6;
-  box-shadow:0 0 0 1px var(--gold),0 0 18px rgba(255,176,32,.28)}
-.badge:hover .tip{opacity:1}
-.badge.locked{opacity:.32}
-.badgepick{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px 14px;
-  padding-top:2px}
-/* ---------- badge library (edit mode) ---------- */
-.blib{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:8px;margin-top:26px}
-.bcard{border:1px solid var(--edge);background:#000;padding:22px 18px 18px;
-  display:flex;flex-direction:column;align-items:center;gap:12px;
-  transition:border-color .14s,box-shadow .14s}
-.bcard:hover{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold),0 0 22px rgba(255,176,32,.24)}
-.bcard .sq{position:relative;width:76px;height:76px;border:1px solid var(--edge);display:block;overflow:hidden}
-.bcard .sq img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
-.bcard .bname{font-family:'Barlow Semi Condensed',sans-serif;font-weight:600;font-size:15px;
-  letter-spacing:.12em;text-transform:uppercase;color:var(--white);text-align:center;line-height:1.2}
-.bcard .rowtools{display:flex;margin-top:auto;padding-top:4px}
-.badgepick .tog{align-items:flex-start;line-height:1.3}
-.badgepick .tog input{margin-top:2px;flex:0 0 auto}
-
-.sheetview .maincol{min-width:0}
-/* Record header: the tile's portrait at the tile's proportions, with the
-   name block beside it. Everything below the header stays full width. */
-.sheetview .head{display:grid;grid-template-columns:214px minmax(0,1fr);gap:36px;align-items:start}
-.sheetview .head.solo{display:block}
-.sheetview .headtext{min-width:0}
-.portcol{position:relative;aspect-ratio:3/4;border:1px solid var(--edge);background:#000;overflow:hidden}
-.portcol img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
-.portcol::after{content:"";position:absolute;inset:0;pointer-events:none;
-  background:repeating-linear-gradient(to bottom,rgba(255,176,32,.07) 0 1px,transparent 1px 3px)}
-@media(max-width:860px){
-  .sheetview .head{grid-template-columns:1fr;gap:22px}
-  .portcol{max-width:200px}
-}
-
-/* ---------- detail view ---------- */
-.detail{margin-top:8px}
+/* ---------- detail pages ---------- */
+.detail{margin-top:26px}
 .back{all:unset;cursor:pointer;padding:8px 18px;border:1px solid var(--edge);margin-bottom:8px;
   display:inline-block;font-family:'Barlow Semi Condensed',sans-serif;font-weight:600;font-size:13px;
   letter-spacing:.16em;text-transform:uppercase;color:var(--gray);
@@ -425,184 +160,39 @@ body.editing .pc.still .rowtools{display:flex}
   text-transform:uppercase;color:var(--dim);font-weight:500;display:block;margin-top:10px}
 .sheetview .meta{font-size:14px;color:var(--dim);margin-top:8px}
 .sheetview .lede{font-size:17px;color:var(--gray);line-height:1.6;margin:24px 0 0;max-width:70ch}
+.sheetview .lede:empty{display:none}
 .sheetview .body{margin-top:20px;max-width:70ch}
 .sheetview .body p{font-size:15px;color:var(--gray);line-height:1.7;margin:0 0 14px}
-.sheetview .stats{gap:44px;padding-top:28px;margin-top:30px;border-top:1px solid var(--edge)}
-.sheetview .stat b{font-size:24px}
-.sheetview .flag{top:38px;right:40px;font-size:13px}
+.sheetview .head{display:grid;grid-template-columns:214px minmax(0,1fr);gap:36px;align-items:start}
+.sheetview .head.solo{display:block}
+.sheetview .headtext{min-width:0}
+.portcol{position:relative;aspect-ratio:3/4;border:1px solid var(--edge);background:#000;overflow:hidden}
+.portcol img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.portcol::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(to bottom,rgba(255,176,32,.07) 0 1px,transparent 1px 3px)}
+.flag{position:absolute;top:38px;right:40px;font-family:'Barlow Semi Condensed',sans-serif;font-weight:600;
+  font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
+.stats{display:flex;gap:44px;flex-wrap:wrap;padding-top:28px;margin-top:30px;border-top:1px solid var(--edge)}
+.stat{font-family:'Barlow Semi Condensed',sans-serif;font-size:12px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--dim);font-weight:500}
+.stat b{display:block;font-weight:700;font-size:24px;letter-spacing:.06em;color:var(--white);
+  border-bottom:1px solid var(--edge);padding-bottom:3px;margin-top:3px}
 .links{display:flex;gap:8px;flex-wrap:wrap;margin-top:30px;padding-top:26px;border-top:1px solid var(--edge)}
-button.link{appearance:none;-webkit-appearance:none;background:transparent;cursor:pointer;
-  line-height:inherit;margin:0}
 .link{display:inline-block;padding:10px 20px;border:1px solid var(--edge);text-decoration:none;
   background:transparent;
   font-family:'Barlow Semi Condensed',sans-serif;font-weight:600;font-size:14px;letter-spacing:.14em;
   text-transform:uppercase;color:var(--gray);transition:background .12s,color .12s,border-color .12s,box-shadow .12s}
 .link:hover,.link:focus-visible{background:rgba(255,176,32,.07);color:var(--gold-hi);border-color:var(--gold);
   box-shadow:0 0 0 1px var(--gold),0 0 22px rgba(255,176,32,.28);outline:none}
-.card{cursor:pointer}
-@media(max-width:860px){
-  .sheetview{padding:24px}
-  .sheetview h2{font-size:32px}
-  .sheetview .aur{padding-right:0}
-  .sheetview .flag{position:static;display:block;margin-bottom:10px}
-}
 .blankslate{margin-top:34px;padding-top:26px;border-top:1px solid var(--edge);
   font-family:'Barlow Semi Condensed',sans-serif;font-size:14px;letter-spacing:.18em;
   text-transform:uppercase;color:var(--dim)}
 
-/* ---------- hologram ---------- */
-.holostage{
-  --h-hue:160deg; --h-sat:3.4; --h-bright:1.08; --h-contrast:1.25; --h-alpha:.88;
-  --h-glow:26px; --h-gap:3px; --h-strength:.16; --h-scan:2.4s; --h-sweep:4.5s;
-  --h-split:1.4px; --h-tint:#7fd8ff;
-  border:1px solid var(--edge);border-top:none;background:#000;
-  display:none;flex-direction:column;align-items:center;justify-content:flex-end;
-  padding:44px 30px 0;overflow:hidden;position:relative;
-}
-.holostage.open{display:flex}
-.holostage .rig{position:relative;width:min(380px,72%);margin-bottom:34px;isolation:isolate}
-.holostage .holo{position:relative;display:block;width:100%;
-  -webkit-mask-image:linear-gradient(to right,transparent 0,#000 4%,#000 96%,transparent 100%),
-                     linear-gradient(to top,transparent 0,#000 5%,#000 97%,transparent 100%);
-  -webkit-mask-composite:source-in;
-  mask-image:linear-gradient(to right,transparent 0,#000 4%,#000 96%,transparent 100%),
-             linear-gradient(to top,transparent 0,#000 5%,#000 97%,transparent 100%);
-  mask-composite:intersect;
-  animation:h-drift 7s ease-in-out infinite, h-flicker 6s steps(1,end) infinite}
-.holostage .holo img{display:block;width:100%;height:auto}
-.holostage .layer{position:absolute;inset:0}
-.holostage .layer img{display:block;width:100%;height:auto}
-.holostage .bloom img{
-  filter:grayscale(1) brightness(1.2) contrast(1.1)
-         sepia(1) hue-rotate(var(--h-hue)) saturate(var(--h-sat)) blur(calc(var(--h-glow) / 2));
-  opacity:calc(var(--h-glow) / 90);mix-blend-mode:screen}
-.holostage .base img{
-  filter:grayscale(1) brightness(var(--h-bright)) contrast(var(--h-contrast))
-         sepia(1) hue-rotate(var(--h-hue)) saturate(var(--h-sat));
-  opacity:var(--h-alpha);mix-blend-mode:screen}
-.holostage .split-a img,.holostage .split-b img{
-  filter:grayscale(1) contrast(1.3) sepia(1) hue-rotate(var(--h-hue)) saturate(6);
-  opacity:.35;mix-blend-mode:screen}
-.holostage .split-a{transform:translateX(calc(var(--h-split) * -1));
-  animation:h-jitter-a 3.7s steps(1,end) infinite}
-.holostage .split-b{transform:translateX(var(--h-split));
-  animation:h-jitter-b 4.3s steps(1,end) infinite}
-.holostage .scan{
-  background:repeating-linear-gradient(to bottom,
-    rgba(255,255,255,var(--h-strength)) 0 1px,transparent 1px var(--h-gap));
-  mix-blend-mode:overlay;animation:h-roll var(--h-scan) linear infinite}
-.holostage .sweep{
-  background:linear-gradient(to bottom,transparent 0%,
-    color-mix(in srgb,var(--h-tint) 55%,transparent) 45%,
-    color-mix(in srgb,#fff 65%,transparent) 50%,
-    color-mix(in srgb,var(--h-tint) 55%,transparent) 55%,transparent 100%);
-  background-size:100% 42%;background-repeat:no-repeat;mix-blend-mode:screen;opacity:.5;
-  animation:h-sweep var(--h-sweep) linear infinite}
-.holostage .mask{-webkit-mask-size:100% 100%;mask-size:100% 100%;
-  -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}
-.holostage .rig::after{
-  content:"";position:absolute;left:0;right:0;bottom:0;height:34%;pointer-events:none;z-index:5;
-  background:linear-gradient(to top,#000 0%,rgba(0,0,0,.92) 18%,rgba(0,0,0,.65) 38%,
-    rgba(0,0,0,.32) 62%,rgba(0,0,0,.10) 82%,transparent 100%)}
-.holostage .emitter{position:relative;width:min(380px,72%);height:76px;flex:0 0 auto;margin-bottom:56px}
-.holostage .cone{position:absolute;left:50%;bottom:34px;width:78%;height:300px;transform:translateX(-50%);
-  background:linear-gradient(to top,color-mix(in srgb,var(--h-tint) 26%,transparent),transparent 78%);
-  clip-path:polygon(50% 100%,10% 0,90% 0);filter:blur(14px);opacity:.5;pointer-events:none;
-  -webkit-mask-image:linear-gradient(to top,#000 0%,rgba(0,0,0,.55) 45%,transparent 92%);
-  mask-image:linear-gradient(to top,#000 0%,rgba(0,0,0,.55) 45%,transparent 92%)}
-.holostage .disc{position:absolute;left:50%;bottom:26px;width:62%;height:26px;transform:translateX(-50%);
-  border-radius:50%;background:radial-gradient(ellipse at center,
-    color-mix(in srgb,var(--h-tint) 85%,transparent) 0%,
-    color-mix(in srgb,var(--h-tint) 22%,transparent) 55%,transparent 72%);
-  filter:blur(4px);animation:h-pulse 3.4s ease-in-out infinite}
-
-@keyframes h-roll{to{background-position:0 calc(var(--h-gap) * 14)}}
-@keyframes h-sweep{0%{background-position:0 -60%}70%{background-position:0 130%}100%{background-position:0 130%}}
-@keyframes h-drift{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
-@keyframes h-flicker{0%,92%{opacity:1}93%{opacity:.72}94%{opacity:1}96%{opacity:.85}97%,100%{opacity:1}}
-@keyframes h-jitter-a{0%,88%{transform:translateX(calc(var(--h-split) * -1))}
-  89%{transform:translateX(calc(var(--h-split) * -4)) translateY(2px)}
-  90%,100%{transform:translateX(calc(var(--h-split) * -1))}}
-@keyframes h-jitter-b{0%,82%{transform:translateX(var(--h-split))}
-  83%{transform:translateX(calc(var(--h-split) * 4)) translateY(-2px)}
-  84%,100%{transform:translateX(var(--h-split))}}
-@keyframes h-pulse{0%,100%{opacity:.75;transform:translateX(-50%) scaleX(1)}
-  50%{opacity:1;transform:translateX(-50%) scaleX(1.05)}}
-
-/* tuning panel, edit mode only */
-.holoempty{padding:34px 0 46px;text-align:center;max-width:420px}
-.holoempty .ebtn{display:inline-block;cursor:pointer}
-.holoempty .note{font-size:13px;color:var(--dim);line-height:1.55;margin:14px 0 0}
-.holotune{display:none;width:100%;max-width:760px;margin:0 auto;padding:22px 0 30px;
-  border-top:1px solid var(--edge)}
-body.editing .holostage.open .holotune{display:block}
-.holotune .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px 22px}
-.holotune .row label{display:flex;justify-content:space-between;align-items:baseline;
-  font-family:'Barlow Semi Condensed',sans-serif;font-size:11px;letter-spacing:.18em;
-  text-transform:uppercase;color:var(--dim);margin-bottom:5px}
-.holotune .row label b{font-weight:500;color:var(--gray)}
-.holotune input[type=range]{width:100%;accent-color:#ffb020;background:transparent}
-.holotune .swatches{display:flex;gap:6px;margin:4px 0 16px}
-.holotune .sw{width:26px;height:26px;border:1px solid var(--edge);cursor:pointer;padding:0;
-  transition:border-color .12s,box-shadow .12s}
-.holotune .sw:hover,.holotune .sw[aria-pressed="true"]{border-color:var(--gold);
-  box-shadow:0 0 0 1px var(--gold),0 0 14px rgba(255,176,32,.25)}
-.holotune .acts{display:flex;gap:8px;margin-top:18px;flex-wrap:wrap}
-@media(prefers-reduced-motion:reduce){.holostage *{animation:none!important}}
-
-/* ---------- edit layer ---------- */
-.editbar{display:none;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 18px}
-body.editing .editbar{display:flex}
-.ebtn{all:unset;cursor:pointer;padding:9px 18px;border:1px solid var(--edge);background:transparent;
-  font-family:'Barlow Semi Condensed',sans-serif;font-weight:600;font-size:14px;letter-spacing:.14em;
-  text-transform:uppercase;color:var(--gray);transition:background .12s,color .12s,border-color .12s,box-shadow .12s}
-.ebtn:hover,.ebtn:focus-visible{background:rgba(255,176,32,.07);color:var(--gold-hi);border-color:var(--gold);
-  box-shadow:0 0 0 1px var(--gold),0 0 22px rgba(255,176,32,.28)}
-.ebtn.ghost{color:var(--dim)}
-.editflag{font-family:'Barlow Semi Condensed',sans-serif;font-size:12px;letter-spacing:.2em;
-  text-transform:uppercase;color:var(--gold);margin-left:auto}
-
-.rowtools{display:none;gap:6px;margin-top:16px}
-body.editing .card .rowtools,body.editing .entry .rowtools,body.editing .tile .rowtools,
-body.editing .pc .rowtools,body.editing .sheetview .rowtools{display:flex}
-.tbtn{all:unset;cursor:pointer;padding:5px 12px;border:1px solid var(--edge);
-  font-family:'Barlow Semi Condensed',sans-serif;font-size:11px;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--dim);transition:color .12s,border-color .12s}
-.tbtn:hover,.tbtn:focus-visible{color:var(--gold-hi);border-color:var(--gold)}
-
-.veil{display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.86);
-  align-items:flex-start;justify-content:center;padding:56px 18px;overflow-y:auto}
-.veil.open{display:flex}
-.sheet{width:100%;max-width:560px;background:#000;border:1px solid var(--gold);
-  box-shadow:0 0 0 1px var(--gold),0 0 42px rgba(255,176,32,.22);padding:28px}
-.sheet h2{font-family:'Barlow Semi Condensed',sans-serif;font-weight:700;font-size:26px;letter-spacing:.04em;
-  text-transform:uppercase;color:var(--white);margin:0 0 4px}
-.sheet .hint{font-size:13px;color:var(--dim);margin:0 0 20px;line-height:1.5}
-.field{margin-bottom:14px}
-.field label{display:block;font-family:'Barlow Semi Condensed',sans-serif;font-size:12px;letter-spacing:.18em;
-  text-transform:uppercase;color:var(--dim);margin-bottom:5px}
-.field input,.field textarea,.field select{width:100%;background:transparent;border:1px solid var(--edge);
-  color:var(--white);font-family:'Barlow',sans-serif;font-size:15px;padding:9px 12px;outline:none}
-.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--gold);
-  box-shadow:0 0 0 1px var(--gold)}
-.field textarea{min-height:82px;resize:vertical;line-height:1.5}
-.field select option{background:#000}
-.trio{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.sheet .actions{display:flex;gap:8px;margin-top:22px;flex-wrap:wrap}
-.note{font-size:12.5px;color:var(--dim);margin-top:16px;line-height:1.5}
-.note b{color:var(--gold-hi);font-weight:600}
-.toggles{display:flex;gap:18px;padding-top:4px}
-.tog{display:flex;align-items:center;gap:8px;font-family:'Barlow Semi Condensed',sans-serif;
-  font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:var(--gray);cursor:pointer}
-.tog input{width:auto;accent-color:#ffb020}
-.sheet.bare{max-width:340px;padding:20px;border-color:var(--edge);box-shadow:none}
-.lock input{width:100%;background:transparent;border:1px solid var(--edge);color:var(--white);
-  font-family:'Barlow',sans-serif;font-size:15px;padding:10px 12px;outline:none}
-.lock input:focus{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}
-.lock .actions{display:flex;gap:6px;margin-top:10px}
-.lock .ebtn{flex:1;text-align:center;padding:8px 0;font-size:13px}
-.lockerr{margin:10px 0 0;font-family:'Barlow Semi Condensed',sans-serif;font-size:12px;
-  letter-spacing:.16em;text-transform:uppercase;color:var(--dim);min-height:1em}
+/* footer prompt bar */
+.prompt{display:flex;align-items:center;gap:12px;margin-top:26px;padding-top:16px;border-top:1px solid var(--edge);
+  font-family:'Barlow Semi Condensed',sans-serif;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+.prompt i{font-style:normal;display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;
+  border:1px solid var(--edge);border-radius:50%;font-size:11px;color:var(--gray)}
 
 @media(max-width:860px){
   .wrap{padding:0 14px 50px}
@@ -612,19 +202,20 @@ body.editing .pc .rowtools,body.editing .sheetview .rowtools{display:flex}
   nav{width:100%;overflow-x:auto}
   .tab{padding:10px 16px;font-size:14px;white-space:nowrap}
   .tab .n{display:none}
-  .grid,.camprow{grid-template-columns:1fr}
+  .home,.camprow{grid-template-columns:1fr}
+  .home .feature{grid-row:auto;min-height:340px}
+  .home .feature h3{font-size:34px}
+  .tile{min-height:0}
+  .tile .aur{padding-right:0}
   .roster{grid-template-columns:repeat(auto-fill,minmax(148px,1fr))}
   .pc{min-height:0}
   .pc h3{font-size:18px}
-  .camps{gap:38px}
-  .card{min-height:0;padding:24px}
-  .card h3{font-size:26px}
-  .card .aur{padding-right:92px}
-  .flag{top:24px;right:24px}
-  .entry{grid-template-columns:1fr;gap:8px}
-  .home.hgrid .tile:not(.feature){min-height:0}
-  .cal{overflow-x:auto}
-  .calhead,.calbody{min-width:760px}
+  .sheetview{padding:24px}
+  .sheetview h2{font-size:32px}
+  .sheetview .aur{padding-right:0}
+  .sheetview .head{grid-template-columns:1fr;gap:22px}
+  .portcol{max-width:200px}
+  .flag{position:static;display:block;margin-bottom:10px}
 }
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
@@ -642,2709 +233,312 @@ body.editing .pc .rowtools,body.editing .sheetview .rowtools{display:flex}
     </label>
   </header>
 
-  <div class="bar">
-    <label class="search">
-      <span>&gt;</span>
-      <input id="q" type="search" placeholder="Search records" autocomplete="off">
-    </label>
-    <div class="chips" id="chips"></div>
-  </div>
-
-  <div class="editbar">
-    <button class="ebtn" id="addBtn">+ New record</button>
-    <button class="ebtn" id="addCampBtn">+ New campaign</button>
-    <button class="ebtn" id="addBadgeBtn">+ New badge</button>
-    <button class="ebtn" id="addSessionBtn">+ New session</button>
-    <button class="ebtn" id="addBlockBtn">+ Time block</button>
-    <button class="ebtn" id="pubBtn">Publish to GitHub</button>
-    <button class="ebtn ghost" id="dlBtn">Download file</button>
-    <button class="ebtn ghost" id="lockBtn">Lock</button>
-    <span class="editflag" id="dirtyFlag">Edit mode</span>
-  </div>
-
   <div id="view"></div>
 
   <div class="prompt"><i>&#9679;</i><span id="clock">LINK ACTIVE</span></div>
 </div>
 
-<div class="veil" id="veil"><div class="sheet" id="sheet"></div></div>
-
 <script>
 /* ============================================================
-   CAMPAIGN DATA — edit below. Everything else is the interface.
+   EDIT EVERYTHING HERE. Below the "end data" line is the interface.
    ============================================================ */
-const DATA = {
-  "home": {
-    "label": "Home",
-    "layout": "home",
-    "tiles": [
-      {
-        "pid": "outer-rim-tales",
-        "size": "feature",
-        "footL": "1 session",
-        "footR": "1st - 5th level",
-        "img": "images/bounty-hunter-missions-home.jpg"
-      },
-      {
-        "pid": "the-archive",
-        "footL": "Upcoming",
-        "footR": "3rd - 5th level",
-        "img": "images/the-mando-ade-campaign.jpg"
-      },
-      {
-        "pid": "kessa-descent",
-        "footL": "Database",
-        "footR": "Browse",
-        "img": "images/patch-notes-home.jpg"
-      },
-      {
-        "pid": "schedule",
-        "footL": "Database",
-        "footR": "Browse"
-      }
-    ]
-  },
-  "campaigns": {
-    "label": "Campaigns",
-    "layout": "campaigns",
-    "groups": [
-      {
-        "title": "Main campaign",
-        "entries": [
-          {
-            "pid": "outer-rim-tales",
-            "size": "feature",
-            "footL": "1 session",
-            "footR": "1st - 5th level",
-            "img": "images/bounty-hunter-missions-campaign.jpg"
-          }
-        ]
-      },
-      {
-        "title": "Side campaigns",
-        "entries": [
-          {
-            "pid": "tactics-strategy",
-            "footL": "1 Session",
-            "footR": "1st - 5th level",
-            "img": "images/tactics-strategy-campaign.jpg"
-          }
-        ]
-      },
-      {
-        "title": "Upcoming",
-        "entries": [
-          {
-            "pid": "squadron-missioms",
-            "img": "images/squadron-missions-tile.jpg",
-            "footL": "1 session",
-            "footR": "1st - 3rd level"
-          },
-          {
-            "pid": "the-mando-ade",
-            "footL": "Upcoming",
-            "footR": "3rd - 5th level",
-            "img": "images/the-mando-ade-campaign.jpg"
-          }
-        ]
-      }
-    ]
-  },
-  "schedule": {
-    "label": "Schedule",
-    "layout": "schedule",
-    "title": "Schedule",
-    "eyebrow": "Weekly Calendar",
-    "blurb": "",
-    "tz": "America/Los_Angeles",
-    "blocks": [
-      {
-        "pid": "ghosts-of-utapau",
-        "date": "2026-08-28",
-        "start": "18:00",
-        "end": "21:00",
-        "dm": "Farandole"
-      },
-      {
-        "pid": "outer-rim-tales",
-        "date": "2026-09-16",
-        "start": "18:30",
-        "end": "21:30",
-        "img": "images/bounty-hunter-missions-block.jpg"
-      },
-      {
-        "pid": "the-mando-ade",
-        "date": "2026-11-05",
-        "start": "18:00",
-        "end": "21:00",
-        "img": "images/the-mando-ade-campaign.jpg"
-      }
-    ]
-  },
-  "characters": {
-    "label": "Characters",
-    "layout": "roster",
-    "filterKey": "status",
-    "items": [
-      {
-        "name": "W'ade Ordo",
-        "eyebrow": "Human · Operative",
-        "status": "Active",
-        "blurb": "",
-        "stats": {
-          "Level": "6",
-          "Campaign": "The Mando'ade"
-        },
-        "badges": [
-          "co1"
-        ],
-        "portrait": "images/w-ade-ordo-portrait.jpg"
-      },
-      {
-        "name": "Tang",
-        "eyebrow": "Human · Scout",
-        "status": "Active",
-        "blurb": "",
-        "stats": {
-          "Level": "1",
-          "Campaign": "The Mando'ade"
-        },
-        "badges": [
-          "co1"
-        ],
-        "portrait": "images/tang-portrait.jpg"
-      },
-      {
-        "name": "Arx",
-        "eyebrow": "Human · Fighter",
-        "status": "Active",
-        "player": "Sam",
-        "blurb": "",
-        "stats": {
-          "Level": "3",
-          "Campaign": "Bounty Hunter Missions"
-        },
-        "badges": [
-          "co1",
-          "bh8"
-        ],
-        "portrait": "images/arx-portrait.jpg"
-      },
-      {
-        "name": "Niks",
-        "eyebrow": "Human · Operative",
-        "status": "Active",
-        "player": "Logan",
-        "blurb": "",
-        "stats": {
-          "Level": "3",
-          "Campaign": "The Mando'ade"
-        },
-        "badges": [
-          "co1"
-        ],
-        "portrait": "images/niks-portrait.jpg"
-      },
-      {
-        "name": "T7-M3",
-        "eyebrow": "T7-series astromech droid",
-        "status": "Active",
-        "blurb": "",
-        "stats": {
-          "Level": "1",
-          "Campaign": "The Mando'ade"
-        },
-        "badges": [
-          "bh5",
-          "co1"
-        ],
-        "portrait": "images/t7-m3-portrait.jpg"
-      },
-      {
-        "name": "IG-J4K",
-        "eyebrow": "IG-86 Sentinel Droid",
-        "status": "Active",
-        "blurb": "",
-        "stats": {
-          "Level": "3",
-          "Campaign": "Bounty Hunter Missions"
-        },
-        "notes": "IG-J4-CK, better known as \"JACK,\" formerly belonged to the Hutt Cartel as an enforcer droid. During a spice raid, he was hijacked by Ardennian bounty hunter Tak Durin, and brought aboard the crew.",
-        "badges": [
-          "bh3",
-          "co1"
-        ],
-        "portrait": "images/ig-j4-ck-portrait.jpg"
-      },
-      {
-        "name": "CT-8627",
-        "eyebrow": "Advanced Recon Commando",
-        "status": "Active",
-        "blurb": "",
-        "portrait": "images/ct-8627-portrait.jpg"
-      },
-      {
-        "name": "CT-9022",
-        "eyebrow": "Advanced Recon Commando",
-        "status": "Active",
-        "blurb": "",
-        "portrait": "images/ct-9022-portrait.jpg"
-      },
-      {
-        "name": "Karrask",
-        "eyebrow": "Trandoshan · Fighter",
-        "status": "Inactive",
-        "blurb": "Trandoshan surgeon, bounty hunter, and known contractor of the Hutt Cartel. Blown to smithereens by the thermal detonators of Devaronian gunslinger Gremik.",
-        "portrait": "images/karrask-portrait.jpg"
-      },
-      {
-        "name": "Gins Farr",
-        "eyebrow": "Human · Scholar",
-        "status": "Active",
-        "blurb": "",
-        "portrait": "images/gins-farr-portrait.jpg"
-      },
-      {
-        "name": "Tay Vizsla",
-        "eyebrow": "Human",
-        "status": "Active",
-        "blurb": "",
-        "portrait": "images/tay-vizsla-portrait.jpg"
-      },
-      {
-        "name": "Rhines Ordo",
-        "eyebrow": "Human · Berserker",
-        "status": "Active",
-        "blurb": "",
-        "portrait": "images/rhines-ordo-portrait.jpg"
-      },
-      {
-        "name": "Kora Shale",
-        "eyebrow": "Twi'lek · Scout",
-        "status": "Active",
-        "blurb": "",
-        "portrait": "images/kora-shale-portrait.jpg"
-      },
-      {
-        "name": "Nol Skirata",
-        "eyebrow": "Human · Fighter",
-        "status": "Active",
-        "blurb": "",
-        "portrait": "images/nol-skirata-portrait.jpg"
-      },
-      {
-        "name": "S-3PO",
-        "eyebrow": "3PO-series Protocol Droid",
-        "status": "Active",
-        "blurb": "",
-        "notes": "Proxy for Goran the Hutt's majordomo.",
-        "portrait": "images/s-3po-portrait.jpg"
-      },
-      {
-        "name": "Gremik",
-        "eyebrow": "Devaronian · Fighter",
-        "status": "Active",
-        "player": "felipemontecinos",
-        "blurb": "",
-        "stats": {
-          "Level": "3",
-          "Campaign": "Bounty Hunter Missions"
-        },
-        "notes": "Devaronian gunslinger frequenting the Outer Rim.",
-        "links": [
-          {
-            "label": "Character Sheet",
-            "url": "https://drive.google.com/file/d/1waG0xaThBE6cCe1tRksFEowgK2ev6EDm/view?usp=sharing"
-          }
-        ],
-        "badges": [
-          "bh3",
-          "bh4",
-          "ts1",
-          "bh5",
-          "co1",
-          "bh8"
-        ],
-        "portrait": "images/gremik-portrait.jpg"
-      },
-      {
-        "name": "Quill Ko",
-        "eyebrow": "Human · Berserker",
-        "status": "Active",
-        "player": "lightknight4048",
-        "blurb": "",
-        "stats": {
-          "Level": "3",
-          "Campaign": "The Mando'ade"
-        },
-        "notes": "Mandalorian warrior, and bounty hunter.",
-        "links": [
-          {
-            "label": "Character Sheet",
-            "url": "https://drive.google.com/file/d/1T2XuRTdeGqOOdRF48Mlozt43fH8NPBhF/view?usp=sharing"
-          }
-        ],
-        "badges": [
-          "bh3",
-          "bh4",
-          "ts1",
-          "bh5",
-          "co1",
-          "bh8"
-        ],
-        "portrait": "images/quill-ko-portrait.jpg"
-      },
-      {
-        "name": "Chido Tanwa",
-        "eyebrow": "Rodian",
-        "status": "Inactive",
-        "blurb": "",
-        "notes": "After a daring spice heist at the expense of Goran Hutt, Chido Tanwa and his enforcers fled to the Outer Rim. Bounty hunter and ace pilot Tak Durin defeated Tanwa in a starship dogfight over the canyons of Alba-16.",
-        "portrait": "images/chido-tanwa-portrait.jpg"
-      },
-      {
-        "name": "Tak Durin",
-        "eyebrow": "Ardennian · Scout",
-        "status": "Active",
-        "player": "Sean",
-        "blurb": "",
-        "stats": {
-          "Level": "3",
-          "Campaign": "Bounty Hunter Missions"
-        },
-        "notes": "Ardennian bounty hunter, and ace pilot.",
-        "badges": [
-          "bh3",
-          "bh2",
-          "co1",
-          "bh8"
-        ],
-        "portrait": "images/tak-durin-portrait.jpg"
-      },
-      {
-        "name": "IG-86A",
-        "eyebrow": "IG-86 Sentinel Droid",
-        "status": "Inactive",
-        "blurb": "",
-        "notes": "Droid bounty hunter that frequented the Outer Rim. Destroyed by the Mandalorian Quill Ko during a spice raid in the Murkhana System.",
-        "portrait": "images/ig-86a-portrait.jpg",
-        "holo": "images/ig-86a.png",
-        "holoTune": {
-          "hue": 160,
-          "sat": 3.4,
-          "bright": 1.08,
-          "contrast": 0.66,
-          "alpha": 0.88,
-          "glow": 26,
-          "gap": 3,
-          "strength": 0.16,
-          "scan": 2.4,
-          "sweep": 4.5,
-          "split": 1.4,
-          "tint": "#7fd8ff"
-        }
-      },
-      {
-        "name": "Qehlg",
-        "eyebrow": "Quarren",
-        "status": "Inactive",
-        "blurb": "",
-        "notes": "After embezzling over 10,000 credits from the Hutt Cartel, Qehlg fled to the Outer Rim. He was hunted and defeated by Aleena bounty hunter Rakka Orrek.",
-        "portrait": "images/qehlg-portrait.jpg",
-        "holo": "images/qehlg.png",
-        "holoTune": {
-          "hue": 160,
-          "sat": 3.4,
-          "bright": 1.08,
-          "contrast": 0.66,
-          "alpha": 0.88,
-          "glow": 26,
-          "gap": 3,
-          "strength": 0.16,
-          "scan": 2.4,
-          "sweep": 4.5,
-          "split": 1.4,
-          "tint": "#7fd8ff"
-        }
-      },
-      {
-        "name": "Gallia",
-        "eyebrow": "Nautolan · Fighter",
-        "status": "Active",
-        "blurb": "",
-        "stats": {
-          "Level": "?"
-        },
-        "notes": "Proprietor of Gallia's Cantina, on Alba-16.",
-        "portrait": "images/gallia-portrait.jpg",
-        "holo": "images/gallia.png",
-        "holoTune": {
-          "hue": 166,
-          "sat": 3.4,
-          "bright": 1.08,
-          "contrast": 0.66,
-          "alpha": 0.88,
-          "glow": 26,
-          "gap": 3,
-          "strength": 0.16,
-          "scan": 2.4,
-          "sweep": 4.5,
-          "split": 1.4,
-          "tint": "#7fd8ff"
-        }
-      },
-      {
-        "name": "R2-V7",
-        "eyebrow": "R2-Series Astromech Droid",
-        "status": "Active",
-        "blurb": "",
-        "stats": {
-          "Level": "1",
-          "Campaign": "Bounty Hunter Missions"
-        },
-        "badges": [
-          "bh1"
-        ],
-        "portrait": "images/r2-v7-portrait.jpg",
-        "holo": "images/r2-v7.png",
-        "holoTune": {
-          "hue": 160,
-          "sat": 3.4,
-          "bright": 1.08,
-          "contrast": 0.66,
-          "alpha": 0.88,
-          "glow": 26,
-          "gap": 3,
-          "strength": 0.16,
-          "scan": 2.4,
-          "sweep": 4.5,
-          "split": 1.4,
-          "tint": "#7fd8ff"
-        }
-      },
-      {
-        "name": "Rakka Orrek",
-        "eyebrow": "Aleena · Scout",
-        "status": "Active",
-        "player": "Jeremy",
-        "blurb": "",
-        "stats": {
-          "Level": "1",
-          "Campaign": "Bounty Hunter Missions"
-        },
-        "notes": "Aleena bounty hunter.",
-        "links": [
-          {
-            "label": "Character Sheet",
-            "url": "https://drive.google.com/file/d/1hCLAd8ba9KMwlS9HaHld9sSbMo2KzrOy/view?usp=sharing"
-          }
-        ],
-        "badges": [
-          "bh1"
-        ],
-        "portrait": "images/rakka-orrek-portrait.jpg",
-        "holo": "images/rakka-orrek.png",
-        "holoTune": {
-          "hue": 160,
-          "sat": 3.4,
-          "bright": 1.08,
-          "contrast": 0.66,
-          "alpha": 0.88,
-          "glow": 26,
-          "gap": 3,
-          "strength": 0.16,
-          "scan": 2.4,
-          "sweep": 4.5,
-          "split": 1.4,
-          "tint": "#7fd8ff"
-        }
-      }
-    ]
-  },
-  "badges": {
-    "label": "Badges",
-    "layout": "badges",
-    "editOnly": true
-  }
+
+// The Discord invite the home tile opens.
+const DISCORD_URL = "https://discord.gg/REPLACE-ME";
+
+// The next session. `campaign` is one of the keys in CAMPAIGNS below.
+// `when` is the start time with its UTC offset (-08:00 is Pacific Standard,
+// -07:00 is Pacific Daylight). Visitors see it in their own time zone.
+// Once the time has passed, the tile reads "Date TBA" until you update it.
+const NEXT_SESSION = {
+  campaign: "the-mando-ade",
+  name: "",            // optional label, e.g. "Session III"
+  when: "2026-11-19T18:00:00-08:00"
 };
 
-const PAGES = {
-  "outer-rim-tales": {
-    "title": "Bounty Hunter Missions",
-    "eyebrow": "Anthology · Ongoing",
-    "blurb": "Hunt the galaxy's most wanted in a one-shot anthology series.",
-    "featured": true,
-    "sessions": [
-      {
-        "name": "Bounty Hunter I",
-        "eyebrow": "Session I",
-        "img": "images/bounty-hunter-i-session.jpg"
-      },
-      {
-        "name": "Bounty Hunter II",
-        "eyebrow": "Session II",
-        "img": "images/bounty-hunter-ii-session.jpg"
-      },
-      {
-        "name": "Bounty Hunter III",
-        "eyebrow": "Session III",
-        "img": "images/bounty-hunter-iii-session.jpg"
-      },
-      {
-        "name": "Bounty Hunter IV",
-        "eyebrow": "Session IV",
-        "img": "images/bounty-hunter-iv-session.jpg"
-      },
-      {
-        "name": "Bounty Hunter V",
-        "eyebrow": "Session V",
-        "img": "images/bounty-hunter-v-session.jpg"
-      },
-      {
-        "name": "Bounty Hunter VI",
-        "eyebrow": "Session VI",
-        "img": "images/bounty-hunter-vi-session.jpg"
-      },
-      {
-        "name": "Bounty Hunter VII",
-        "eyebrow": "Session VII",
-        "img": "images/bounty-hunter-vii-session.jpg"
-      },
-      {
-        "name": "Bounty Hunter VIII",
-        "eyebrow": "Session VIII",
-        "img": "images/bounty-hunter-viii-session.jpg"
-      }
+const CAMPAIGNS = {
+  "bounty-hunter-missions": {
+    title: "Bounty Hunter Missions",
+    eyebrow: "Anthology · Ongoing",
+    blurb: "Hunt the galaxy's most wanted in a one-shot anthology series.",
+    img: "images/bounty-hunter-missions-campaign.jpg",
+    homeImg: "images/bounty-hunter-missions-home.jpg",
+    footL: "1 session",
+    footR: "1st - 5th level",
+    sessions: [
+      { name: "Bounty Hunter I",    eyebrow: "Session I",    img: "images/bounty-hunter-i-session.jpg" },
+      { name: "Bounty Hunter II",   eyebrow: "Session II",   img: "images/bounty-hunter-ii-session.jpg" },
+      { name: "Bounty Hunter III",  eyebrow: "Session III",  img: "images/bounty-hunter-iii-session.jpg" },
+      { name: "Bounty Hunter IV",   eyebrow: "Session IV",   img: "images/bounty-hunter-iv-session.jpg" },
+      { name: "Bounty Hunter V",    eyebrow: "Session V",    img: "images/bounty-hunter-v-session.jpg" },
+      { name: "Bounty Hunter VI",   eyebrow: "Session VI",   img: "images/bounty-hunter-vi-session.jpg" },
+      { name: "Bounty Hunter VII",  eyebrow: "Session VII",  img: "images/bounty-hunter-vii-session.jpg" },
+      { name: "Bounty Hunter VIII", eyebrow: "Session VIII", img: "images/bounty-hunter-viii-session.jpg" }
     ]
-  },
-  "kessa-descent": {
-    "title": "Patch Notes",
-    "eyebrow": "September 2026",
-    "blurb": "",
-    "featured": true
-  },
-  "schedule": {
-    "title": "Schedule",
-    "eyebrow": "Week of September 6th",
-    "blurb": "Plan your adventures at the table.",
-    "goto": "schedule"
-  },
-  "the-archive": {
-    "title": "The Mando'ade",
-    "eyebrow": "Anthology · Upcoming",
-    "blurb": "Take the creed to every corner of the galaxy in an anthology series.",
-    "goto": "page:the-mando-ade",
-    "featured": true,
-    "upcoming": true
-  },
-  "squadron-missioms": {
-    "title": "Squadron Missioms",
-    "eyebrow": "Anthology · Upcoming",
-    "blurb": "Master the skies in a one-shot anthology series.",
-    "upcoming": true
-  },
-  "tactics-strategy": {
-    "title": "Tactics & Strategy",
-    "eyebrow": "Anthology · Ongoing",
-    "blurb": "Fight across eras of the galaxy in a highly tactical one-shot series."
   },
   "the-mando-ade": {
-    "title": "The Mando'ade",
-    "eyebrow": "Anthology · Upcoming",
-    "blurb": "Take the creed to every corner of the galaxy in an anthology series.",
-    "featured": true,
-    "upcoming": true
+    title: "The Mando'ade",
+    eyebrow: "Anthology · Upcoming",
+    blurb: "Take the creed to every corner of the galaxy in an anthology series.",
+    img: "images/the-mando-ade-campaign.jpg",
+    homeImg: "images/the-mando-ade-campaign.jpg",
+    footL: "Upcoming",
+    footR: "3rd - 5th level",
+    upcoming: true,
+    sessions: []
   }
 };
 
-/* Badge library — made by hand from the Badges tab in edit mode. */
-const BADGES = [
+const CHARACTERS = [
   {
-    "id": "bh3",
-    "name": "BH3",
-    "img": "images/bh3-badge.png"
+    name: "Gremik", eyebrow: "Devaronian · Fighter", player: "felipemontecinos",
+    level: "3", campaign: "Bounty Hunter Missions",
+    notes: "Devaronian gunslinger frequenting the Outer Rim.",
+    sheet: "https://drive.google.com/file/d/1waG0xaThBE6cCe1tRksFEowgK2ev6EDm/view?usp=sharing",
+    portrait: "images/gremik-portrait.jpg"
   },
   {
-    "id": "bh2",
-    "name": "BH2",
-    "img": "images/bh2-badge.png"
+    name: "Quill Ko", eyebrow: "Human · Berserker", player: "lightknight4048",
+    level: "3", campaign: "The Mando'ade",
+    notes: "Mandalorian warrior, and bounty hunter.",
+    sheet: "https://drive.google.com/file/d/1T2XuRTdeGqOOdRF48Mlozt43fH8NPBhF/view?usp=sharing",
+    portrait: "images/quill-ko-portrait.jpg"
   },
   {
-    "id": "bh1",
-    "name": "BH1",
-    "img": "images/bh1-badge.png"
+    name: "Tak Durin", eyebrow: "Ardennian · Scout", player: "Sean",
+    level: "3", campaign: "Bounty Hunter Missions",
+    notes: "Ardennian bounty hunter, and ace pilot.",
+    portrait: "images/tak-durin-portrait.jpg"
   },
   {
-    "id": "bh4",
-    "name": "BH4",
-    "img": "images/bh4-badge.png"
+    name: "Rakka Orrek", eyebrow: "Aleena · Scout", player: "Jeremy",
+    level: "1", campaign: "Bounty Hunter Missions",
+    notes: "Aleena bounty hunter.",
+    sheet: "https://drive.google.com/file/d/1hCLAd8ba9KMwlS9HaHld9sSbMo2KzrOy/view?usp=sharing",
+    portrait: "images/rakka-orrek-portrait.jpg"
   },
   {
-    "id": "ts1",
-    "name": "TS1",
-    "img": "images/ts1-badge.png"
+    name: "Arx", eyebrow: "Human · Fighter", player: "Sam",
+    level: "3", campaign: "Bounty Hunter Missions",
+    portrait: "images/arx-portrait.jpg"
   },
   {
-    "id": "bh5",
-    "name": "BH5",
-    "img": "images/bh5-badge.png"
-  },
-  {
-    "id": "co1",
-    "name": "CO1",
-    "img": "images/co1-badge.png"
-  },
-  {
-    "id": "bh8",
-    "name": "BH8",
-    "img": "images/bh8-badge.png"
+    name: "Niks", eyebrow: "Human · Operative", player: "Logan",
+    level: "3", campaign: "The Mando'ade",
+    portrait: "images/niks-portrait.jpg"
   }
 ];
 /* ========================= end data ========================= */
 
-const nav=document.getElementById('nav'), view=document.getElementById('view'),
-      chips=document.getElementById('chips'), q=document.getElementById('q');
-let tab=Object.keys(DATA)[0], filter='All', detail=null, page=null;
+const view = document.getElementById('view'), nav = document.getElementById('nav');
+const TABS = [['home','Home'],['campaigns','Campaigns'],['characters','Characters']];
+const esc = t => String(t == null ? '' : t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const slug = s => String(s).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+const bg = src => src ? `<span class="bgimg" style="background-image:url('${src}')"></span>` : '';
 
-Object.entries(DATA).forEach(([k,s])=>{
-  const b=document.createElement('button');
-  b.className='tab'; b.role='tab'; b.dataset.k=k;
-  b.innerHTML=s.items?`${s.label}<span class="n">${String(s.items.length).padStart(2,'0')}</span>`:s.label;
-  b.onclick=()=>{tab=k;filter='All';detail=null;page=null;q.value='';render()};
+TABS.forEach(([k,label]) => {
+  const b = document.createElement('button');
+  b.className = 'tab'; b.role = 'tab'; b.dataset.k = k;
+  b.innerHTML = k === 'characters'
+    ? `${label}<span class="n">${String(CHARACTERS.length).padStart(2,'0')}</span>` : label;
+  b.onclick = () => go(k);
   nav.appendChild(b);
 });
 
-// "Played by X" for a player character, "NPC" for one without a player.
-// Places have neither, so records outside the roster get no line at all.
-function metaLine(i,secKey){
-  if(i.player)return `<div class="meta">Played by ${i.player}</div>`;
-  if(secKey==='characters')return '<div class="meta">NPC</div>';
-  return '';
+/* ---------- routing: #campaigns, #campaigns/<id>, #characters/<name> ---------- */
+function route(){
+  const [tab='home', id=''] = location.hash.slice(1).split('/').map(decodeURIComponent);
+  return { tab: TABS.some(t => t[0] === tab) ? tab : 'home', id };
+}
+function go(tab, id){
+  location.hash = id ? `${tab}/${encodeURIComponent(id)}` : tab;
 }
 
-// A placement may carry its own `img`, which wins over the shared PAGES image.
-// `t.img === ''` is meaningful: it means "show no image in this spot".
-function tileImage(t,p){
-  return (t && t.img!==undefined) ? t.img : (p.img||'');
+/* ---------- next session ---------- */
+function nextWhen(){
+  const t = new Date(NEXT_SESSION.when);
+  if (isNaN(t) || t < Date.now() - 6*3600e3) return null;   // stays up through the session itself
+  return {
+    date: t.toLocaleDateString(undefined, { weekday:'long', month:'short', day:'numeric' }),
+    time: t.toLocaleTimeString(undefined, { hour:'numeric', minute:'2-digit', timeZoneName:'short' })
+  };
 }
 
-function tileHTML(t,isCampaigns,scope){
-  const p=PAGES[t.pid]||{};
-  const bg=tileImage(t,p);
-  const tags=[];
-  if(isCampaigns&&p.featured)tags.push('Featured');
-  if(p.upcoming)tags.push('Upcoming');
-  if(p.recruiting)tags.push('Recruiting');
-  // free-text tags sit alongside the three built-ins, in the order they were typed
-  (p.tags||[]).forEach(x=>{if(x&&!tags.includes(x))tags.push(x)});
-  const home=String(scope||'').startsWith('home:');
-  // a page carrying `goto` is a shortcut to a tab, not a page of its own
-  return `<button class="tile ${t.size==='feature'?'feature':''}" data-page="${t.pid}"${p.goto?` data-goto="${p.goto}"`:''}>
-    ${bg?`<span class="bgimg" style="background-image:url('${bg}')"></span>`:''}
-    <span class="tiletools rowtools"><span class="tbtn" data-act="page" data-pid="${t.pid}" data-scope="${scope||''}">Edit tile</span>${home?'<span class="tbtn grip" title="Drag to rearrange">Move</span>':''}</span>
-    ${tags.length?`<span class="tags">${tags.map(x=>`<span class="tag">${x}</span>`).join('')}</span>`:''}
-    ${t.label?`<span class="tlabel">${t.label}</span>`:''}
-    <span class="aur">${p.aur||p.title}</span>
-    <h3>${p.title}</h3>
-    <span class="eyebrow">${p.eyebrow||''}</span>
-    <p>${p.blurb||''}</p>
-    <span class="foot"><span>${t.footL||''}</span><span>${t.footR||''}</span></span>
-  </button>`;
-}
-/* ============================================================
-   BADGES
-   Every badge is made by hand in the Badges tab, which is visible
-   in edit mode only. A character's `badges` is a list of badge ids.
-   Nothing is generated or inferred; a badge with no image is an
-   empty square. Hovering one shows its name.
-   ============================================================ */
-function badgeById(id){return BADGES.find(b=>b.id===id)||null}
-
-// Only badges that still exist are drawn, so deleting one from the library
-// clears it everywhere without leaving a stray square behind.
-function badgesHTML(list){
-  return (list||[]).map(id=>{
-    const b=badgeById(id); if(!b)return '';
-    return `<span class="badge">${b.img?`<img src="${b.img}" alt="">`:''}
-      <span class="tip">${esc(b.name)}</span></span>`;
-  }).join('');
-}
-function makeBadgeId(name){
-  let base=(name||'badge').toLowerCase()
-    .replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,40)||'badge';
-  let id=base,k=2;
-  while(BADGES.some(b=>b.id===id))id=`${base}-${k++}`;
-  return id;
-}
-
-function rosterCardHTML(i,n,sec){
-  // The card carries the name and nothing else — status and level live on
-  // the record page, so the top of the tile stays clean.
-  return `<button class="pc" data-i="${n}">
-    ${i.portrait?`<span class="bgimg" style="background-image:url('${i.portrait}')"></span>`:''}
-    <span class="rowtools"><span class="tbtn" data-act="edit" data-i="${n}">Edit</span><span class="tbtn" data-act="del" data-i="${n}">Delete</span></span>
-    <span class="txt">
-      <span class="aur">${i.aur||i.name}</span>
-      <h3>${i.name}</h3>
-      ${i.eyebrow?`<span class="eyebrow">${i.eyebrow}</span>`:''}
-    </span>
-  </button>`;
-}
-
-/* A session card. Same shape as a character card, but it is a record of
-   something that happened rather than a link, so it only lights up. */
-function sessionCardHTML(s,n){
-  return `<div class="pc still" data-s="${n}">
-    ${s.img?`<span class="bgimg" style="background-image:url('${s.img}')"></span>`:''}
-    <span class="rowtools"><span class="tbtn" data-act="sedit" data-i="${n}">Edit</span><span class="tbtn" data-act="sdel" data-i="${n}">Delete</span></span>
-    <span class="txt">
-      <span class="aur">${s.aur||s.name}</span>
-      <h3>${s.name}</h3>
-      ${s.eyebrow?`<span class="eyebrow">${s.eyebrow}</span>`:''}
-    </span>
+/* ---------- views ---------- */
+function homeView(){
+  const c = CAMPAIGNS[NEXT_SESSION.campaign] || {};
+  const w = nextWhen();
+  const campCount = Object.keys(CAMPAIGNS).length;
+  return `<div class="home">
+    <button class="tile feature" data-go="campaigns/${NEXT_SESSION.campaign}">
+      ${bg(c.homeImg || c.img)}
+      <span class="tags"><span class="tag">Next session</span></span>
+      <span class="aur">${esc(c.title)}</span>
+      <h3>${esc(c.title)}</h3>
+      ${NEXT_SESSION.name ? `<span class="eyebrow">${esc(NEXT_SESSION.name)}</span>` : ''}
+      <span class="when">${w ? `${esc(w.date)}<small>${esc(w.time)}</small>` : 'Date TBA'}</span>
+      <p>${esc(c.blurb)}</p>
+      <span class="foot"><span>${esc(c.footL)}</span><span>${esc(c.footR)}</span></span>
+    </button>
+    <button class="tile" data-go="campaigns">
+      <span class="aur">Campaigns</span>
+      <h3>Campaigns</h3>
+      <span class="eyebrow">${Object.values(CAMPAIGNS).map(x => esc(x.title)).join(' · ')}</span>
+      <span class="foot"><span>${campCount} campaigns</span><span>Browse</span></span>
+    </button>
+    <button class="tile" data-go="characters">
+      <span class="aur">Characters</span>
+      <h3>Characters</h3>
+      <span class="eyebrow">Player characters</span>
+      <span class="foot"><span>${CHARACTERS.length} on file</span><span>Browse</span></span>
+    </button>
+    <a class="tile" href="${esc(DISCORD_URL)}" target="_blank" rel="noopener">
+      <span class="aur">Discord</span>
+      <h3>Discord</h3>
+      <span class="eyebrow">Open the server</span>
+      <span class="foot"><span>Comms</span><span>&#8599;</span></span>
+    </a>
   </div>`;
 }
 
-/* ============================================================
-   HOME TILE DRAGGING
-   Edit mode only. A tile is picked up whole and dropped either side of
-   another one; the order of DATA.home.tiles is the order on the page, so
-   the rearrangement is what gets published.
-   ============================================================ */
-function wireHomeDrag(){
-  const grid=view.querySelector('.home.hgrid'); if(!grid)return;
-  const tiles=[...grid.querySelectorAll('.tile')];
-  let from=null;
-  const clear=()=>tiles.forEach(t=>t.classList.remove('dropL','dropR'));
-  tiles.forEach((el,i)=>{
-    el.setAttribute('draggable','true');
-    el.addEventListener('dragstart',e=>{
-      from=i; el.classList.add('dragging');
-      e.dataTransfer.effectAllowed='move';
-      try{e.dataTransfer.setData('text/plain',String(i))}catch(err){}
-    });
-    el.addEventListener('dragend',()=>{el.classList.remove('dragging');clear();from=null});
-    el.addEventListener('dragover',e=>{
-      if(from==null||from===i)return;
-      e.preventDefault(); e.dataTransfer.dropEffect='move';
-      const r=el.getBoundingClientRect();
-      const after=(e.clientX-r.left)>r.width/2;
-      clear(); el.classList.add(after?'dropR':'dropL');
-    });
-    el.addEventListener('dragleave',()=>el.classList.remove('dropL','dropR'));
-    el.addEventListener('drop',e=>{
-      e.preventDefault(); e.stopPropagation();
-      if(from==null||from===i){clear();return}
-      const r=el.getBoundingClientRect();
-      const after=(e.clientX-r.left)>r.width/2;
-      const list=(DATA.home&&DATA.home.tiles)||[];
-      let to=i+(after?1:0);
-      if(from<to)to--;
-      if(to===from){clear();return}
-      const moved=list.splice(from,1)[0];
-      list.splice(to,0,moved);
-      from=null; markDirty(); render();
-    });
-  });
-  // dropping past the last tile parks it at the end
-  grid.addEventListener('dragover',e=>{if(from!=null)e.preventDefault()});
-  grid.addEventListener('drop',e=>{
-    if(from==null)return;
-    e.preventDefault();
-    const list=(DATA.home&&DATA.home.tiles)||[];
-    const moved=list.splice(from,1)[0];
-    list.push(moved); from=null; markDirty(); render();
-  });
+function campaignsView(){
+  return `<div class="camprow">${Object.entries(CAMPAIGNS).map(([id,c]) => `
+    <button class="tile" data-go="campaigns/${id}">
+      ${bg(c.img)}
+      ${c.upcoming ? '<span class="tags"><span class="tag">Upcoming</span></span>' : ''}
+      <span class="aur">${esc(c.title)}</span>
+      <h3>${esc(c.title)}</h3>
+      <span class="eyebrow">${esc(c.eyebrow)}</span>
+      <p>${esc(c.blurb)}</p>
+      <span class="foot"><span>${esc(c.footL)}</span><span>${esc(c.footR)}</span></span>
+    </button>`).join('')}</div>`;
 }
 
-/* ============================================================
-   SCHEDULE
-   A weekly grid. Blocks are stored against a date and a clock time in the
-   schedule's home zone; the viewer picks a zone and the same instant is
-   redrawn there, so a block can slide columns or straddle midnight without
-   the record changing. A block is a tile: thumbnail, campaign name, and a
-   sheet behind it carrying the exact times, the DM and the players.
-   ============================================================ */
-const HOURPX=60;
-const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-const DOWS=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-const TZ_LIST=['Pacific/Honolulu','America/Anchorage','America/Los_Angeles','America/Denver',
-  'America/Chicago','America/New_York','America/Halifax','America/Sao_Paulo','UTC',
-  'Europe/London','Europe/Berlin','Europe/Madrid','Europe/Athens','Africa/Lagos',
-  'Africa/Johannesburg','Asia/Dubai','Asia/Kolkata','Asia/Bangkok','Asia/Shanghai',
-  'Asia/Tokyo','Australia/Perth','Australia/Sydney','Pacific/Auckland'];
-let schedWeek=0, schedTZ=null, nowTimer=null;
-
-function localTZ(){
-  try{return Intl.DateTimeFormat().resolvedOptions().timeZone||'UTC'}catch(e){return 'UTC'}
-}
-// the wall clock in a zone at a given instant
-const TZCACHE={};
-function tzFmt(zone){
-  if(TZCACHE[zone])return TZCACHE[zone];
-  const opt={hour12:false,year:'numeric',month:'2-digit',day:'2-digit',
-    hour:'2-digit',minute:'2-digit',second:'2-digit'};
-  let f;
-  try{f=new Intl.DateTimeFormat('en-US',{...opt,timeZone:zone})}
-  catch(e){f=new Intl.DateTimeFormat('en-US',{...opt,timeZone:'UTC'})}
-  return TZCACHE[zone]=f;
-}
-function zoneParts(ms,zone){
-  const f=tzFmt(zone);
-  const o={}; f.formatToParts(new Date(ms)).forEach(p=>{if(p.type!=='literal')o[p.type]=p.value});
-  let h=+o.hour; if(h===24)h=0;
-  return {y:+o.year,m:+o.month,d:+o.day,hh:h,mm:+o.minute,ss:+o.second};
-}
-function zoneOffset(ms,zone){
-  const p=zoneParts(ms,zone);
-  return Date.UTC(p.y,p.m-1,p.d,p.hh,p.mm,p.ss)-Math.floor(ms/1000)*1000;
-}
-// a wall clock reading in a zone, back to an instant. Two passes settle DST.
-function wallToMs(y,m,d,hh,mm,zone){
-  const want=Date.UTC(y,m-1,d,hh,mm);
-  let guess=want;
-  for(let i=0;i<3;i++){
-    const next=want-zoneOffset(guess,zone);
-    if(next===guess)break;
-    guess=next;
-  }
-  return guess;
-}
-const civAdd=(c,n)=>{const t=new Date(Date.UTC(c.y,c.m-1,c.d)+n*86400000);
-  return {y:t.getUTCFullYear(),m:t.getUTCMonth()+1,d:t.getUTCDate()}};
-const civDow=c=>(new Date(Date.UTC(c.y,c.m-1,c.d)).getUTCDay()+6)%7;   // Mon = 0
-const pad2=n=>String(n).padStart(2,'0');
-const civKey=c=>`${c.y}-${pad2(c.m)}-${pad2(c.d)}`;
-const parseCiv=v=>{const m=/^(\d{4})-(\d{1,2})-(\d{1,2})$/.exec(String(v||'').trim());
-  return m?{y:+m[1],m:+m[2],d:+m[3]}:null};
-const parseHM=v=>{const m=/^(\d{1,2}):(\d{2})$/.exec(String(v||'').trim());
-  return (m&&+m[1]<24&&+m[2]<60)?{hh:+m[1],mm:+m[2]}:null};
-const hm=p=>pad2(p.hh)+':'+pad2(p.mm);
-
-function schedPage(){return DATA.schedule||{}}
-function schedBaseTZ(){return schedPage().tz||'UTC'}
-function schedViewTZ(){if(!schedTZ)schedTZ=schedPage().tz||localTZ();return schedTZ}
-function blockName(b){const p=PAGES[b.pid]||{};return b.name||p.title||'Untitled block'}
-function blockImg(b){const p=PAGES[b.pid]||{};return b.img!==undefined?b.img:(p.img||'')}
-
-// The seven columns of the shown week, as civil dates in the viewer's zone.
-function schedDays(){
-  const n=zoneParts(Date.now(),schedViewTZ());
-  const today={y:n.y,m:n.m,d:n.d};
-  const mon=civAdd(today,-civDow(today)+schedWeek*7);
-  return [0,1,2,3,4,5,6].map(i=>civAdd(mon,i));
-}
-
-// Every occurrence that could touch the shown week, as absolute instants.
-function blockRanges(days){
-  const base=schedBaseTZ(), out=[];
-  const cand=[civAdd(days[0],-1),...days,civAdd(days[6],1)];
-  ((schedPage().blocks)||[]).forEach((b,bi)=>{
-    const bc=parseCiv(b.date), st=parseHM(b.start), en=parseHM(b.end);
-    if(!bc||!st||!en)return;
-    cand.forEach(c=>{
-      if(b.repeat?civDow(c)!==civDow(bc):civKey(c)!==civKey(bc))return;
-      const a=wallToMs(c.y,c.m,c.d,st.hh,st.mm,base);
-      const nx=civAdd(c,1);
-      let z=wallToMs(c.y,c.m,c.d,en.hh,en.mm,base);
-      if(z<=a)z=wallToMs(nx.y,nx.m,nx.d,en.hh,en.mm,base);   // runs past midnight
-      out.push({bi,b,a,z});
-    });
-  });
-  return out;
-}
-
-// blocks that overlap inside one column sit side by side rather than on top
-function laneOut(segs){
-  segs.sort((x,y)=>x.a-y.a||x.z-y.z);
-  const ends=[];
-  segs.forEach(sg=>{
-    let li=ends.findIndex(e=>e<=sg.a);
-    if(li<0){li=ends.length;ends.push(0)}
-    ends[li]=sg.z; sg.lane=li;
-  });
-  const n=Math.max(1,ends.length);
-  segs.forEach(sg=>sg.lanes=n);
-}
-
-// The week resolved into columns of drawable segments. Shared by the live grid
-// and the export, so the two can never drift apart.
-function schedColumns(days,z){
-  const ranges=blockRanges(days);
-  return days.map(c=>{
-    const ds=wallToMs(c.y,c.m,c.d,0,0,z);
-    const nx=civAdd(c,1), de=wallToMs(nx.y,nx.m,nx.d,0,0,z);
-    const segs=[];
-    ranges.forEach(r=>{
-      const a=Math.max(r.a,ds), zz=Math.min(r.z,de);
-      if(zz<=a)return;
-      segs.push({r,a,z:zz,cut:r.a<ds||r.z>de});
-    });
-    laneOut(segs);
-    return {c,ds,de,segs};
-  });
-}
-
-// the seven dates as one readable line: "Aug 24 - Aug 30 2026"
-function schedWeekLabel(days){
-  const a=days[0], b=days[6];
-  return `${MONTHS[a.m-1]} ${a.d} \u2013 ${MONTHS[b.m-1]} ${b.d} ${b.y}`;
-}
-
-function renderSchedule(){
-  const p=schedPage();
-  const editing=document.body.classList.contains('editing');
-  const z=schedViewTZ(), days=schedDays();
-  const nowP=zoneParts(Date.now(),z), todayKey=civKey({y:nowP.y,m:nowP.m,d:nowP.d});
-
-  const head=days.map(c=>`<div class="dh ${civKey(c)===todayKey?'today':''}">
-      <span class="dw">${DOWS[civDow(c)]}</span>
-      <span class="dd">${MONTHS[c.m-1]} ${c.d}</span></div>`).join('');
-
-  const lines=[];
-  for(let h=0;h<24;h++){
-    if(h)lines.push(`<div class="hl" style="top:${h*HOURPX}px"></div>`);
-    lines.push(`<div class="hl half" style="top:${h*HOURPX+HOURPX/2}px"></div>`);
-  }
-  const rules=lines.join('');
-  const gut=[];
-  for(let h=0;h<24;h++)gut.push(`<span style="top:${h*HOURPX}px">${pad2(h)}:00</span>`);
-
-  const cols=schedColumns(days,z).map((col,ci)=>{
-    const {c,ds,de,segs}=col;
-    const html=segs.map(sg=>{
-      const b=sg.r.b;
-      const top=(sg.a-ds)/60000/60*HOURPX;
-      const h=Math.max((sg.z-sg.a)/60000/60*HOURPX,26);
-      const wpc=100/sg.lanes, left=sg.lane*wpc;
-      const img=blockImg(b);
-      const t1=hm(zoneParts(sg.r.a,z)), t2=hm(zoneParts(sg.r.z,z));
-      return `<div class="tblock ${sg.cut?'cut':''}" data-bi="${sg.r.bi}"
-        style="top:${top}px;height:${h}px;left:calc(${left}% + 3px);width:calc(${wpc}% - 6px)">
-        ${img?`<span class="bgimg" style="background-image:url('${img}')"></span>`:''}
-        <span class="rowtools"><span class="tbtn" data-act="blkedit" data-i="${sg.r.bi}">Edit</span><span class="tbtn" data-act="blkdel" data-i="${sg.r.bi}">Delete</span></span>
-        <span class="bt">${t1}&ndash;${t2}</span>
-        <span class="bn">${esc(blockName(b))}</span>
-      </div>`;
-    }).join('');
-    const now=Date.now();
-    const live=(civKey(c)===todayKey&&now>=ds&&now<de)
-      ? `<div class="nowline" style="top:${(now-ds)/3600000*HOURPX}px"></div>` : '';
-    return `<div class="caldy" data-day="${ci}">${rules}${html}${live}</div>`;
-  }).join('');
-
-  // the same reading in the gutter, so the line has a time against it
-  const nowMs=Date.now(), tCiv=(()=>{const n=zoneParts(nowMs,z);return {y:n.y,m:n.m,d:n.d}})();
-  const onScreen=days.some(c=>civKey(c)===civKey(tCiv));
-  const tDayStart=wallToMs(tCiv.y,tCiv.m,tCiv.d,0,0,z);
-  const nowTag=onScreen
-    ? `<span class="nowtag" style="top:${(nowMs-tDayStart)/3600000*HOURPX}px">${hm(zoneParts(nowMs,z))}</span>`
-    : '';
-
-  const zones=[...new Set([schedBaseTZ(),localTZ(),...TZ_LIST])];
-  const wlabel=schedWeekLabel(days);
-
-  view.innerHTML=`
-    <div class="detail">
-      <div class="sheetview">
-        <span class="aur">${esc(p.aur||p.title)}</span>
-        <h2>${esc(p.title)}</h2>
-        <span class="eyebrow">${esc(p.eyebrow||'')}</span>
-        <p class="lede">${esc(p.blurb||'')}</p>
-        <div class="rowtools"><button class="tbtn" data-act="schedset">Edit schedule</button></div>
-        <div class="schedbar">
-          <div class="weeknav">
-            <button class="ebtn ghost" id="wPrev" style="display:inline-block">&larr; Week</button>
-            <button class="ebtn ghost" id="wThis" style="display:inline-block">This week</button>
-            <button class="ebtn ghost" id="wNext" style="display:inline-block">Week &rarr;</button>
-            <span class="wlabel">${wlabel}</span>
-            <button class="ebtn" id="calExport" style="display:inline-block">Export image</button>
-          </div>
-          <div class="tzbox">
-            <label for="tzSel">Timezone</label>
-            <select id="tzSel">${zones.map(t=>
-              `<option value="${esc(t)}" ${t===z?'selected':''}>${esc(t)}</option>`).join('')}</select>
-          </div>
-        </div>
-        <div class="cal">
-          <div class="calhead"><div class="gut"></div>${head}</div>
-          <div class="calbody" style="height:${24*HOURPX}px">
-            <div class="calgut">${gut.join('')}${nowTag}</div>
-            ${cols}
-          </div>
-        </div>
-        ${editing?'<p class="note">Click any empty stretch of a day to open a new block at that hour. Blocks drawn with a dashed edge carry on into the next column.</p>':''}
-      </div>
-    </div>`;
-  document.getElementById('wPrev').onclick=()=>{schedWeek--;render()};
-  document.getElementById('wNext').onclick=()=>{schedWeek++;render()};
-  document.getElementById('wThis').onclick=()=>{schedWeek=0;render()};
-  document.getElementById('tzSel').onchange=e=>{schedTZ=e.target.value;render()};
-  document.getElementById('calExport').onclick=e=>exportSchedule(e.currentTarget);
-
-  if(nowTimer)clearInterval(nowTimer);
-  if(onScreen)nowTimer=setInterval(()=>{
-    const line=view.querySelector('.nowline'), tag=view.querySelector('.nowtag');
-    if(!line&&!tag){clearInterval(nowTimer);nowTimer=null;return}
-    const t=(Date.now()-tDayStart)/3600000*HOURPX;
-    if(line)line.style.top=t+'px';
-    if(tag){tag.style.top=t+'px';tag.textContent=hm(zoneParts(Date.now(),z))}
-  },30000);
-}
-
-/* ============================================================
-   EXPORT THE WEEK AS AN IMAGE
-   Draws the grid onto a canvas rather than screenshotting the page, so it
-   works with no extra library and no server. Thumbnails are painted at full
-   strength, the way a block looks under the cursor.
-   ============================================================ */
-const EXP={S:2,W:1680,PAD:46,GUT:86,HOUR:64};
-
-// ctx.letterSpacing is recent; where it is missing the text just sits tighter
-function setLS(ctx,v){try{ctx.letterSpacing=v}catch(e){}}
-
-function loadImage(src){
-  return new Promise(res=>{
-    if(!src)return res(null);
-    const im=new Image();
-    if(/^https?:/i.test(src))im.crossOrigin='anonymous';
-    im.onload=()=>res(im);
-    im.onerror=()=>res(null);
-    im.src=src;
-  });
-}
-
-// fill a box with an image, cropping the overflow rather than squashing it
-function coverDraw(ctx,im,x,y,w,h){
-  const sc=Math.max(w/im.naturalWidth,h/im.naturalHeight);
-  const dw=im.naturalWidth*sc, dh=im.naturalHeight*sc;
-  ctx.drawImage(im,x+(w-dw)/2,y+(h-dh)/2,dw,dh);
-}
-
-function wrapText(ctx,text,maxW,maxLines){
-  const words=String(text).split(/\s+/), out=[];
-  let line='';
-  for(const wd of words){
-    const t=line?line+' '+wd:wd;
-    if(ctx.measureText(t).width<=maxW||!line){line=t}
-    else{out.push(line);line=wd;if(out.length===maxLines-1)break}
-  }
-  if(line&&out.length<maxLines)out.push(line);
-  if(out.length===maxLines){
-    let last=out[maxLines-1];
-    while(last.length>1&&ctx.measureText(last+'\u2026').width>maxW)last=last.slice(0,-1);
-    if(ctx.measureText(out[maxLines-1]).width>maxW)out[maxLines-1]=last+'\u2026';
-  }
-  return out;
-}
-
-async function exportSchedule(btn){
-  const p=schedPage(), z=schedViewTZ(), days=schedDays();
-  const cols=schedColumns(days,z);
-  const was=btn?btn.textContent:'';
-  if(btn){btn.textContent='Rendering\u2026';btn.disabled=true}
-  try{
-    // the webfonts have to be resident before canvas can draw with them
-    try{
-      await Promise.all([
-        document.fonts.load('700 44px "Barlow Semi Condensed"'),
-        document.fonts.load('600 15px "Barlow Semi Condensed"'),
-        document.fonts.load('700 22px "Barlow Semi Condensed"'),
-        document.fonts.load('700 15px "Aurebesh AF"'),
-        document.fonts.load('400 17px "Barlow"')
-      ]);
-      await document.fonts.ready;
-    }catch(e){}
-
-    // crop to the hours that carry something, with an hour of air either side
-    let lo=24, hi=0;
-    cols.forEach(col=>col.segs.forEach(sg=>{
-      lo=Math.min(lo,Math.floor((sg.a-col.ds)/3600000));
-      hi=Math.max(hi,Math.ceil((sg.z-col.ds)/3600000));
-    }));
-    if(lo>hi){lo=8;hi=23}
-    lo=Math.max(0,lo-1); hi=Math.min(24,hi+1);
-    if(hi-lo<7){hi=Math.min(24,lo+7); lo=Math.max(0,hi-7)}
-
-    const {S,W,PAD,GUT,HOUR}=EXP;
-    const HEAD=126, DAYH=66;
-    const gridW=W-PAD*2, colW=(gridW-GUT)/7;
-    const calLeft=PAD, calRight=W-PAD;
-    const calTop=PAD+HEAD, gridTop=calTop+DAYH;
-    const bodyH=(hi-lo)*HOUR, calBot=gridTop+bodyH;
-    const H=calBot+PAD;
-
-    const cv=document.createElement('canvas');
-    cv.width=W*S; cv.height=H*S;
-    const ctx=cv.getContext('2d');
-    ctx.scale(S,S);
-    ctx.textBaseline='alphabetic';
-
-    const cs=getComputedStyle(document.documentElement);
-    const C=k=>(cs.getPropertyValue('--'+k).trim()||'#fff');
-    const line=(x1,y1,x2,y2)=>{ctx.beginPath();ctx.moveTo(x1+.5,y1+.5);ctx.lineTo(x2+.5,y2+.5);ctx.stroke()};
-
-    ctx.fillStyle=C('bg'); ctx.fillRect(0,0,W,H);
-
-    /* ---- header ---- */
-    setLS(ctx,'1px');
-    ctx.font='700 15px "Aurebesh AF", sans-serif';
-    ctx.fillStyle=C('dim');
-    ctx.fillText(p.aur||p.title||'Schedule',PAD,PAD+16);
-
-    setLS(ctx,'1.5px');
-    ctx.font='700 44px "Barlow Semi Condensed", sans-serif';
-    ctx.fillStyle=C('white');
-    ctx.fillText(String(p.title||'Schedule').toUpperCase(),PAD,PAD+62);
-
-    setLS(ctx,'2.6px');
-    ctx.font='600 15px "Barlow Semi Condensed", sans-serif';
-    ctx.fillStyle=C('dim');
-    ctx.fillText(('Week of '+schedWeekLabel(days)).toUpperCase(),PAD,PAD+90);
-
-    ctx.textAlign='right';
-    setLS(ctx,'2.6px');
-    ctx.font='600 13px "Barlow Semi Condensed", sans-serif';
-    ctx.fillStyle=C('dim');
-    ctx.fillText('TIMEZONE',calRight,PAD+16);
-    setLS(ctx,'0px');
-    ctx.font='400 17px "Barlow", sans-serif';
-    ctx.fillStyle=C('gray');
-    ctx.fillText(z,calRight,PAD+42);
-    ctx.textAlign='left';
-
-    /* ---- frame, day headers, hour rules ---- */
-    const nowP=zoneParts(Date.now(),z), todayKey=civKey({y:nowP.y,m:nowP.m,d:nowP.d});
-    ctx.lineWidth=1; ctx.strokeStyle=C('edge');
-    ctx.strokeRect(calLeft+.5,calTop+.5,gridW-1,DAYH+bodyH-1);
-    line(calLeft,gridTop,calRight,gridTop);
-    line(calLeft+GUT,calTop,calLeft+GUT,calBot);
-
-    days.forEach((c,i)=>{
-      const x=calLeft+GUT+i*colW;
-      if(i)line(x,calTop,x,calBot);
-      const today=civKey(c)===todayKey;
-      setLS(ctx,'2.4px');
-      ctx.font='600 13px "Barlow Semi Condensed", sans-serif';
-      ctx.fillStyle=today?C('gold-hi'):C('dim');
-      ctx.fillText(DOWS[civDow(c)].toUpperCase(),x+16,calTop+26);
-      setLS(ctx,'.6px');
-      ctx.font='700 22px "Barlow Semi Condensed", sans-serif';
-      ctx.fillStyle=today?C('gold'):C('white');
-      ctx.fillText((MONTHS[c.m-1]+' '+c.d).toUpperCase(),x+16,calTop+52);
-    });
-
-    for(let h=lo;h<=hi;h++){
-      const y=gridTop+(h-lo)*HOUR;
-      if(h>lo&&h<hi){ctx.globalAlpha=.5;line(calLeft+GUT,y,calRight,y)}
-      if(h<hi){ctx.globalAlpha=.2;line(calLeft+GUT,y+HOUR/2,calRight,y+HOUR/2)}
-      ctx.globalAlpha=1;
-      if(h<24){
-        ctx.textAlign='right';
-        setLS(ctx,'1.8px');
-        ctx.font='600 12px "Barlow Semi Condensed", sans-serif';
-        ctx.fillStyle=C('dim');
-        ctx.fillText(pad2(h)+':00',calLeft+GUT-14,y+4);
-        ctx.textAlign='left';
-      }
-    }
-
-    /* ---- blocks, thumbnails at full strength ---- */
-    const srcs=[...new Set(cols.flatMap(col=>col.segs.map(sg=>blockImg(sg.r.b))).filter(Boolean))];
-    const loaded=await Promise.all(srcs.map(loadImage));
-    const imgs={}; srcs.forEach((src,i)=>imgs[src]=loaded[i]);
-
-    cols.forEach((col,ci)=>{
-      col.segs.forEach(sg=>{
-        const b=sg.r.b;
-        const top=gridTop+((sg.a-col.ds)/3600000-lo)*HOUR;
-        const hgt=Math.max((sg.z-sg.a)/3600000*HOUR,36);
-        const laneW=(colW-8)/sg.lanes;
-        const x=calLeft+GUT+ci*colW+4+sg.lane*laneW;
-        const w=laneW-(sg.lanes>1?4:0);
-
-        ctx.save();
-        ctx.beginPath(); ctx.rect(x,top,w,hgt); ctx.clip();
-        ctx.fillStyle='#000'; ctx.fillRect(x,top,w,hgt);
-        const im=imgs[blockImg(b)];
-        if(im)coverDraw(ctx,im,x,top,w,hgt);
-        const g=ctx.createLinearGradient(0,top,0,top+hgt);
-        g.addColorStop(0,'rgba(0,0,0,.10)');
-        g.addColorStop(.38,'rgba(0,0,0,.34)');
-        g.addColorStop(.70,'rgba(0,0,0,.72)');
-        g.addColorStop(1,'rgba(0,0,0,1)');
-        ctx.fillStyle=g; ctx.fillRect(x,top,w,hgt);
-
-        const inset=10;
-        setLS(ctx,'.5px');
-        ctx.font='700 15px "Barlow Semi Condensed", sans-serif';
-        const lines=wrapText(ctx,blockName(b).toUpperCase(),w-inset*2,hgt>78?3:2);
-        let ty=top+hgt-inset-1;
-        ctx.fillStyle=C('gold');
-        for(let i=lines.length-1;i>=0;i--){ctx.fillText(lines[i],x+inset,ty);ty-=17}
-        setLS(ctx,'1.8px');
-        ctx.font='600 11px "Barlow Semi Condensed", sans-serif';
-        ctx.fillStyle=C('gold-hi');
-        ctx.fillText(hm(zoneParts(sg.r.a,z))+' \u2013 '+hm(zoneParts(sg.r.z,z)),x+inset,ty-1);
-        ctx.restore();
-
-        ctx.save();
-        ctx.shadowColor='rgba(255,176,32,.30)'; ctx.shadowBlur=18;
-        ctx.strokeStyle=C('gold'); ctx.lineWidth=1;
-        if(sg.cut)ctx.setLineDash([5,4]);
-        ctx.strokeRect(x+.5,top+.5,w-1,hgt-1);
-        ctx.restore();
-      });
-    });
-
-
-    /* ---- hand it over ---- */
-    const blob=await new Promise((res,rej)=>{
-      try{cv.toBlob(bl=>bl?res(bl):rej(new Error('Canvas produced nothing.')),'image/png')}
-      catch(err){rej(err)}
-    });
-    const a=document.createElement('a');
-    a.href=URL.createObjectURL(blob);
-    a.download=`schedule-${civKey(days[0])}.png`;
-    a.click();
-    setTimeout(()=>URL.revokeObjectURL(a.href),2000);
-  }catch(err){
-    alert('The export could not be drawn.\n\n'+(err&&err.message||err)+
-      '\n\nIf the page is open from a file:// path, the browser blocks reading the thumbnails back off the canvas. Serving the site over http fixes it.');
-  }finally{
-    if(btn){btn.textContent=was;btn.disabled=false}
-  }
-}
-
-/* ---- the schedule's own record ---- */
-function scheduleForm(){
-  const p=schedPage();
-  openSheet(`
-    <h2>Edit schedule</h2>
-    <p class="hint">The heading of the Schedule tab, and the zone its blocks are stored against.</p>
-    <div class="field"><label>Tab label</label><input id="s_label" value="${esc(p.label)}"></div>
-    <div class="field"><label>Title</label><input id="s_title" value="${esc(p.title)}"></div>
-    <div class="field"><label>Subtitle</label><input id="s_eyebrow" value="${esc(p.eyebrow)}"></div>
-    <div class="field"><label>Aurebesh line</label><input id="s_aur" value="${esc(p.aur)}" placeholder="Defaults to the title"></div>
-    <div class="field"><label>Description</label><textarea id="s_blurb">${esc(p.blurb)}</textarea></div>
-    <div class="field"><label>Home timezone</label>
-      <select id="s_tz">${[...new Set([p.tz||'UTC',localTZ(),...TZ_LIST])].map(t=>
-        `<option value="${esc(t)}" ${t===(p.tz||'UTC')?'selected':''}>${esc(t)}</option>`).join('')}</select>
-      <p class="note">Block times are read against this zone. Viewers can show the grid in any other.</p></div>
-    <div class="actions">
-      <button class="ebtn" id="schSave">Save schedule</button>
-      <button class="ebtn ghost" id="schCancel">Cancel</button>
-    </div>`);
-  document.getElementById('schCancel').onclick=closeSheet;
-  document.getElementById('schSave').onclick=()=>{
-    const v=id=>document.getElementById(id).value.trim();
-    p.label=v('s_label')||'Schedule';
-    p.title=v('s_title')||'Schedule';
-    p.eyebrow=v('s_eyebrow');
-    if(v('s_aur'))p.aur=v('s_aur'); else delete p.aur;
-    p.blurb=v('s_blurb');
-    p.tz=v('s_tz');
-    const tb=[...nav.children].find(b=>b.dataset.k==='schedule');
-    if(tb)tb.textContent=p.label;
-    markDirty(); closeSheet(); render();
-  };
-}
-
-/* ---- a block, write side ---- */
-function blockForm(index,prefill){
-  const p=schedPage(); if(!p.blocks)p.blocks=[];
-  const b=index==null?(prefill||{}):p.blocks[index]||{};
-  const opts=Object.entries(PAGES).filter(([k,v])=>!v.goto&&v.layout!=='schedule')
-    .map(([k,v])=>`<option value="${esc(k)}" ${b.pid===k?'selected':''}>${esc(v.title||k)}</option>`).join('');
-  openSheet(`
-    <h2>${index==null?'New':'Edit'} time block</h2>
-    <p class="hint">Times are read in <b>${esc(schedBaseTZ())}</b>, the schedule's home zone. Set that on the page itself.</p>
-    <div class="field"><label>Campaign</label>
-      <select id="b_pid"><option value="" ${!b.pid?'selected':''}>None \u2014 use the name below</option>${opts}</select>
-      <p class="note">Lends the block its name and thumbnail unless you override them.</p></div>
-    <div class="field"><label>Name \u2014 this block only</label>
-      <input id="b_name" value="${esc(b.name)}" placeholder="Leave blank to use the campaign title"></div>
-    <div class="trio">
-      <div class="field"><label>Date</label><input id="b_date" type="date" value="${esc(b.date)}"></div>
-      <div class="field"><label>Repeats</label>
-        <div class="toggles"><label class="tog"><input type="checkbox" id="b_rep" ${b.repeat?'checked':''}> Every week</label></div></div>
-    </div>
-    <div class="trio">
-      <div class="field"><label>Start</label><input id="b_start" type="time" value="${esc(b.start)}"></div>
-      <div class="field"><label>End</label><input id="b_end" type="time" value="${esc(b.end)}"></div>
-    </div>
-    <div class="field"><label>Dungeon master</label><input id="b_dm" value="${esc(b.dm)}" placeholder="Who is running it"></div>
-    <div class="field"><label>Players \u2014 comma separated</label>
-      <input id="b_players" value="${esc((b.players||[]).join(', '))}" placeholder="Tay Vizsla, Kora Shale"></div>
-    <div class="field"><label>Notes</label><textarea id="b_notes">${esc(b.notes)}</textarea></div>
-    <div class="field"><label>Thumbnail \u2014 this block only</label>
-      <input id="b_img" value="${b.img!==undefined?esc(b.img):''}" placeholder="Leave blank to use the campaign thumbnail"></div>
-    <div class="field"><label>Upload a thumbnail</label><input type="file" id="b_file" accept="image/*"></div>
-    <div class="actions">
-      <button class="ebtn" id="bSave">Save block</button>
-      <button class="ebtn ghost" id="bClear">Clear thumbnail</button>
-      ${index==null?'':'<button class="ebtn ghost" id="bDel">Delete block</button>'}
-      <button class="ebtn ghost" id="bCancel">Cancel</button>
-    </div>
-    <p class="note" id="bMsg">An end earlier than the start is read as running past midnight.</p>`);
-  const msg=document.getElementById('bMsg');
-  document.getElementById('b_file').onchange=e=>{
-    const f=e.target.files[0]; if(!f)return;
-    msg.textContent='Processing image\u2026';
-    const img=new Image();
-    img.onload=()=>{
-      const max=900, sc=Math.min(1,max/img.width);
-      const c=document.createElement('canvas');
-      c.width=Math.round(img.width*sc); c.height=Math.round(img.height*sc);
-      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
-      const data=c.toDataURL('image/jpeg',0.74);
-      document.getElementById('b_img').value=data;
-      msg.textContent='Image ready. '+Math.round(data.length/1400)+' KB once saved.';
-      URL.revokeObjectURL(img.src);
-    };
-    img.onerror=()=>{msg.textContent='That file could not be read as an image.'};
-    img.src=URL.createObjectURL(f);
-  };
-  document.getElementById('bClear').onclick=()=>{
-    document.getElementById('b_img').value=''; msg.textContent='Thumbnail cleared. Save to apply.';
-  };
-  document.getElementById('bCancel').onclick=closeSheet;
-  const bd=document.getElementById('bDel'); if(bd)bd.onclick=()=>deleteBlock(index);
-  document.getElementById('bSave').onclick=()=>{
-    const v=id=>document.getElementById(id).value.trim();
-    const date=v('b_date'), start=v('b_start'), end=v('b_end');
-    if(!parseCiv(date)){alert('A date is required.');return}
-    if(!parseHM(start)||!parseHM(end)){alert('A start and an end time are required.');return}
-    if(!v('b_pid')&&!v('b_name')){alert('Pick a campaign or give the block a name.');return}
-    const players=v('b_players').split(',').map(x=>x.trim()).filter(Boolean);
-    const rec={
-      ...(v('b_pid')?{pid:v('b_pid')}:{}),
-      ...(v('b_name')?{name:v('b_name')}:{}),
-      date, start, end,
-      ...(document.getElementById('b_rep').checked?{repeat:true}:{}),
-      ...(v('b_dm')?{dm:v('b_dm')}:{}),
-      ...(players.length?{players}:{}),
-      ...(v('b_notes')?{notes:v('b_notes')}:{}),
-      ...(v('b_img')?{img:v('b_img')}:{})
-    };
-    if(index==null)p.blocks.push(rec); else p.blocks[index]=rec;
-    markDirty(); closeSheet(); render();
-  };
-}
-
-function deleteBlock(index){
-  const p=schedPage(), b=(p.blocks||[])[index]; if(!b)return;
-  if(!confirm(`Delete the "${blockName(b)}" block?`))return;
-  p.blocks.splice(index,1); markDirty(); closeSheet(); render();
-}
-
-function renderPage(backLabel){
-  const p=PAGES[page]||{};
-  const editing=document.body.classList.contains('editing');
-  const ss=p.sessions||[];
-  const sessions=(ss.length||editing)?`
-    <div class="groups">
-      <section class="group">
+function campaignPage(id){
+  const c = CAMPAIGNS[id]; if (!c) return campaignsView();
+  const ss = c.sessions || [];
+  return `<div class="detail">
+    <button class="back" data-go="campaigns">&larr; All campaigns</button>
+    <div class="sheetview">
+      ${c.upcoming ? '<div class="flag">Upcoming</div>' : ''}
+      <span class="aur">${esc(c.title)}</span>
+      <h2>${esc(c.title)}</h2>
+      <span class="eyebrow">${esc(c.eyebrow)}</span>
+      <p class="lede">${esc(c.blurb)}</p>
+      ${ss.length ? `<div class="groups"><section>
         <div class="grouphead"><h2>Sessions</h2></div>
-        ${ss.length?`<div class="roster">${ss.map(sessionCardHTML).join('')}</div>`
-          :'<div class="empty">No sessions logged yet</div>'}
-      </section>
-    </div>`:'';
-  view.innerHTML=`
-    <div class="detail">
-      <button class="back" id="backBtn">${backLabel}</button>
-      <div class="sheetview">
-        ${(p.upcoming||p.recruiting)?`<div class="flag">${p.upcoming?'Upcoming':'Recruiting'}</div>`:''}
-        <span class="aur">${p.aur||p.title}</span>
-        <h2>${p.title}</h2>
-        <span class="eyebrow">${p.eyebrow||''}</span>
-        <p class="lede">${p.blurb||''}</p>
-        ${ss.length?'':'<div class="blankslate">This page is not written yet.</div>'}
-        <div class="rowtools"><button class="tbtn" data-act="page" data-pid="${page}" data-scope="">Edit page</button></div>
-        ${sessions}
-      </div>
-    </div>`;
-  document.getElementById('backBtn').onclick=()=>{page=null;render()};
+        <div class="roster">${ss.map(s => `<div class="pc still">
+          ${bg(s.img)}
+          <span class="txt">
+            <span class="aur">${esc(s.name)}</span>
+            <h3>${esc(s.name)}</h3>
+            ${s.eyebrow ? `<span class="eyebrow">${esc(s.eyebrow)}</span>` : ''}
+          </span></div>`).join('')}</div>
+      </section></div>` : '<div class="blankslate">No sessions logged yet.</div>'}
+    </div>
+  </div>`;
 }
-const flagClass=v=>['Missing','Deceased','Hostile','Uncharted','Lost'].includes(v)?'off':'';
 
-// Search reads the words on a record, not its pictures — an embedded image is
-// a wall of base64 that otherwise matches almost any query.
-const NOSEARCH=['holo','portrait','holoTune'];
-function searchText(i){
-  return Object.entries(i).filter(([k])=>!NOSEARCH.includes(k))
-    .map(([,v])=>typeof v==='string'?v:JSON.stringify(v)).join(' ').toLowerCase();
+function charactersView(){
+  return `<div class="groups"><section>
+    <div class="grouphead"><h2>Player characters</h2></div>
+    <div class="roster">${CHARACTERS.map(i => `
+      <button class="pc" data-go="characters/${slug(i.name)}">
+        ${bg(i.portrait)}
+        <span class="txt">
+          <span class="aur">${esc(i.name)}</span>
+          <h3>${esc(i.name)}</h3>
+          ${i.eyebrow ? `<span class="eyebrow">${esc(i.eyebrow)}</span>` : ''}
+        </span>
+      </button>`).join('')}</div>
+  </section></div>`;
+}
+
+function characterPage(id){
+  const i = CHARACTERS.find(x => slug(x.name) === id); if (!i) return charactersView();
+  const stats = [['Level',i.level],['Campaign',i.campaign]].filter(s => s[1]);
+  return `<div class="detail">
+    <button class="back" data-go="characters">&larr; All characters</button>
+    <div class="sheetview">
+      <div class="head${i.portrait ? '' : ' solo'}">
+        ${i.portrait ? `<div class="portcol"><img src="${i.portrait}" alt=""></div>` : ''}
+        <div class="headtext">
+          <span class="aur">${esc(i.name)}</span>
+          <h2>${esc(i.name)}</h2>
+          ${i.eyebrow ? `<span class="eyebrow">${esc(i.eyebrow)}</span>` : ''}
+          ${i.player ? `<div class="meta">Played by ${esc(i.player)}</div>` : ''}
+          ${i.notes ? `<div class="body"><p>${esc(i.notes)}</p></div>` : ''}
+        </div>
+      </div>
+      ${stats.length ? `<div class="stats">${stats.map(([k,v]) => `<div class="stat">${k}<b>${esc(v)}</b></div>`).join('')}</div>` : ''}
+      ${i.sheet ? `<div class="links"><a class="link" href="${esc(i.sheet)}" target="_blank" rel="noopener">Character Sheet</a></div>` : ''}
+    </div>
+  </div>`;
 }
 
 function render(){
-  const editing=document.body.classList.contains('editing');
-  // an edit-only section keeps its tab hidden while the archive is locked
-  if(DATA[tab]&&DATA[tab].editOnly&&!editing){tab=Object.keys(DATA)[0];detail=null;page=null}
-  [...nav.children].forEach(b=>{
-    b.setAttribute('aria-selected',b.dataset.k===tab);
-    const s=DATA[b.dataset.k];
-    b.style.display=(s&&s.editOnly&&!editing)?'none':'';
-  });
-  syncAddBtn();
-  const sec=DATA[tab], key=sec.filterKey;
-
-  const bar=document.querySelector('.bar');
-
-  if(detail!=null&&sec.items&&sec.items[detail]){
-    const i=sec.items[detail], key2=sec.filterKey;
-    bar.style.display='none';
-    document.querySelector('.editbar').style.visibility='visible';
-    const st=i.stats?Object.entries(i.stats).map(([k2,v])=>
-      `<div class="stat">${k2}<b>${v}</b></div>`).join(''):'';
-    const body=(i.notes||'').split('\n\n').filter(Boolean).map(p=>`<p>${p}</p>`).join('');
-    const links=(i.links||[]).map(l=>
-      `<a class="link" href="${l.url}" ${/^https?:/.test(l.url)?'target="_blank" rel="noopener"':''}>${l.label}</a>`).join('');
-    const hasHolo=!!i.holo;
-    const canHolo=hasHolo||document.body.classList.contains('editing');
-    const appr=canHolo?`<button class="link" id="apprBtn">${hasHolo?'Appearance':'Add appearance'}</button>`:'';
-    const editing=document.body.classList.contains('editing');
-    const isRoster=sec.layout==='roster';
-    // the record page uses the card's own portrait, at the card's proportions
-    const port=isRoster&&i.portrait?i.portrait:'';
-    const hasBadges=!!(i.badges&&i.badges.length);
-    const badgebox=(isRoster&&(hasBadges||editing))?`
-      <div class="badgebox">
-        <div class="cap">Badges</div>
-        ${hasBadges?`<div class="badges">${badgesHTML(i.badges)}</div>`
-          :'<p class="note">No badges awarded yet. They are set from Edit.</p>'}
-      </div>`:'';
-    view.innerHTML=`
-      <div class="detail">
-        <button class="back" id="backBtn">← All ${sec.label}</button>
-        <div class="sheetview">
-          ${key2&&i[key2]?`<div class="flag ${flagClass(i[key2])}">${i[key2]}</div>`:''}
-          <div class="maincol">
-            <div class="head${port?'':' solo'}">
-              ${port?`<div class="portcol"><img src="${port}" alt=""></div>`:''}
-              <div class="headtext">
-                <span class="aur">${i.aur||i.name}</span>
-                <h2>${i.name}</h2>
-                ${i.eyebrow?`<span class="eyebrow">${i.eyebrow}</span>`:''}
-                ${metaLine(i,tab)}
-                <p class="lede">${i.blurb||''}</p>
-                ${body?`<div class="body">${body}</div>`:''}
-              </div>
-            </div>
-            ${st?`<div class="stats">${st}</div>`:''}
-            ${badgebox}
-            ${(links||appr)?`<div class="links">${appr}${links}</div>`:''}
-            <div class="rowtools"><button class="tbtn" data-act="edit" data-i="${detail}">Edit</button><button class="tbtn" data-act="del" data-i="${detail}">Delete</button></div>
-          </div>
-        </div>
-        ${canHolo?`<div class="holostage" id="holoStage"></div>`:''}
-      </div>`;
-    document.getElementById('backBtn').onclick=()=>{detail=null;render()};
-    if(canHolo)wireHologram(i);
-    return;
-  }
-
-  if(sec.layout==='campaigns'){
-    bar.style.display='none';
-    document.querySelector('.editbar').style.visibility='visible';
-    if(page!=null){renderPage('← All campaigns');return}
-    // an empty heading is only shown to an editor, who may be about to fill it
-    view.innerHTML='<div class="camps">'+sec.groups.map((g,gi)=>
-      (!g.entries.length&&!editing)?'':`
-      <section class="group">
-        <div class="grouphead">
-          <h2>${g.title}</h2>
-        </div>
-        ${g.entries.length?`<div class="${g.entries.some(e=>e.size==='feature')?'home':'camprow'}">
-          ${g.entries.map((e,ei)=>tileHTML(e,true,'camp:'+gi+':'+ei)).join('')}
-        </div>`:'<div class="empty">Nothing in this group yet</div>'}
-      </section>`).join('')+'</div>';
-    return;
-  }
-
-  if(sec.layout==='schedule'){
-    bar.style.display='none';
-    document.querySelector('.editbar').style.visibility='visible';
-    renderSchedule();
-    return;
-  }
-
-  // Badge library. Edit mode only, so there is no viewer-facing version.
-  if(sec.layout==='badges'){
-    bar.style.display='none';
-    document.querySelector('.editbar').style.visibility='visible';
-    view.innerHTML=BADGES.length
-      ? '<div class="blib">'+BADGES.map((b,n)=>`
-          <div class="bcard">
-            <span class="sq">${b.img?`<img src="${b.img}" alt="">`:''}</span>
-            <span class="bname">${b.name}</span>
-            <span class="rowtools">
-              <button class="tbtn" data-act="bedit" data-i="${n}">Edit</button>
-              <button class="tbtn" data-act="bdel" data-i="${n}">Delete</button>
-            </span>
-          </div>`).join('')+'</div>'
-      : '<div class="empty">No badges yet — use + New badge</div>';
-    return;
-  }
-
-  if(page!=null&&sec.layout==='home'){
-    bar.style.display='none';
-    document.querySelector('.editbar').style.visibility='visible';
-    renderPage('← Home');
-    return;
-  }
-
-  if(sec.layout==='home'){
-    bar.style.display='none';
-    document.querySelector('.editbar').style.visibility='visible';
-    view.innerHTML='<div class="home hgrid">'+sec.tiles.map((t,ti)=>tileHTML(t,false,'home:'+ti)).join('')+'</div>';
-    if(editing)wireHomeDrag();
-    return;
-  }
-  bar.style.display='flex';
-  document.querySelector('.editbar').style.visibility='visible';
-
-  chips.innerHTML='';
-  if(key){
-    ['All',...new Set(sec.items.map(i=>i[key]))].forEach(v=>{
-      const c=document.createElement('button');
-      c.className='chip'; c.textContent=v; c.setAttribute('aria-pressed',v===filter);
-      c.onclick=()=>{filter=v;render()};
-      chips.appendChild(c);
-    });
-  }
-
-  const term=q.value.toLowerCase();
-  const rows=sec.items.filter(i=>
-    (filter==='All'||i[key]===filter) &&
-    searchText(i).includes(term));
-
-  if(!rows.length){view.innerHTML='<div class="empty">No records match</div>';return}
-
-  if(sec.layout==='log'){
-    view.innerHTML='<div class="log">'+rows.map(i=>{const n=sec.items.indexOf(i);return `
-      <article class="entry">
-        <div class="date">${i.date}</div>
-        <div><h3>${i.name}</h3><p>${i.blurb}</p>
-        <div class="party">Party · ${i.party}</div>
-        <div class="rowtools"><button class="tbtn" data-act="edit" data-i="${n}">Edit</button><button class="tbtn" data-act="del" data-i="${n}">Delete</button></div></div>
-      </article>`}).join('')+'</div>';
-    return;
-  }
-
-  // Roster: player characters first, then everyone the table doesn't play,
-  // the same two-group shape the Campaigns tab uses.
-  if(sec.layout==='roster'){
-    const pcs=rows.filter(i=>i.player), npcs=rows.filter(i=>!i.player);
-    const grp=(title,list)=>!list.length?'':`
-      <section class="group">
-        <div class="grouphead"><h2>${title}</h2></div>
-        <div class="roster">${list.map(i=>rosterCardHTML(i,sec.items.indexOf(i),sec)).join('')}</div>
-      </section>`;
-    view.innerHTML='<div class="groups">'+grp('Player characters',pcs)+grp('Non-player characters',npcs)+'</div>';
-    return;
-  }
-
-  view.innerHTML='<div class="grid">'+rows.map(i=>{
-    const f=key?i[key]:null;
-    const st=i.stats?Object.entries(i.stats).map(([k2,v])=>
-      `<div class="stat">${k2}<b>${v}</b></div>`).join(''):'';
-    return `<article class="card" data-i="${sec.items.indexOf(i)}" tabindex="0">
-      ${f?`<div class="flag ${flagClass(f)}">${f}</div>`:''}
-      <span class="aur">${i.aur||i.name}</span>
-      <h3>${i.name}</h3>
-      <div class="eyebrow">${i.eyebrow||''}</div>
-      ${metaLine(i,tab)}
-      <p>${i.blurb}</p>
-      ${st?`<div class="stats">${st}</div>`:''}
-      <div class="rowtools"><button class="tbtn" data-act="edit" data-i="${sec.items.indexOf(i)}">Edit</button><button class="tbtn" data-act="del" data-i="${sec.items.indexOf(i)}">Delete</button></div>
-    </article>`;
-  }).join('')+'</div>';
+  const { tab, id } = route();
+  [...nav.children].forEach(b => b.setAttribute('aria-selected', b.dataset.k === tab));
+  view.innerHTML =
+    tab === 'campaigns' ? (id ? campaignPage(id) : campaignsView()) :
+    tab === 'characters' ? (id ? characterPage(id) : charactersView()) :
+    homeView();
+  const name = id ? (CAMPAIGNS[id]?.title || CHARACTERS.find(x => slug(x.name) === id)?.name) : null;
+  const label = TABS.find(t => t[0] === tab)[1];
+  document.title = `${name || label} — Star Wars`;
 }
 
-
-/* ============================================================
-   HOLOGRAM
-   Records carry `holo` (the image) and optional `holoTune`.
-   Viewers get the projection. Tuning is edit mode only.
-   ============================================================ */
-const HOLO_KEYS=[
-  ['hue','--h-hue','°',v=>v+'deg',-180,180,1],
-  ['sat','--h-sat','',v=>v,0,8,.1],
-  ['bright','--h-bright','',v=>v,.5,2,.01],
-  ['contrast','--h-contrast','',v=>v,.5,2.5,.01],
-  ['alpha','--h-alpha','',v=>v,.2,1,.01],
-  ['glow','--h-glow','px',v=>v+'px',0,70,1],
-  ['gap','--h-gap','px',v=>v+'px',2,10,1],
-  ['strength','--h-strength','',v=>v,0,.6,.01],
-  ['scan','--h-scan','s',v=>v+'s',.5,8,.1],
-  ['sweep','--h-sweep','s',v=>v+'s',1,12,.1],
-  ['split','--h-split','px',v=>v+'px',0,6,.1]
-];
-const HOLO_DEFAULTS={hue:160,sat:3.4,bright:1.08,contrast:1.25,alpha:.88,glow:26,
-  gap:3,strength:.16,scan:2.4,sweep:4.5,split:1.4,tint:'#7fd8ff'};
-const HOLO_TINTS=[['#7fd8ff','Imperial blue',160],['#8affd6','Signal green',110],
-  ['#ffb020','Archive amber',0],['#ff7a6b','Distress red',-20],['#c9a8ff','Sith violet',210]];
-
-function holoApply(stage,tune){
-  const t={...HOLO_DEFAULTS,...(tune||{})};
-  HOLO_KEYS.forEach(([k,varName,,fmt])=>stage.style.setProperty(varName,fmt(t[k])));
-  stage.style.setProperty('--h-tint',t.tint);
-  return t;
-}
-
-function wireHologram(rec){
-  const stage=document.getElementById('holoStage'), btn=document.getElementById('apprBtn');
-  if(!stage||!btn)return;
-
-  if(!rec.holo){
-    stage.innerHTML=`
-      <div class="holoempty">
-        <label class="ebtn" for="holoPick">Choose an image</label>
-        <input type="file" id="holoPick" accept="image/*" style="display:none">
-        <p class="note">A portrait on a dark background projects best. It is stored inside the page and can be tuned once loaded.</p>
-      </div>`;
-    document.getElementById('holoPick').onchange=e=>{
-      const f=e.target.files[0]; if(!f)return;
-      stage.querySelector('.note').textContent='Processing…';
-      holoProcess(f,data=>{rec.holo=data;markDirty();render();
-        setTimeout(()=>{const b=document.getElementById('apprBtn');if(b)b.click()},60);});
-    };
-    btn.onclick=()=>{
-      const open=stage.classList.toggle('open');
-      btn.textContent=open?'Cancel':'Add appearance';
-    };
-    return;
-  }
-
-  const url=rec.holo;
-  stage.innerHTML=`
-    <div class="rig">
-      <div class="holo">
-        <div class="layer bloom"><img src="${url}" alt=""></div>
-        <div class="layer base"><img src="${url}" alt=""></div>
-        <div class="layer split-a"><img src="${url}" alt=""></div>
-        <div class="layer split-b"><img src="${url}" alt=""></div>
-        <div class="layer scan mask"></div>
-        <div class="layer sweep mask"></div>
-        <img src="${url}" alt="" style="visibility:hidden">
-      </div>
-    </div>
-    <div class="emitter"><span class="cone"></span><span class="disc"></span></div>
-    <div class="holotune" id="holoTune"></div>`;
-  stage.querySelectorAll('.mask').forEach(el=>{
-    el.style.webkitMaskImage=`url('${url}')`;
-    el.style.maskImage=`url('${url}')`;
-  });
-  const tune=holoApply(stage,rec.holoTune);
-
-  btn.onclick=()=>{
-    const open=stage.classList.toggle('open');
-    btn.textContent=open?'Hide appearance':'Appearance';
-    if(open)stage.scrollIntoView({behavior:'smooth',block:'nearest'});
-  };
-
-  /* tuning controls, only rendered for an unlocked editor */
-  if(!document.body.classList.contains('editing'))return;
-  const panel=document.getElementById('holoTune');
-  panel.innerHTML=`
-    <div class="swatches">${HOLO_TINTS.map(([hex,name])=>
-      `<button class="sw" data-hex="${hex}" title="${name}" style="background:${hex}"
-        aria-pressed="${hex===tune.tint}"></button>`).join('')}</div>
-    <div class="grid2">${HOLO_KEYS.map(([k,,unit,,min,max,step])=>
-      `<div class="row"><label>${k} <b id="ht-v-${k}">${tune[k]}${unit}</b></label>
-       <input type="range" id="ht-${k}" min="${min}" max="${max}" step="${step}" value="${tune[k]}"></div>`).join('')}</div>
-    <div class="acts">
-      <button class="ebtn" id="htSave">Save appearance</button>
-      <button class="ebtn ghost" id="htReset">Reset</button>
-      <button class="ebtn ghost" id="htRemove">Remove image</button>
-    </div>`;
-  const current={...tune};
-  HOLO_KEYS.forEach(([k,varName,unit,fmt])=>{
-    const el=document.getElementById('ht-'+k), out=document.getElementById('ht-v-'+k);
-    el.addEventListener('input',()=>{
-      current[k]=+el.value;
-      stage.style.setProperty(varName,fmt(el.value));
-      out.textContent=el.value+unit;
-    });
-  });
-  panel.querySelectorAll('.sw').forEach(b=>b.onclick=()=>{
-    current.tint=b.dataset.hex;
-    stage.style.setProperty('--h-tint',current.tint);
-    panel.querySelectorAll('.sw').forEach(x=>x.setAttribute('aria-pressed',x===b));
-  });
-  document.getElementById('htSave').onclick=()=>{
-    rec.holoTune={...current}; markDirty();
-    document.getElementById('htSave').textContent='Saved';
-    setTimeout(()=>{const b=document.getElementById('htSave');if(b)b.textContent='Save appearance'},1400);
-  };
-  document.getElementById('htReset').onclick=()=>{
-    delete rec.holoTune; markDirty(); render();
-  };
-  document.getElementById('htRemove').onclick=()=>{
-    if(!confirm('Remove the hologram image from this record?'))return;
-    delete rec.holo; delete rec.holoTune; markDirty(); render();
-  };
-}
-
-/* Downscale an upload, keeping transparency intact.
-   The masks and blending both rely on the alpha channel, so a PNG cutout
-   must stay a PNG cutout — flattening it onto black produces a lit rectangle. */
-function holoProcess(file,cb){
-  const r=new FileReader();
-  r.onload=()=>{
-    const img=new Image();
-    img.onload=()=>{
-      const max=900, sc=Math.min(1,max/img.width);
-      const c=document.createElement('canvas');
-      c.width=Math.round(img.width*sc); c.height=Math.round(img.height*sc);
-      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
-      cb(c.toDataURL('image/png'));
-    };
-    img.src=r.result;
-  };
-  r.readAsDataURL(file);
-}
-
-/* ============================================================
-   EDIT LAYER
-   Unlock: press Ctrl + Shift + E, then enter the password.
-   Password: carmen
-   To change it, replace PASS_HASH below with the SHA-256 hash
-   of your new password (any "sha256 online" tool will give it).
-   ============================================================ */
-const PASS_HASH="f3c2ce176290b0c384cb4881eb714f2db58f630c33863d91c9bedf58d36007db";
-const REPO_OWNER="larlesienne-farandole";
-const REPO_NAME="StarWarsDnD";
-const FILE_PATH="index.html";
-
-const veil=document.getElementById('veil'), sheet=document.getElementById('sheet'),
-      dirtyFlag=document.getElementById('dirtyFlag');
-let dirty=false;
-
-async function sha256(t){
-  const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));
-  return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
-}
-const esc=t=>String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-function openSheet(html,bare){sheet.innerHTML=html;sheet.classList.toggle('bare',!!bare);
-  veil.classList.add('open');
-  const f=sheet.querySelector('input,textarea,select');if(f)f.focus()}
-function closeSheet(){veil.classList.remove('open');sheet.classList.remove('bare');sheet.innerHTML=''}
-veil.addEventListener('mousedown',e=>{if(e.target===veil)closeSheet()});
-document.addEventListener('keydown',e=>{
-  if(e.key==='Escape')closeSheet();
-  if(e.ctrlKey&&e.shiftKey&&(e.key==='E'||e.key==='e')){e.preventDefault();promptUnlock()}
+view.addEventListener('click', e => {
+  const el = e.target.closest('[data-go]'); if (!el) return;
+  const [tab, id] = el.dataset.go.split('/');
+  go(tab, id); window.scrollTo(0, 0);
 });
-function markDirty(){dirty=true;dirtyFlag.textContent='Unsaved changes'}
+window.addEventListener('hashchange', render);
 
-/* ---- unlock ---- */
-function promptUnlock(){
-  if(document.body.classList.contains('editing'))return;
-  openSheet(`
-    <div class="lock">
-      <input type="password" id="pw" autocomplete="off" aria-label="Passphrase">
-      <div class="actions">
-        <button class="ebtn" id="pwGo">Unlock</button>
-        <button class="ebtn ghost" id="pwNo">Cancel</button>
-      </div>
-      <p class="lockerr" id="pwErr"></p>
-    </div>`,true);
-  const go=async()=>{
-    const v=document.getElementById('pw').value;
-    if(await sha256(v)===PASS_HASH){document.body.classList.add('editing');closeSheet();render()}
-    else document.getElementById('pwErr').textContent='Passphrase not recognised.';
-  };
-  document.getElementById('pwGo').onclick=go;
-  document.getElementById('pwNo').onclick=closeSheet;
-  document.getElementById('pw').onkeydown=e=>{if(e.key==='Enter')go()};
-}
-
-/* ---- record form ---- */
-function recordForm(secKey,index){
-  const sec=DATA[secKey], isLog=sec.layout==='log', key=sec.filterKey;
-  const isRoster=sec.layout==='roster';
-  const it=index==null?{}:sec.items[index];
-  const opts=key?[...new Set(sec.items.map(i=>i[key]).filter(Boolean))]:[];
-  const st=it.stats?Object.entries(it.stats):[];
-  const lk=it.links||[];
-  const linkRow=(i)=>`<div class="trio">
-      <div class="field"><label>Link ${i+1} label</label><input id="ll${i}" value="${esc(lk[i]?lk[i].label:'')}"></div>
-      <div class="field"><label>URL</label><input id="lu${i}" value="${esc(lk[i]?lk[i].url:'')}"></div>
-    </div>`;
-  const statRow=(i)=>`<div class="trio">
-      <div class="field"><label>Stat ${i+1} label</label><input id="sl${i}" value="${esc(st[i]?st[i][0]:'')}"></div>
-      <div class="field"><label>Value</label><input id="sv${i}" value="${esc(st[i]?st[i][1]:'')}"></div>
-    </div>`;
-  // Badges come from the library on the Badges tab, nowhere else.
-  const held=it.badges||[];
-  const badgeBlock=!isRoster?'':`
-    <div class="field"><label>Badges</label>
-      <div class="badgepick">${BADGES.map((b,n)=>
-        `<label class="tog"><input type="checkbox" id="bg${n}" ${held.includes(b.id)?'checked':''}> ${esc(b.name)}</label>`).join('')
-        ||'<span class="note">None made yet. They are created on the Badges tab.</span>'}</div>
-      <p class="note">Shown as squares on the record page. Hovering one names it.</p></div>`;
-  const portraitBlock=!isRoster?'':`
-    <div class="field"><label>Portrait</label>
-      <input id="f_portrait" value="${esc(it.portrait)}" placeholder="images/name-portrait.jpg — or upload below">
-      <p class="note">Appears on the Characters tab card on hover. Left blank, the card stays black.</p></div>
-    <div class="field"><label>Upload a portrait</label><input type="file" id="f_portfile" accept="image/*"></div>`;
-  openSheet(`
-    <h2>${index==null?'New':'Edit'} ${esc(sec.label)} record</h2>
-    <p class="hint">Blank fields are simply left off the card.</p>
-    ${isLog?`
-      <div class="field"><label>Date</label><input id="f_date" value="${esc(it.date)}" placeholder="12 · 07 · 26"></div>
-      <div class="field"><label>Title</label><input id="f_name" value="${esc(it.name)}"></div>
-      <div class="field"><label>Party</label><input id="f_party" value="${esc(it.party)}"></div>
-      <div class="field"><label>Summary</label><textarea id="f_blurb">${esc(it.blurb)}</textarea></div>
-    `:`
-      <div class="field"><label>Name</label><input id="f_name" value="${esc(it.name)}"></div>
-      <div class="field"><label>Subtitle</label><input id="f_eyebrow" value="${esc(it.eyebrow)}" placeholder="Twi'lek · Scoundrel"></div>
-      <div class="field"><label>Aurebesh line</label><input id="f_aur" value="${esc(it.aur)}" placeholder="Defaults to the name"></div>
-      ${key?`<div class="field"><label>Status</label><input id="f_key" list="statusList" value="${esc(it[key])}">
-        <datalist id="statusList">${opts.map(o=>`<option value="${esc(o)}">`).join('')}</datalist></div>`:''}
-      ${isRoster?`<div class="field"><label>Player — leave blank for an NPC</label><input id="f_player" value="${esc(it.player)}"></div>`:''}
-      <div class="field"><label>Description</label><textarea id="f_blurb">${esc(it.blurb)}</textarea></div>
-      ${statRow(0)}${statRow(1)}${statRow(2)}
-      <div class="field"><label>Full notes (blank line between paragraphs)</label><textarea id="f_notes">${esc(it.notes)}</textarea></div>
-      ${linkRow(0)}${linkRow(1)}${linkRow(2)}
-      ${badgeBlock}
-      ${portraitBlock}
-      <div class="field"><label>Hologram image ${it.holo?'· one loaded':''}</label>
-        <input type="file" id="f_holo" accept="image/*"></div>
-    `}
-    <div class="actions">
-      <button class="ebtn" id="recSave">Save record</button>
-      <button class="ebtn ghost" id="recCancel">Cancel</button>
-    </div>
-    <p class="note" id="recMsg">Uploads are scaled down here and moved into images/ when you publish.</p>`);
-  let pendingHolo=null;
-  const holoInput=document.getElementById('f_holo');
-  if(holoInput)holoInput.onchange=e=>{
-    const f=e.target.files[0]; if(!f)return;
-    holoProcess(f,data=>{pendingHolo=data});
-  };
-  // Portraits are photographs rather than cutouts, so they are flattened to
-  // JPEG — the same treatment the campaign thumbnails get.
-  const portInput=document.getElementById('f_portfile');
-  if(portInput)portInput.onchange=e=>{
-    const f=e.target.files[0]; if(!f)return;
-    const msg=document.getElementById('recMsg');
-    msg.textContent='Processing portrait…';
-    const img=new Image();
-    img.onload=()=>{
-      const max=900, sc=Math.min(1,max/img.width);
-      const c=document.createElement('canvas');
-      c.width=Math.round(img.width*sc); c.height=Math.round(img.height*sc);
-      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
-      const data=c.toDataURL('image/jpeg',0.74);
-      document.getElementById('f_portrait').value=data;
-      msg.textContent='Portrait ready. '+Math.round(data.length/1400)+' KB once saved.';
-      URL.revokeObjectURL(img.src);
-    };
-    img.onerror=()=>{msg.textContent='That file could not be read as an image.'};
-    img.src=URL.createObjectURL(f);
-  };
-  document.getElementById('recCancel').onclick=closeSheet;
-  document.getElementById('recSave').onclick=()=>{
-    const val=id=>{const el=document.getElementById(id);return el?el.value.trim():''};
-    const rec={};
-    if(isLog){
-      rec.date=val('f_date'); rec.name=val('f_name'); rec.party=val('f_party'); rec.blurb=val('f_blurb');
-    }else{
-      rec.name=val('f_name');
-      if(val('f_eyebrow'))rec.eyebrow=val('f_eyebrow');
-      if(val('f_aur'))rec.aur=val('f_aur');
-      if(key&&val('f_key'))rec[key]=val('f_key');
-      if(val('f_player'))rec.player=val('f_player');
-      rec.blurb=val('f_blurb');
-      const stats={};
-      for(let i=0;i<3;i++){const l=val('sl'+i),v=val('sv'+i);if(l)stats[l]=v}
-      if(Object.keys(stats).length)rec.stats=stats;
-      if(val('f_notes'))rec.notes=val('f_notes');
-      const links=[];
-      for(let i=0;i<3;i++){const l=val('ll'+i),u=val('lu'+i);if(l)links.push({label:l,url:u||'#'})}
-      if(links.length)rec.links=links;
-      if(isRoster){
-        const badges=[];
-        BADGES.forEach((b,n)=>{const el=document.getElementById('bg'+n);if(el&&el.checked)badges.push(b.id)});
-        if(badges.length)rec.badges=badges;
-        if(val('f_portrait'))rec.portrait=val('f_portrait');
-      }
-      const holo=pendingHolo||it.holo;
-      if(holo)rec.holo=holo;
-      if(it.holoTune)rec.holoTune=it.holoTune;
-    }
-    if(!rec.name){alert('A name is required.');return}
-    if(index==null)sec.items.unshift(rec); else sec.items[index]=rec;
-    markDirty(); closeSheet(); render();
-  };
-}
-
-// Resolve which tile object a scope string points at, so the footer text
-// (e.g. "1 session" / "3 seats open") can be edited per placement. The same
-// campaign can sit on the home page and in the campaigns list with different
-// footers, so they are stored on the tile, not on the shared page record.
-function tileFromScope(scope){
-  if(!scope)return null;
-  const p=scope.split(':');
-  if(p[0]==='home')return (DATA.home&&DATA.home.tiles||[])[+p[1]]||null;
-  if(p[0]==='camp'){
-    const g=(DATA.campaigns&&DATA.campaigns.groups||[])[+p[1]];
-    return g?(g.entries||[])[+p[2]]||null:null;
-  }
-  return null;
-}
-
-// Build a URL-safe, readable id from a title, kept unique against PAGES.
-function makePid(title){
-  let base=(title||'campaign').toLowerCase()
-    .replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,40)||'campaign';
-  let pid=base,k=2;
-  while(PAGES[pid])pid=`${base}-${k++}`;
-  return pid;
-}
-
-// New campaigns are a Campaigns-tab concern only; the home page is curated
-// by hand and is never touched here.
-function newCampaignForm(){
-  const groups=(DATA.campaigns&&DATA.campaigns.groups)||[];
-  if(!groups.length){alert('No campaign groups exist to add to.');return}
-  const defaultGroup=Math.min(1,groups.length-1);   // prefer "Side campaigns"
-  openSheet(`
-    <h2>New campaign</h2>
-    <p class="hint">Added to the Campaigns tab. The home page is left alone.</p>
-    <div class="field"><label>Title</label><input id="n_title" placeholder="Coruscant Guard"></div>
-    <div class="field"><label>Subtitle</label><input id="n_eyebrow" placeholder="One shot · Upcoming"></div>
-    <div class="field"><label>Description</label><textarea id="n_blurb"></textarea></div>
-    <div class="field"><label>Group</label>
-      <select id="n_group">${groups.map((g,i)=>
-        `<option value="${i}" ${i===defaultGroup?'selected':''}>${g.title}</option>`).join('')}</select></div>
-    <div class="trio">
-      <div class="field"><label>Footer left</label><input id="n_footL" placeholder="1 session"></div>
-      <div class="field"><label>Footer right</label><input id="n_footR" placeholder="3 seats open"></div>
-    </div>
-    <div class="field"><label>Tags</label>
-      <div class="toggles">
-        <label class="tog"><input type="checkbox" id="n_up"> Upcoming</label>
-        <label class="tog"><input type="checkbox" id="n_rec"> Recruiting</label>
-      </div>
-    </div>
-    <div class="field"><label>Custom tags — comma separated</label>
-      <input id="n_tags" placeholder="One shot, Tactical"></div>
-    <div class="actions">
-      <button class="ebtn" id="nSave">Create campaign</button>
-      <button class="ebtn ghost" id="nCancel">Cancel</button>
-    </div>
-    <p class="note">You can add a thumbnail straight after, from the tile's Edit control.</p>`);
-  document.getElementById('nCancel').onclick=closeSheet;
-  document.getElementById('nSave').onclick=()=>{
-    const v=id=>document.getElementById(id).value.trim();
-    const title=v('n_title');
-    if(!title){alert('A title is required.');return}
-    const pid=makePid(title);
-    const ntags=v('n_tags').split(',').map(s=>s.trim()).filter(Boolean);
-    PAGES[pid]={
-      title, eyebrow:v('n_eyebrow'), blurb:v('n_blurb'),
-      ...(ntags.length?{tags:ntags}:{}),
-      ...(document.getElementById('n_up').checked?{upcoming:true}:{}),
-      ...(document.getElementById('n_rec').checked?{recruiting:true}:{})
-    };
-    const gi=+document.getElementById('n_group').value;
-    const entry={pid};
-    if(v('n_footL'))entry.footL=v('n_footL');
-    if(v('n_footR'))entry.footR=v('n_footR');
-    groups[gi].entries.push(entry);
-    markDirty(); closeSheet(); render();
-  };
-}
-
-// Remove a campaign from the Campaigns tab. The shared page record is only
-// discarded once nothing else points at it, so a home tile can never be orphaned.
-function removeCampaign(scope,pid){
-  const parts=String(scope||'').split(':');
-  if(parts[0]!=='camp')return;
-  const groups=(DATA.campaigns&&DATA.campaigns.groups)||[];
-  const g=groups[+parts[1]]; if(!g)return;
-  const title=(PAGES[pid]&&PAGES[pid].title)||pid;
-  if(!confirm(`Remove "${title}" from the Campaigns tab?`))return;
-  g.entries.splice(+parts[2],1);
-
-  const stillUsed=
-    ((DATA.home&&DATA.home.tiles)||[]).some(t=>t.pid===pid) ||
-    groups.some(gr=>gr.entries.some(e=>e.pid===pid));
-  if(!stillUsed)delete PAGES[pid];
-
-  markDirty(); closeSheet(); render();
-}
-
-function pageForm(pid,scope){
-  const p=PAGES[pid]||{};
-  const tile=tileFromScope(scope)||{};
-  // a campaign placement can be moved between the groups on the Campaigns tab
-  const parts=String(scope||'').split(':');
-  const cgroups=(DATA.campaigns&&DATA.campaigns.groups)||[];
-  const inCamp=parts[0]==='camp';
-  const groupSel=!inCamp?'':`
-    <div class="field"><label>Group</label>
-      <select id="p_group">${cgroups.map((g,i)=>
-        `<option value="${i}" ${i===+parts[1]?'selected':''}>${esc(g.title)}</option>`).join('')}</select>
-      <p class="note">Moves this campaign to another heading on the Campaigns tab.</p></div>`;
-  openSheet(`
-    <h2>Edit tile</h2>
-    <p class="hint">Shared by the home page and the campaigns list.</p>
-    <div class="field"><label>Title</label><input id="p_title" value="${esc(p.title)}"></div>
-    <div class="field"><label>Subtitle</label><input id="p_eyebrow" value="${esc(p.eyebrow)}"></div>
-    <div class="field"><label>Aurebesh line</label><input id="p_aur" value="${esc(p.aur)}" placeholder="Defaults to the title">
-      <p class="note">Written in Latin letters and displayed in Aurebesh. Leave blank to use the title.</p></div>
-    <div class="field"><label>Description</label><textarea id="p_blurb">${esc(p.blurb)}</textarea></div>
-    <div class="field"><label>Clicking this tile</label>
-      <select id="p_goto">
-        <option value="" ${!p.goto?'selected':''}>Opens its own page</option>
-        ${Object.entries(DATA).filter(([,s])=>!s.editOnly).map(([k,s])=>
-          `<option value="${k}" ${p.goto===k?'selected':''}>Goes to the ${esc(s.label)} tab</option>`).join('')}
-        <optgroup label="Pages">
-          ${Object.entries(PAGES).filter(([k])=>k!==pid).map(([k,pg])=>
-            `<option value="page:${k}" ${p.goto==='page:'+k?'selected':''}>Opens the "${esc(pg.title||k)}" page</option>`).join('')}
-        </optgroup>
-        <option value="link" ${p.goto&&p.goto.startsWith('link:')?'selected':''}>Opens a link</option>
-      </select></div>
-    <div class="field" id="p_linkWrap" ${p.goto&&p.goto.startsWith('link:')?'':'style="display:none"'}>
-      <label>Link URL</label>
-      <input id="p_link" value="${p.goto&&p.goto.startsWith('link:')?esc(p.goto.slice(5)):''}" placeholder="https://example.com">
-      <p class="note">Opens in a new tab.</p></div>
-    <div class="field"><label>Corner label — this placement only</label>
-      <input id="p_label" value="${esc(tile.label)}" placeholder="Leave blank for none">
-      <p class="note">Small line above the aurebesh, in the tile's top corner.</p></div>
-    ${groupSel}
-    <div class="trio">
-      <div class="field"><label>Footer left</label><input id="p_footL" value="${esc(tile.footL)}" placeholder="3 sessions"></div>
-      <div class="field"><label>Footer right</label><input id="p_footR" value="${esc(tile.footR)}" placeholder="2 seats open"></div>
-    </div>
-    <div class="field"><label>Thumbnail — this placement only</label>
-      <input id="p_timg" value="${tile.img!==undefined?esc(tile.img):''}" placeholder="Leave blank to use the shared thumbnail">
-      <p class="note">Applies to this tile alone, so the Campaigns tab and the home page can differ.</p></div>
-    <div class="field"><label>Upload a thumbnail for this placement</label><input type="file" id="p_file" accept="image/*"></div>
-    <div class="field"><label>Shared thumbnail</label>
-      <input id="p_img" value="${esc(p.img)}" placeholder="Used wherever no placement thumbnail is set"></div>
-    <div class="field"><label>Tags</label>
-      <div class="toggles">
-        <label class="tog"><input type="checkbox" id="p_feat" ${p.featured?'checked':''}> Featured</label>
-        <label class="tog"><input type="checkbox" id="p_up" ${p.upcoming?'checked':''}> Upcoming</label>
-        <label class="tog"><input type="checkbox" id="p_rec" ${p.recruiting?'checked':''}> Recruiting</label>
-      </div>
-    </div>
-    <div class="field"><label>Custom tags — comma separated</label>
-      <input id="p_tags" value="${esc((p.tags||[]).join(', '))}" placeholder="One shot, Tactical, Hutt Space">
-      <p class="note">Sit next to the built-in three, in the order typed.</p></div>
-    <div class="actions">
-      <button class="ebtn" id="pgSave">Save tile</button>
-      <button class="ebtn ghost" id="pgClear">Clear thumbnail</button>
-      ${String(scope||'').startsWith('camp:')?'<button class="ebtn ghost" id="pgDel">Remove campaign</button>':''}
-      <button class="ebtn ghost" id="pgCancel">Cancel</button>
-    </div>
-    <p class="note" id="pgMsg">Uploaded thumbnails are scaled down, then moved into images/ when you publish.</p>`);
-  const msg=document.getElementById('pgMsg');
-  document.getElementById('p_goto').onchange=e=>{
-    document.getElementById('p_linkWrap').style.display=e.target.value==='link'?'':'none';
-  };
-  document.getElementById('p_file').onchange=e=>{
-    const f=e.target.files[0]; if(!f)return;
-    msg.textContent='Processing image…';
-    const img=new Image();
-    img.onload=()=>{
-      const max=1400, sc=Math.min(1,max/img.width);
-      const c=document.createElement('canvas');
-      c.width=Math.round(img.width*sc); c.height=Math.round(img.height*sc);
-      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
-      const data=c.toDataURL('image/jpeg',0.72);
-      document.getElementById(scope?'p_timg':'p_img').value=data;
-      msg.textContent='Image ready. '+Math.round(data.length/1400)+' KB once saved.';
-      URL.revokeObjectURL(img.src);
-    };
-    img.onerror=()=>{msg.textContent='That file could not be read as an image.'};
-    img.src=URL.createObjectURL(f);
-  };
-  document.getElementById('pgCancel').onclick=closeSheet;
-  document.getElementById('pgClear').onclick=()=>{
-    document.getElementById(scope?'p_timg':'p_img').value='';
-    msg.textContent='Thumbnail cleared. Save to apply.';
-  };
-  const delBtn=document.getElementById('pgDel');
-  if(delBtn)delBtn.onclick=()=>removeCampaign(scope,pid);
-  document.getElementById('pgSave').onclick=()=>{
-    const v=id=>document.getElementById(id).value.trim();
-    const tags=v('p_tags').split(',').map(s=>s.trim()).filter(Boolean);
-    PAGES[pid]={
-      // sessions are edited on the page itself, so they survive a tile edit
-      ...(p.sessions?{sessions:p.sessions}:{}),
-      title:v('p_title'), eyebrow:v('p_eyebrow'), blurb:v('p_blurb'),
-      ...(v('p_aur')?{aur:v('p_aur')}:{}),
-      ...(v('p_img')?{img:v('p_img')}:{}),
-      ...(v('p_goto')==='link'?(v('p_link')?{goto:'link:'+v('p_link')}:{}):(v('p_goto')?{goto:v('p_goto')}:{})),
-      ...(tags.length?{tags}:{}),
-      ...(document.getElementById('p_feat').checked?{featured:true}:{}),
-      ...(document.getElementById('p_up').checked?{upcoming:true}:{}),
-      ...(document.getElementById('p_rec').checked?{recruiting:true}:{})
-    };
-    const t=tileFromScope(scope);
-    if(t){
-      const L=v('p_footL'), R=v('p_footR');
-      if(L)t.footL=L; else delete t.footL;
-      if(R)t.footR=R; else delete t.footR;
-      const lb=v('p_label');
-      if(lb)t.label=lb; else delete t.label;
-      // an empty placement field means "inherit the shared thumbnail"
-      const ti=v('p_timg');
-      if(ti)t.img=ti; else delete t.img;
-      // moving groups is a splice out and a push in, so the tile keeps
-      // its own footers and thumbnail
-      const gsel=document.getElementById('p_group');
-      if(gsel&&+gsel.value!==+parts[1]){
-        const from=cgroups[+parts[1]], to=cgroups[+gsel.value];
-        if(from&&to){
-          const moved=from.entries.splice(+parts[2],1)[0];
-          if(moved)to.entries.push(moved);
-        }
-      }
-    }
-    markDirty(); closeSheet(); render();
-  };
-}
-
-/* ---- sessions on a page ---- */
-function sessionForm(index){
-  const p=PAGES[page]; if(!p)return;
-  const list=p.sessions||[];
-  const s=index==null?{}:list[index]||{};
-  openSheet(`
-    <h2>${index==null?'New':'Edit'} session</h2>
-    <p class="hint">Sits under <b>${esc(p.title||page)}</b>. Sessions are a record only — they don't open a page.</p>
-    <div class="field"><label>Title</label><input id="s_name" value="${esc(s.name)}" placeholder="The Alba-16 Job"></div>
-    <div class="field"><label>Subtitle</label><input id="s_eyebrow" value="${esc(s.eyebrow)}" placeholder="Session 01 · 12 · 07 · 26"></div>
-    <div class="field"><label>Aurebesh line</label><input id="s_aur" value="${esc(s.aur)}" placeholder="Defaults to the title"></div>
-    <div class="field"><label>Image</label>
-      <input id="s_img" value="${esc(s.img)}" placeholder="images/alba-16-job.jpg — or upload below">
-      <p class="note">Shows on hover, like a character portrait. Left blank, the card stays black.</p></div>
-    <div class="field"><label>Upload an image</label><input type="file" id="s_file" accept="image/*"></div>
-    <div class="actions">
-      <button class="ebtn" id="sSave">Save session</button>
-      <button class="ebtn ghost" id="sClear">Clear image</button>
-      <button class="ebtn ghost" id="sCancel">Cancel</button>
-    </div>
-    <p class="note" id="sMsg">Uploads are scaled down here and moved into images/ when you publish.</p>`);
-  const msg=document.getElementById('sMsg');
-  document.getElementById('s_file').onchange=e=>{
-    const f=e.target.files[0]; if(!f)return;
-    msg.textContent='Processing image…';
-    const img=new Image();
-    img.onload=()=>{
-      const max=900, sc=Math.min(1,max/img.width);
-      const c=document.createElement('canvas');
-      c.width=Math.round(img.width*sc); c.height=Math.round(img.height*sc);
-      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
-      const data=c.toDataURL('image/jpeg',0.74);
-      document.getElementById('s_img').value=data;
-      msg.textContent='Image ready. '+Math.round(data.length/1400)+' KB once saved.';
-      URL.revokeObjectURL(img.src);
-    };
-    img.onerror=()=>{msg.textContent='That file could not be read as an image.'};
-    img.src=URL.createObjectURL(f);
-  };
-  document.getElementById('sClear').onclick=()=>{
-    document.getElementById('s_img').value=''; msg.textContent='Image cleared. Save to apply.';
-  };
-  document.getElementById('sCancel').onclick=closeSheet;
-  document.getElementById('sSave').onclick=()=>{
-    const v=id=>document.getElementById(id).value.trim();
-    const name=v('s_name');
-    if(!name){alert('A title is required.');return}
-    const rec={name};
-    if(v('s_eyebrow'))rec.eyebrow=v('s_eyebrow');
-    if(v('s_aur'))rec.aur=v('s_aur');
-    if(v('s_img'))rec.img=v('s_img');
-    if(!p.sessions)p.sessions=[];
-    if(index==null)p.sessions.push(rec); else p.sessions[index]=rec;
-    markDirty(); closeSheet(); render();
-  };
-}
-function deleteSession(index){
-  const p=PAGES[page]; if(!p||!p.sessions)return;
-  const s=p.sessions[index]; if(!s)return;
-  if(!confirm(`Delete the session "${s.name}"?`))return;
-  p.sessions.splice(index,1);
-  if(!p.sessions.length)delete p.sessions;
-  markDirty(); render();
-}
-
-/* ---- badge library ---- */
-function badgeImgProcess(file,cb){
-  const r=new FileReader();
-  r.onload=()=>{
-    const img=new Image();
-    img.onload=()=>{
-      const max=320, sc=Math.min(1,max/Math.max(img.width,img.height));
-      const c=document.createElement('canvas');
-      c.width=Math.round(img.width*sc); c.height=Math.round(img.height*sc);
-      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
-      cb(c.toDataURL('image/png'));   // PNG, so cut-out badges keep their edges
-    };
-    img.src=r.result;
-  };
-  r.readAsDataURL(file);
-}
-function badgeForm(index){
-  const b=index==null?{}:BADGES[index];
-  openSheet(`
-    <h2>${index==null?'New':'Edit'} badge</h2>
-    <p class="hint">Made here, awarded from a character's own record.</p>
-    <div class="field"><label>Name</label><input id="b_name" value="${esc(b.name)}" placeholder="First Blood"></div>
-    <div class="field"><label>Image</label>
-      <input id="b_img" value="${esc(b.img)}" placeholder="images/first-blood-badge.png"></div>
-    <div class="field"><label>Upload an image</label><input type="file" id="b_file" accept="image/*"></div>
-    <div class="actions">
-      <button class="ebtn" id="bSave">Save badge</button>
-      <button class="ebtn ghost" id="bClear">Clear image</button>
-      <button class="ebtn ghost" id="bCancel">Cancel</button>
-    </div>
-    <p class="note" id="bMsg">Square images sit best in the 54px square. Uploads move into images/ when you publish.</p>`);
-  const msg=document.getElementById('bMsg');
-  document.getElementById('b_file').onchange=e=>{
-    const f=e.target.files[0]; if(!f)return;
-    msg.textContent='Processing image…';
-    badgeImgProcess(f,data=>{
-      document.getElementById('b_img').value=data;
-      msg.textContent='Image ready. '+Math.round(data.length/1400)+' KB once saved.';
-    });
-  };
-  document.getElementById('bClear').onclick=()=>{
-    document.getElementById('b_img').value=''; msg.textContent='Image cleared. Save to apply.';
-  };
-  document.getElementById('bCancel').onclick=closeSheet;
-  document.getElementById('bSave').onclick=()=>{
-    const v=id=>document.getElementById(id).value.trim();
-    const name=v('b_name');
-    if(!name){alert('A name is required.');return}
-    if(index==null)BADGES.push({id:makeBadgeId(name),name,img:v('b_img')});
-    else BADGES[index]={...BADGES[index],name,img:v('b_img')};
-    markDirty(); closeSheet(); render();
-  };
-}
-function deleteBadge(index){
-  const b=BADGES[index]; if(!b)return;
-  if(!confirm(`Delete the badge "${b.name}"? It comes off every character that holds it.`))return;
-  BADGES.splice(index,1);
-  Object.values(DATA).forEach(s=>(s.items||[]).forEach(rec=>{
-    if(!rec.badges)return;
-    rec.badges=rec.badges.filter(x=>x!==b.id);
-    if(!rec.badges.length)delete rec.badges;
-  }));
-  markDirty(); render();
-}
-
-function deleteRecord(secKey,index){
-  const sec=DATA[secKey];
-  if(!confirm('Delete "'+sec.items[index].name+'"? This cannot be undone until you reload without publishing.'))return;
-  sec.items.splice(index,1); detail=null; markDirty(); render();
-}
-
-/* ---- serialise DATA back into the file ---- */
-function serialiseData(){
-  return 'const DATA = '+JSON.stringify(DATA,null,2)+';\n\nconst PAGES = '+JSON.stringify(PAGES,null,2)+';'
-    +'\n\n/* Badge library — made by hand from the Badges tab in edit mode. */\nconst BADGES = '
-    +JSON.stringify(BADGES,null,2)+';';
-}
-function rebuildFile(sourceText){
-  const start=sourceText.indexOf('const DATA = {');
-  const end=sourceText.indexOf('/* ========================= end data ========================= */');
-  if(start<0||end<0)throw new Error('Could not locate the data block in the file.');
-  return sourceText.slice(0,start)+serialiseData()+'\n'+sourceText.slice(end);
-}
-
-/* ---- download ---- */
-async function downloadFile(){
-  const res=await fetch(location.href,{cache:'no-store'});
-  const txt=rebuildFile(await res.text());
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([txt],{type:'text/html'}));
-  a.download='index.html'; a.click(); URL.revokeObjectURL(a.href);
-}
-
-/* ---- publish straight to GitHub ---- */
-
-/* ============================================================
-   IMAGE EXTERNALISATION
-   Holograms used to be embedded as data: URLs inside the records,
-   which bloated index.html past GitHub's 1 MB inline limit. These
-   helpers move any embedded image out to an images/ file and leave
-   only a short path behind. Runs automatically at publish time, so
-   existing embedded holograms migrate themselves on the next publish.
-   ============================================================ */
-
-// base64 body <-> bytes, chunked so large images never overflow the call stack
-function b64ToBytes(b64){
-  const raw=atob(b64);
-  const arr=new Uint8Array(raw.length);
-  for(let i=0;i<raw.length;i++)arr[i]=raw.charCodeAt(i);
-  return arr;
-}
-function bytesToB64(bytes){
-  let bin=''; const CH=0x8000;
-  for(let i=0;i<bytes.length;i+=CH){bin+=String.fromCharCode.apply(null,bytes.subarray(i,i+CH))}
-  return btoa(bin);
-}
-
-// commit ONE binary file to the repo (create or update). Returns nothing on success.
-async function commitFile(tok,path,contentB64,message){
-  const api=`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`;
-  const h={Authorization:'Bearer '+tok,Accept:'application/vnd.github+json'};
-  // does it already exist? (need its sha to update)
-  let sha=null;
-  try{
-    const meta=await fetch(api+'?ref=main',{headers:h});
-    if(meta.ok){const j=await meta.json(); sha=j.sha||null;}
-  }catch(e){}
-  const body={message,content:contentB64};
-  if(sha)body.sha=sha;
-  const put=await fetch(api,{method:'PUT',headers:h,body:JSON.stringify(body)});
-  if(!put.ok){
-    let detail=''; try{detail=(await put.json()).message||''}catch(e){}
-    throw new Error(`Image upload failed for ${path} (${put.status}) ${detail}`);
-  }
-}
-
-// walk DATA, pull every embedded holo image out to images/, rewrite to a path.
-// mutates DATA in place; returns the list of {path, b64} files that must be committed.
-async function externaliseImages(tok,progress){
-  const files=[];
-  const seen=new Set();
-  let n=0;
-
-  // Pull one embedded data-URL out to images/ and hand back its new path.
-  // `hint` only shapes the filename, so files stay readable in the repo.
-  function extract(value,hint){
-    if(typeof value!=='string'||!value.startsWith('data:'))return null;
-    const m=value.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.*)$/s);
-    if(!m)return null;
-    const ext=({'image/png':'png','image/jpeg':'jpg','image/webp':'webp','image/gif':'gif'})[m[1]]||'png';
-    let base=(hint||('img'+(++n))).toLowerCase()
-      .replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,40)||'img';
-    let path=`images/${base}.${ext}`, k=2;
-    while(seen.has(path)){path=`images/${base}-${k++}.${ext}`}
-    seen.add(path);
-    files.push({path, b64:m[2]});
-    if(progress)progress(`Extracting ${path}…`);
-    return path;
-  }
-
-  // character and location holograms
-  for(const secKey of Object.keys(DATA)){
-    const sec=DATA[secKey];
-    if(!sec.items)continue;
-    for(const rec of sec.items){
-      const p=extract(rec.holo, rec.name||'holo');
-      if(p)rec.holo=p;
-      const q=extract(rec.portrait, (rec.name||'record')+'-portrait');
-      if(q)rec.portrait=q;
-    }
-  }
-
-  // badge images
-  for(const b of BADGES){
-    const p=extract(b.img,(b.name||b.id||'badge')+'-badge');
-    if(p)b.img=p;
-  }
-
-  // shared tile thumbnails, then the session cards on that page
-  for(const pid of Object.keys(PAGES)){
-    const p=extract(PAGES[pid].img, (PAGES[pid].title||pid)+'-tile');
-    if(p)PAGES[pid].img=p;
-    for(const s of (PAGES[pid].sessions||[])){
-      const q=extract(s.img,(s.name||'session')+'-session');
-      if(q)s.img=q;
-    }
-  }
-
-  // schedule blocks carry their own thumbnails too
-  for(const secKey of Object.keys(DATA)){
-    for(const bl of ((DATA[secKey]||{}).blocks||[])){
-      const p=extract(bl.img,((bl.name||(PAGES[bl.pid]&&PAGES[bl.pid].title)||'block'))+'-block');
-      if(p)bl.img=p;
-    }
-  }
-
-  // per-placement thumbnails, tagged by where they sit so they never collide
-  const placements=[
-    ...(((DATA.home&&DATA.home.tiles)||[]).map(t=>({t,where:'home'}))),
-    ...(((DATA.campaigns&&DATA.campaigns.groups)||[])
-        .flatMap(g=>(g.entries||[]).map(t=>({t,where:'campaign'}))))
-  ];
-  for(const {t,where} of placements){
-    const label=((PAGES[t.pid]&&PAGES[t.pid].title)||t.pid)+'-'+where;
-    const p=extract(t.img,label);
-    if(p)t.img=p;
-  }
-
-  return files;
-}
-
-function publishForm(){
-  const saved=sessionStorage.getItem('ghToken')||'';
-  openSheet(`
-    <h2>Publish to GitHub</h2>
-    <p class="hint">Commits the current records to <b>${REPO_OWNER}/${REPO_NAME}</b>. The live site updates about a minute later.</p>
-    <div class="field"><label>Personal access token</label><input type="password" id="tok" value="${esc(saved)}" autocomplete="off"></div>
-    <div class="field"><label>Commit message</label><input id="msg" value="Update archive records"></div>
-    <div class="actions">
-      <button class="ebtn" id="pubGo">Publish</button>
-      <button class="ebtn ghost" id="pubNo">Cancel</button>
-    </div>
-    <p class="note" id="pubMsg">Create a token at github.com → Settings → Developer settings → Fine-grained tokens, with <b>Contents: Read and write</b> on this repository only. It is kept for this browser tab and never written into the page.</p>`);
-  document.getElementById('pubNo').onclick=closeSheet;
-  document.getElementById('pubGo').onclick=async()=>{
-    const tok=document.getElementById('tok').value.trim();
-    const msg=document.getElementById('msg').value.trim()||'Update archive records';
-    const out=document.getElementById('pubMsg');
-    if(!tok){out.textContent='A token is required.';return}
-    out.textContent='Publishing…';
-    try{
-      const api=`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}?ref=main`;
-      const h={Authorization:'Bearer '+tok,Accept:'application/vnd.github+json'};
-
-      // 1) Metadata call — used ONLY for the file's current sha.
-      //    For files over 1 MB the GitHub Contents API returns an EMPTY
-      //    content field, which is what previously produced the misleading
-      //    "could not locate the data block" error. We no longer read content here.
-      const meta=await fetch(api,{headers:h});
-      if(!meta.ok)throw new Error('Could not read the file metadata ('+meta.status+').');
-      const info=await meta.json();
-
-      // 2) Fetch the ACTUAL current file via the raw media type, which works
-      //    for files up to 100 MB. This is the real fix.
-      let current='';
-      // Primary: raw media type on the Contents API (works to 100 MB, private-repo safe).
-      try{
-        const rawRes=await fetch(api,{headers:{Authorization:'Bearer '+tok,Accept:'application/vnd.github.raw'}});
-        if(rawRes.ok)current=await rawRes.text();
-      }catch(e){}
-      // Fallback A: the blob's git_url via the Git Data API, which returns base64
-      // regardless of size (the Contents API only omits content, not the blob API).
-      if(current.indexOf('const DATA = {')<0 && info.sha){
-        try{
-          const blob=await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/git/blobs/${info.sha}`,
-            {headers:{Authorization:'Bearer '+tok,Accept:'application/vnd.github+json'}});
-          if(blob.ok){
-            const bj=await blob.json();
-            if(bj.encoding==='base64'&&bj.content){
-              const raw=atob(bj.content.replace(/\n/g,''));
-              const arr=new Uint8Array(raw.length);
-              for(let i=0;i<raw.length;i++)arr[i]=raw.charCodeAt(i);
-              current=new TextDecoder().decode(arr);
-            }
-          }
-        }catch(e){}
-      }
-      // Fallback B: the live page we are running, if all API reads failed.
-      if(current.indexOf('const DATA = {')<0){
-        try{
-          const live=await fetch(location.href,{cache:'no-store'});
-          if(live.ok)current=await live.text();
-        }catch(e){}
-      }
-      if(!current||current.indexOf('const DATA = {')<0)
-        throw new Error('Could not read a valid file from GitHub (got '+current.length+' chars). Check that index.html on GitHub is the full file.');
-
-      // 3) Move any embedded holograms out to images/ files first.
-      const imgFiles=await externaliseImages(tok,txt=>{out.textContent=txt});
-      for(let i=0;i<imgFiles.length;i++){
-        out.textContent=`Uploading image ${i+1} of ${imgFiles.length}…`;
-        await commitFile(tok,imgFiles[i].path,imgFiles[i].b64,msg+' (image)');
-      }
-
-      // 4) Now the records hold short paths, so the HTML is small again.
-      out.textContent='Committing index.html…';
-      const updated=rebuildFile(current);
-      const bytes=new TextEncoder().encode(updated);
-      const b64=bytesToB64(bytes);
-      const put=await fetch(api,{method:'PUT',headers:h,
-        body:JSON.stringify({message:msg,content:b64,sha:info.sha})});
-      if(!put.ok){
-        let detail=''; try{detail=(await put.json()).message||''}catch(e){}
-        throw new Error('Commit rejected ('+put.status+') '+detail);
-      }
-      sessionStorage.setItem('ghToken',tok);
-      dirty=false; dirtyFlag.textContent='Published';
-      const moved=imgFiles.length?` Moved ${imgFiles.length} image${imgFiles.length>1?'s':''} to images/.`:'';
-      out.innerHTML='Committed. The live site refreshes in about a minute.'+moved;
-    }catch(err){out.textContent=err.message}
-  };
-}
-
-document.getElementById('addBtn').onclick=()=>recordForm(tab,null);
-function syncAddBtn(){
-  const onPage=page!=null;
-  const onSched=!onPage&&DATA[tab]&&DATA[tab].layout==='schedule';
-  const hasItems=!!DATA[tab].items&&!onPage;
-  document.getElementById('addBtn').style.display=hasItems?'':'none';
-  // sessions belong to whichever page is open, except a schedule, which
-  // carries time blocks instead
-  document.getElementById('addSessionBtn').style.display=onPage?'':'none';
-  document.getElementById('addBlockBtn').style.display=onSched?'':'none';
-  // adding campaigns belongs to the Campaigns tab and nowhere else
-  const camp=DATA[tab] && DATA[tab].layout==='campaigns' && page==null;
-  document.getElementById('addCampBtn').style.display=camp?'':'none';
-  const bdg=DATA[tab] && DATA[tab].layout==='badges';
-  document.getElementById('addBadgeBtn').style.display=bdg?'':'none';
-}
-document.getElementById('addCampBtn').onclick=newCampaignForm;
-document.getElementById('addBadgeBtn').onclick=()=>badgeForm(null);
-document.getElementById('addSessionBtn').onclick=()=>sessionForm(null);
-document.getElementById('addBlockBtn').onclick=()=>blockForm(null);
-document.getElementById('pubBtn').onclick=publishForm;
-document.getElementById('dlBtn').onclick=downloadFile;
-document.getElementById('lockBtn').onclick=()=>{
-  if(dirty&&!confirm('There are unsaved changes. Lock anyway?'))return;
-  document.body.classList.remove('editing');render();
-};
-view.addEventListener('click',e=>{
-  const tile=e.target.closest('.tile');
-  const editingNow=document.body.classList.contains('editing');
-  // a time block is a record on the grid, so it stays inert. Its controls,
-  // which live on the block itself, are picked up further down.
-  const blk=e.target.closest('.tblock');
-  if(blk&&!e.target.closest('.tbtn'))return;
-  // in edit mode, empty space in a day column starts a block at that hour
-  const cell=e.target.closest('.caldy');
-  if(cell&&editingNow&&!blk){
-    const days=schedDays(), c=days[+cell.dataset.day];
-    const r=cell.getBoundingClientRect();
-    const h=Math.max(0,Math.min(23,Math.floor((e.clientY-r.top)/HOURPX)));
-    blockForm(null,{date:civKey(c),start:pad2(h)+':00',end:pad2((h+3)%24)+':00'});
-    return;
-  }
-  // a session card carries no record index, so it stays inert
-  const hit=e.target.closest('.card,.pc');
-  if(hit&&hit.dataset.i!==undefined&&!e.target.closest('.tbtn')){
-    detail=+hit.dataset.i; render(); window.scrollTo(0,0); return;
-  }
-  if(tile&&!e.target.closest('.tbtn')&&!tile.classList.contains('dragging')){
-    const to=tile.dataset.goto;
-    if(to&&to.startsWith('link:')){
-      window.open(to.slice(5),'_blank','noopener');
-      return;
-    }
-    if(to&&to.startsWith('page:')&&PAGES[to.slice(5)]){
-      tab='home';filter='All';detail=null;page=to.slice(5);q.value='';
-    }
-    else if(to&&DATA[to]){tab=to;filter='All';detail=null;page=null;q.value=''}
-    else page=tile.dataset.page;
-    render();window.scrollTo(0,0);return;
-  }
-  const b=e.target.closest('.tbtn'); if(!b)return;
-  if(b.dataset.act==='page'){pageForm(b.dataset.pid,b.dataset.scope);return}
-  if(b.dataset.act==='schedset'){scheduleForm();return}
-  if(b.dataset.act==='blkedit'){blockForm(+b.dataset.i);return}
-  if(b.dataset.act==='blkdel'){deleteBlock(+b.dataset.i);return}
-  if(b.classList.contains('grip'))return;   // the grip only exists to be dragged
-  const i=+b.dataset.i;
-  if(b.dataset.act==='bedit'){badgeForm(i);return}
-  if(b.dataset.act==='bdel'){deleteBadge(i);return}
-  if(b.dataset.act==='sedit'){sessionForm(i);return}
-  if(b.dataset.act==='sdel'){deleteSession(i);return}
-  if(b.dataset.act==='edit')recordForm(tab,i); else deleteRecord(tab,i);
-});
-window.addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue=''}});
-
-q.oninput=render;
-
-/* Aurebesh scramble on hover */
-const GLYPHS="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+/* ---------- aurebesh scramble on hover ---------- */
+const GLYPHS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 function scramble(el){
-  if(reduced||el.dataset.busy)return;
-  const target=el.dataset.text||el.textContent;
-  el.dataset.text=target; el.dataset.busy="1";
-  const len=target.length; let frame=0;
-  const settle=target.split('').map((_,i)=>6+Math.floor(i*1.6+Math.random()*6));
-  const HOLD=4;
-  const held=target.split('').map(()=>GLYPHS[Math.floor(Math.random()*GLYPHS.length)]);
-  el._scr=setInterval(()=>{
-    const id=el._scr;
-    let out='';
-    for(let i=0;i<len;i++){
-      const ch=target[i];
-      if(ch===' '||frame>=settle[i]){out+=ch;continue}
-      if(frame%HOLD===0)held[i]=GLYPHS[Math.floor(Math.random()*GLYPHS.length)];
-      out+=held[i];
+  if (reduced || el.dataset.busy) return;
+  const target = el.dataset.text || el.textContent;
+  el.dataset.text = target; el.dataset.busy = "1";
+  const len = target.length; let frame = 0;
+  const settle = target.split('').map((_,i) => 6 + Math.floor(i*1.6 + Math.random()*6));
+  const HOLD = 4;
+  const held = target.split('').map(() => GLYPHS[Math.floor(Math.random()*GLYPHS.length)]);
+  el._scr = setInterval(() => {
+    let out = '';
+    for (let i = 0; i < len; i++){
+      const ch = target[i];
+      if (ch === ' ' || frame >= settle[i]){ out += ch; continue }
+      if (frame % HOLD === 0) held[i] = GLYPHS[Math.floor(Math.random()*GLYPHS.length)];
+      out += held[i];
     }
-    el.textContent=out;
-    if(frame++>Math.max(...settle))stopScramble(el);
-  },35);
+    el.textContent = out;
+    if (frame++ > Math.max(...settle)) stopScramble(el);
+  }, 35);
 }
 function stopScramble(el){
-  if(!el||!el._scr)return;
-  clearInterval(el._scr); el._scr=null;
-  el.textContent=el.dataset.text||el.textContent;
+  if (!el || !el._scr) return;
+  clearInterval(el._scr); el._scr = null;
+  el.textContent = el.dataset.text || el.textContent;
   delete el.dataset.busy;
 }
-view.addEventListener('mouseover',e=>{
-  const card=e.target.closest('.card,.tile,.pc'); if(!card)return;
-  if(card.contains(e.relatedTarget))return;
-  const a=card.querySelector('.aur'); if(a)scramble(a);
+view.addEventListener('mouseover', e => {
+  const card = e.target.closest('.tile,.pc'); if (!card || card.contains(e.relatedTarget)) return;
+  const a = card.querySelector('.aur'); if (a) scramble(a);
 });
-view.addEventListener('mouseout',e=>{
-  const card=e.target.closest('.card,.tile,.pc'); if(!card)return;
-  if(card.contains(e.relatedTarget))return;
+view.addEventListener('mouseout', e => {
+  const card = e.target.closest('.tile,.pc'); if (!card || card.contains(e.relatedTarget)) return;
   stopScramble(card.querySelector('.aur'));
 });
 
-// ---------- shareable URLs (each tab / item / page gets its own #hash) ----------
-function syncHash(){
-  const parts=['tab='+encodeURIComponent(tab)];
-  if(page!=null) parts.push('page='+encodeURIComponent(page));
-  else if(detail!=null) parts.push('i='+detail);
-  const h='#'+parts.join('&');
-  if(location.hash!==h) history.replaceState(null,'',h);
-}
-function applyHash(){
-  const params=new URLSearchParams(location.hash.slice(1));
-  const t=params.get('tab');
-  if(t&&DATA[t]) tab=t;
-  const p=params.get('page');
-  page=p||null;
-  const i=params.get('i');
-  detail=(i!=null&&i!==''&&!isNaN(+i))?+i:null;
-}
-// ---------- always-show-images switch ----------
-// Off by default on every load. Only touches .bgimg opacity — the hover glow,
-// scanline overlay and aurebesh scramble are separate effects and don't listen
-// to this class at all.
-document.getElementById('imgToggle').addEventListener('change',e=>{
-  document.body.classList.toggle('images-on',e.target.checked);
+document.getElementById('imgToggle').addEventListener('change', e => {
+  document.body.classList.toggle('images-on', e.target.checked);
 });
 
-// ---------- browser tab title tracks whatever's on screen ----------
-function currentTitle(){
-  if(page!=null) return (PAGES[page]&&PAGES[page].title)||page;
-  const sec=DATA[tab];
-  if(!sec)return'';
-  if(detail!=null&&sec.items&&sec.items[detail]) return sec.items[detail].name||sec.label;
-  return sec.label||'';
-}
-function syncTitle(){
-  const t=currentTitle();
-  document.title=t?`${t} — Star Wars`:'Star Wars';
-}
-// any time render() rewrites #view, grab the current state and reflect it in the URL and tab title
-new MutationObserver(()=>{syncHash();syncTitle()}).observe(view,{childList:true});
-// read the URL back into state on load and whenever the user hits back/forward
-// or opens a link that only changes the hash
-window.addEventListener('hashchange',()=>{applyHash();render()});
-applyHash();
-
 render();
-
-const total=Object.values(DATA).reduce((n,s)=>n+(s.items?s.items.length:0),0);
-document.getElementById('clock').textContent=`${total} RECORDS ON FILE`;
+document.getElementById('clock').textContent = `${CHARACTERS.length} RECORDS ON FILE`;
 </script>
 </body>
 </html>
