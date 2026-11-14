@@ -169,6 +169,10 @@ body.editing .sheetview .lede:empty{display:block}
   font-family:'Barlow Semi Condensed',sans-serif;font-size:14px;letter-spacing:.18em;
   text-transform:uppercase;color:var(--dim)}
 
+/* ---------- campaign tiles ---------- */
+.camprow .tile{min-height:310px}
+.tile.still{cursor:default}
+
 /* footer prompt bar */
 .prompt{display:flex;align-items:center;gap:12px;margin-top:26px;padding-top:16px;border-top:1px solid var(--edge);
   font-family:'Barlow Semi Condensed',sans-serif;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
@@ -194,6 +198,7 @@ body.editing .sheetview .lede:empty{display:block}
   .sheetview{padding:24px}
   .sheetview h2{font-size:32px}
   .sheetview .aur{padding-right:0}
+  .camprow .tile{min-height:240px}
   .flag{position:static;display:block;margin-bottom:10px}
 }
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
@@ -226,6 +231,7 @@ body.editing .editbar{display:flex}
 .tile .tools{top:22px;left:26px}
 body.editing .tools{display:flex}
 body.editing .tile{padding-top:64px}
+.camprow .blankslate{margin-top:0;border-top:none;padding:6px 0}
 body.editing .pc .txt{padding-top:40px}
 
 /* every editable line: a faint dashed edge, solid gold while typing */
@@ -365,6 +371,7 @@ const SITE = {
   "campaigns": {
     "bounty-hunter-missions": {
       "title": "Bounty Hunter Missions",
+      "status": "ongoing",
       "eyebrow": "Anthology · Ongoing",
       "blurb": "Hunt the galaxy's most wanted in a one-shot anthology series.",
       "tag": "",
@@ -385,6 +392,7 @@ const SITE = {
     },
     "the-mando-ade": {
       "title": "The Mando'ade",
+      "status": "ongoing",
       "eyebrow": "Anthology · Upcoming",
       "blurb": "Take the creed to every corner of the galaxy in an anthology series.",
       "tag": "",
@@ -435,17 +443,23 @@ function F(path, value, tag, cls, ph){
   const ed = editing();
   return `<${tag}${cls ? ` class="${cls}"` : ''}${ed ? ` data-f="${path}" data-ph="${esc(ph || '')}" contenteditable="plaintext-only" spellcheck="false"` : ''}>${esc(value)}</${tag}>`;
 }
-const tools = (img, del, drag) => `<span class="tools">
+const tools = (img, del, drag, extra = '') => `<span class="tools">
   ${img && imgSrc(img) ? `<span class="tbtn" data-crop>Crop</span>` : ''}
   ${drag ? `<span class="tbtn grip" data-grip draggable="true" title="Drag to reorder">Move</span>` : ''}
   ${img ? `<span class="tbtn" data-img="${img}">Image</span>` : ''}
-  ${del ? `<span class="tbtn" data-del="${del}">Remove</span>` : ''}</span>`;
+  ${del ? `<span class="tbtn" data-del="${del}">Remove</span>` : ''}${extra}</span>`;
 
 // a footer line of two editable halves; the rule stays even when both are blank
 function foot(path, o){
   return `<span class="foot">${F(path + '.footL', o.footL, 'span', '', 'Left')}${F(path + '.footR', o.footR, 'span', '', 'Right')}</span>`;
 }
 // fill in anything an older data block doesn't have yet
+for (const c of Object.values(SITE.campaigns)){
+  if (!c.status) c.status = /upcoming/i.test((c.eyebrow || '') + (c.footL || '')) ? 'upcoming' : 'ongoing';
+  if (c.levels == null) c.levels = (c.footR || '').replace(/\s*level\s*$/i, '');
+  delete c.eyebrow; delete c.footL; delete c.footR; delete c.gm;
+}
+for (const k of ['campaigns','characters','discord']) if (SITE.home[k]){ delete SITE.home[k].footL; delete SITE.home[k].footR; }
 SITE.home.order = (SITE.home.order || ['campaigns','characters','discord']).filter(k => SITE.home[k]);
 if (SITE.footer == null) SITE.footer = '';
 
@@ -516,7 +530,7 @@ function homeView(){
         `<option value="${k}" ${k === id ? 'selected' : ''}>Next: ${esc(v.title)}</option>`).join('')}</select>`
     : '<span class="tag">Next session</span>';
   return `<div class="home">
-    <div class="tile feature" tabindex="0" data-go="campaigns/${id}">
+    <div class="tile feature" tabindex="0" data-go="campaigns">
       ${bg(`campaigns.${id}.homeImg`)}${tools(`campaigns.${id}.homeImg`)}
       <span class="tags">${picker}</span>
       <span class="aur">${esc(c.title)}</span>
@@ -538,15 +552,24 @@ function homeView(){
   </div>`;
 }
 
+const STATUS = [['ongoing','Ongoing'], ['upcoming','Upcoming']];
 function campaignsView(){
-  return `<div class="camprow">${Object.entries(SITE.campaigns).map(([id,c],n) => `
-    <div class="tile" tabindex="0" data-go="campaigns/${id}" data-drag="campaigns|${n}">
-      ${bg(`campaigns.${id}.img`)}${tools(`campaigns.${id}.img`, null, true)}
-      <span class="tags">${F(`campaigns.${id}.tag`, c.tag, 'span', 'tag', 'Tag')}</span>
-      <span class="aur">${esc(c.title)}</span>
-      ${F(`campaigns.${id}.title`, c.title, 'h3', '', 'Title')}
-      ${F(`campaigns.${id}.eyebrow`, c.eyebrow, 'span', 'eyebrow', 'Subtitle')}
-    </div>`).join('')}</div>`;
+  const all = Object.entries(SITE.campaigns);
+  return `<div class="groups">${STATUS.map(([st, label]) => {
+    const list = all.map((e, n) => [...e, n]).filter(([, c]) => c.status === st);
+    if (!list.length && !editing()) return '';
+    const other = STATUS.find(x => x[0] !== st);
+    return `<section>
+      <div class="grouphead"><h2>${label}</h2></div>
+      <div class="camprow" data-group="${st}">${list.map(([id, c, n]) => `
+        <div class="tile still" data-drag="campaigns|${n}" data-group="${st}">
+          ${bg(`campaigns.${id}.img`)}${tools(`campaigns.${id}.img`, null, true, `<span class="tbtn" data-status="${id}|${other[0]}">Move to ${other[1]}</span>`)}
+          <span class="aur">${esc(c.title)}</span>
+          ${F(`campaigns.${id}.title`, c.title, 'h3', '', 'Title')}
+        </div>`).join('') || '<div class="blankslate">Nothing here yet. Use “Move to” on a campaign.</div>'}
+      </div>
+    </section>`;
+  }).join('')}</div>`;
 }
 
 function card(path, name, eyebrow, img, imgKey, delPath){
@@ -558,28 +581,6 @@ function card(path, name, eyebrow, img, imgKey, delPath){
       ${F(`${path}.name`, name, 'h3', '', 'Name')}
       ${(eyebrow || editing()) ? F(`${path}.eyebrow`, eyebrow, 'span', 'eyebrow', 'Subtitle') : ''}
     </span>
-  </div>`;
-}
-
-function campaignPage(id){
-  const c = SITE.campaigns[id]; if (!c) return campaignsView();
-  const ss = c.sessions || [];
-  return `<div class="detail">
-    <button class="back" data-go="campaigns">&larr; All campaigns</button>
-    <div class="sheetview">
-      ${c.tag ? `<div class="flag">${esc(c.tag)}</div>` : ''}
-      <span class="aur">${esc(c.title)}</span>
-      <h2>${esc(c.title)}</h2>
-      <span class="eyebrow">${esc(c.eyebrow)}</span>
-      ${F(`campaigns.${id}.blurb`, c.blurb, 'p', 'lede', 'Description')}
-      ${(ss.length || editing()) ? `<div class="groups"><section>
-        <div class="grouphead"><h2>Sessions</h2></div>
-        <div class="roster">
-          ${ss.map((s,n) => card(`campaigns.${id}.sessions.${n}`, s.name, s.eyebrow, s.img, 'img', `campaigns.${id}.sessions.${n}`)).join('')}
-          <button class="addcard" data-add="campaigns.${id}.sessions">+ Add session</button>
-        </div>
-      </section></div>` : '<div class="blankslate">No sessions logged yet.</div>'}
-    </div>
   </div>`;
 }
 
@@ -602,9 +603,9 @@ function render(){
       ? `${label}<span class="n">${String(SITE.characters.length).padStart(2,'0')}</span>` : label;
   });
   view.innerHTML =
-    tab === 'campaigns' ? (id ? campaignPage(id) : campaignsView()) :
+    tab === 'campaigns' ? campaignsView() :
     tab === 'characters' ? charactersView() : homeView();
-  const name = id && SITE.campaigns[id] ? SITE.campaigns[id].title : TABS.find(t => t[0] === tab)[1];
+  const name = TABS.find(t => t[0] === tab)[1];
   document.title = `${name} — Star Wars`;
   const pr = document.getElementById('prompt');
   pr.innerHTML = `<i>&#9679;</i>${F('footer', SITE.footer, 'span', '', 'Footer text')}`;
@@ -625,7 +626,9 @@ root.addEventListener('click', e => {
   const t = e.target;
   if (editing()){
     const cb = t.closest('[data-crop]');
-    if (cb){ e.preventDefault(); toggleCrop(cb.closest('.tile,.pc')); return; }
+    if (cb){ e.preventDefault(); toggleCrop(cb); return; }
+    const sb = t.closest('[data-status]');
+    if (sb){ e.preventDefault(); const [cid, st] = sb.dataset.status.split('|'); SITE.campaigns[cid].status = st; markDirty(); render(); return; }
     if (t.closest('.cropping')){ e.preventDefault(); return; }
     const img = t.closest('[data-img]');
     if (img){ e.preventDefault(); pickImage(img.dataset.img); return; }
@@ -678,14 +681,16 @@ root.addEventListener('change', e => {
 });
 
 /* ---------- crop: drag the picture inside its frame ---------- */
-function toggleCrop(card){
-  const on = !card.classList.contains('cropping');
-  view.querySelectorAll('.cropping').forEach(c => { c.classList.remove('cropping'); c.querySelector('.crophint')?.remove();
-    const b = c.querySelector('[data-crop]'); if (b) b.textContent = 'Crop'; });
+function toggleCrop(btn){
+  const host = btn.closest('.tile,.pc'), frame = host && host.querySelector('.bgimg')?.parentElement;
+  if (!frame) return;
+  const on = !frame.classList.contains('cropping');
+  view.querySelectorAll('.cropping').forEach(c => { c.classList.remove('cropping'); c.querySelector('.crophint')?.remove(); });
+  view.querySelectorAll('[data-crop]').forEach(b => b.textContent = 'Crop');
   if (!on) return;
-  card.classList.add('cropping');
-  card.querySelector('[data-crop]').textContent = 'Done';
-  card.insertAdjacentHTML('beforeend', '<span class="crophint">Drag to position</span>');
+  frame.classList.add('cropping');
+  btn.textContent = 'Done';
+  frame.insertAdjacentHTML('beforeend', '<span class="crophint">Drag</span>');
 }
 let crop = null;
 view.addEventListener('pointerdown', e => {
@@ -750,6 +755,7 @@ view.addEventListener('dragover', e => {
   const it = e.target.closest('[data-drag]'); if (!it) return;
   const list = dragFrom.split('|')[0];
   if (it.dataset.drag.split('|')[0] !== list || it.dataset.drag === dragFrom) { clearDrop(); return; }
+  // (campaign tiles may cross between Ongoing and Upcoming)
   e.preventDefault(); e.dataTransfer.dropEffect = 'move';
   const after = dropSide(it, e, list), v = VERTICAL.includes(list);
   clearDrop(); it.classList.add(v ? (after ? 'dropB' : 'dropT') : (after ? 'dropR' : 'dropL'));
@@ -761,6 +767,10 @@ view.addEventListener('drop', e => {
   if (it && it.dataset.drag.split('|')[0] === list){
     let to = +it.dataset.drag.split('|')[1] + (dropSide(it, e, list) ? 1 : 0);
     if (from < to) to--;
+    if (list === 'campaigns' && it.dataset.group){
+      const key = Object.keys(SITE.campaigns)[from];
+      if (SITE.campaigns[key].status !== it.dataset.group){ SITE.campaigns[key].status = it.dataset.group; markDirty(); }
+    }
     if (to !== from){ moveItem(list, from, to); markDirty(); }
   }
   dragFrom = null; justDropped = true; setTimeout(() => justDropped = false, 50);
