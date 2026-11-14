@@ -260,6 +260,7 @@ body.editing .addcard{display:flex}
 .dropT{box-shadow:inset 0 4px 0 var(--gold),0 0 0 1px var(--gold)!important}
 .dropB{box-shadow:inset 0 -4px 0 var(--gold),0 0 0 1px var(--gold)!important}
 .prompt [data-f]{min-width:12ch}
+.tile .foot{min-height:31px}
 </style>
 </head>
 <body>
@@ -463,9 +464,8 @@ const tools = (img, del, drag) => `<span class="tools">
   ${img ? `<span class="tbtn" data-img="${img}">Image</span>` : ''}
   ${del ? `<span class="tbtn" data-del="${del}">Remove</span>` : ''}</span>`;
 
-// a footer line of two editable halves; hidden for visitors when both are blank
+// a footer line of two editable halves; the rule stays even when both are blank
 function foot(path, o){
-  if (!editing() && !o.footL && !o.footR) return '';
   return `<span class="foot">${F(path + '.footL', o.footL, 'span', '', 'Left')}${F(path + '.footR', o.footR, 'span', '', 'Right')}</span>`;
 }
 // fill in anything an older data block doesn't have yet
@@ -616,7 +616,6 @@ function render(){
   const name = id && SITE.campaigns[id] ? SITE.campaigns[id].title : TABS.find(t => t[0] === tab)[1];
   document.title = `${name} — Star Wars`;
   const pr = document.getElementById('prompt');
-  pr.style.display = (SITE.footer || editing()) ? '' : 'none';
   pr.innerHTML = `<i>&#9679;</i>${F('footer', SITE.footer, 'span', '', 'Footer text')}`;
 }
 
