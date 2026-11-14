@@ -172,6 +172,13 @@ body.editing .sheetview .lede:empty{display:block}
 /* ---------- campaign tiles ---------- */
 .camprow .tile{min-height:310px}
 .tile.still{cursor:default}
+.gmicon{position:absolute;right:26px;bottom:26px;z-index:6;width:64px;height:64px}
+.camprow .tile h3,.camprow .tile .aur{max-width:calc(100% - 100px)}   /* clear of the GM icon */
+.gmicon .bgimg{position:absolute;inset:0;border-radius:50%;background-size:contain;background-repeat:no-repeat;
+  background-position:center;opacity:1!important}
+.gmicon .bgimg::after{display:none}
+body.editing .gmicon{outline:1px dashed rgba(255,176,32,.38);outline-offset:3px;border-radius:50%}
+.gmicon .tbtn{position:absolute;right:0;bottom:calc(100% + 8px);white-space:nowrap}
 
 /* footer prompt bar */
 .prompt{display:flex;align-items:center;gap:12px;margin-top:26px;padding-top:16px;border-top:1px solid var(--edge);
@@ -199,6 +206,7 @@ body.editing .sheetview .lede:empty{display:block}
   .sheetview h2{font-size:32px}
   .sheetview .aur{padding-right:0}
   .camprow .tile{min-height:240px}
+  .gmicon{right:14px;bottom:14px;width:48px;height:48px}
   .flag{position:static;display:block;margin-bottom:10px}
 }
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
@@ -457,7 +465,9 @@ function foot(path, o){
 for (const c of Object.values(SITE.campaigns)){
   if (!c.status) c.status = /upcoming/i.test((c.eyebrow || '') + (c.footL || '')) ? 'upcoming' : 'ongoing';
   if (c.levels == null) c.levels = (c.footR || '').replace(/\s*level\s*$/i, '');
-  delete c.eyebrow; delete c.footL; delete c.footR; delete c.gm;
+  delete c.eyebrow; delete c.footL; delete c.footR;
+  if (!c.gm || typeof c.gm !== 'object') c.gm = { img: '' };
+  delete c.gm.name;
 }
 for (const k of ['campaigns','characters','discord']) if (SITE.home[k]){ delete SITE.home[k].footL; delete SITE.home[k].footR; }
 SITE.home.order = (SITE.home.order || ['campaigns','characters','discord']).filter(k => SITE.home[k]);
@@ -566,6 +576,8 @@ function campaignsView(){
           ${bg(`campaigns.${id}.img`)}${tools(`campaigns.${id}.img`, null, true, `<span class="tbtn" data-status="${id}|${other[0]}">Move to ${other[1]}</span>`)}
           <span class="aur">${esc(c.title)}</span>
           ${F(`campaigns.${id}.title`, c.title, 'h3', '', 'Title')}
+          ${(c.gm.img || editing()) ? `<span class="gmicon">${bg(`campaigns.${id}.gm.img`)}${editing()
+            ? `<span class="tbtn" data-img="campaigns.${id}.gm.img">GM icon</span>` : ''}</span>` : ''}
         </div>`).join('') || '<div class="blankslate">Nothing here yet. Use “Move to” on a campaign.</div>'}
       </div>
     </section>`;
@@ -792,7 +804,8 @@ imgPick.onchange = () => {
     const sc = Math.min(1, 1400 / im.width), c = document.createElement('canvas');
     c.width = Math.round(im.width * sc); c.height = Math.round(im.height * sc);
     c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
-    setAt(imgTarget, c.toDataURL('image/jpeg', .82));
+    const png = /\.gm\.img$/.test(imgTarget) || f.type === 'image/png';
+    setAt(imgTarget, png ? c.toDataURL('image/png') : c.toDataURL('image/jpeg', .82));
     setAt(imgTarget + 'Pos', '');
     URL.revokeObjectURL(im.src); markDirty(); render();
   };
@@ -867,7 +880,8 @@ function embeddedImages(){
       const v = o[k], p = path ? path + '.' + k : k;
       if (typeof v === 'string' && v.startsWith('data:image/')) {
         const hint = o.name || o.title || path.split('.').filter(x => isNaN(x)).pop() || 'image';
-        out.push({p, data: v, file: `images/${slug(hint)}-${k === 'portrait' ? 'portrait' : k}-${Date.now().toString(36)}${out.length}.jpg`});
+        const ext = v.startsWith('data:image/png') ? 'png' : 'jpg';
+        out.push({p, data: v, file: `images/${slug(hint)}-${k === 'portrait' ? 'portrait' : k}-${Date.now().toString(36)}${out.length}.${ext}`});
       } else if (v && typeof v === 'object') walk(v, p);
     }
   })(SITE, '');
