@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><script type="text/javascript" src="chrome-extension://eiimnmioipafcokbfikbljfdeojpcgbh/activeContentBlocker.js"></script><head><script type="text/javascript" src="chrome-extension://eiimnmioipafcokbfikbljfdeojpcgbh/activeContentBlocker.js"></script>
+<html lang="en"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Star Wars</title>
@@ -253,6 +253,13 @@ body.editing .addcard{display:flex}
 .lockerr{margin:10px 0 0;font-family:'Barlow Semi Condensed',sans-serif;font-size:12px;
   letter-spacing:.16em;text-transform:uppercase;color:var(--dim);min-height:1em}
 @media(max-width:860px){.editbar input{width:100%}}
+.tbtn.grip{cursor:grab;-webkit-user-drag:element;user-select:none}
+.dragging{opacity:.35}
+.dropL{box-shadow:inset 4px 0 0 var(--gold),0 0 0 1px var(--gold)!important}
+.dropR{box-shadow:inset -4px 0 0 var(--gold),0 0 0 1px var(--gold)!important}
+.dropT{box-shadow:inset 0 4px 0 var(--gold),0 0 0 1px var(--gold)!important}
+.dropB{box-shadow:inset 0 -4px 0 var(--gold),0 0 0 1px var(--gold)!important}
+.prompt [data-f]{min-width:12ch}
 </style>
 </head>
 <body>
@@ -278,7 +285,7 @@ body.editing .addcard{display:flex}
 
   <div id="view"></div>
 
-  <div class="prompt"><i>●</i><span id="clock">LINK ACTIVE</span></div>
+  <div class="prompt" id="prompt"></div>
 </div>
 
 <div class="veil" id="veil"></div>
@@ -451,9 +458,19 @@ function F(path, value, tag, cls, ph){
   const ed = editing();
   return `<${tag}${cls ? ` class="${cls}"` : ''}${ed ? ` data-f="${path}" data-ph="${esc(ph || '')}" contenteditable="plaintext-only" spellcheck="false"` : ''}>${esc(value)}</${tag}>`;
 }
-const tools = (img, del) => `<span class="tools">
+const tools = (img, del, drag) => `<span class="tools">
+  ${drag ? `<span class="tbtn grip" data-grip draggable="true" title="Drag to reorder">Move</span>` : ''}
   ${img ? `<span class="tbtn" data-img="${img}">Image</span>` : ''}
   ${del ? `<span class="tbtn" data-del="${del}">Remove</span>` : ''}</span>`;
+
+// a footer line of two editable halves; hidden for visitors when both are blank
+function foot(path, o){
+  if (!editing() && !o.footL && !o.footR) return '';
+  return `<span class="foot">${F(path + '.footL', o.footL, 'span', '', 'Left')}${F(path + '.footR', o.footR, 'span', '', 'Right')}</span>`;
+}
+// fill in anything an older data block doesn't have yet
+SITE.home.order = (SITE.home.order || ['campaigns','characters','discord']).filter(k => SITE.home[k]);
+if (SITE.footer == null) SITE.footer = '';
 
 /* ---------- time: the session is typed in one zone, shown in the viewer's ---------- */
 function zoneOffset(ms, zone){
@@ -513,47 +530,38 @@ function homeView(){
       <h3>${esc(c.title)}</h3>
       ${when}
     </div>
-    <div class="tile" tabindex="0" data-go="campaigns">
-      ${bg(h.campaigns.img)}${tools('home.campaigns.img')}
-      <span class="aur">${esc(h.campaigns.title)}</span>
-      ${F('home.campaigns.title', h.campaigns.title, 'h3', '', 'Title')}
-      ${F('home.campaigns.eyebrow', h.campaigns.eyebrow, 'span', 'eyebrow', 'Subtitle')}
-      <span class="foot"><span>${Object.keys(SITE.campaigns).length} campaigns</span><span>Browse</span></span>
-    </div>
-    <div class="tile" tabindex="0" data-go="characters">
-      ${bg(h.characters.img)}${tools('home.characters.img')}
-      <span class="aur">${esc(h.characters.title)}</span>
-      ${F('home.characters.title', h.characters.title, 'h3', '', 'Title')}
-      ${F('home.characters.eyebrow', h.characters.eyebrow, 'span', 'eyebrow', 'Subtitle')}
-      <span class="foot"><span>${SITE.characters.length} on file</span><span>Browse</span></span>
-    </div>
-    <a class="tile" href="${esc(h.discord.url)}" target="_blank" rel="noopener">
-      ${bg(h.discord.img)}${tools('home.discord.img')}
-      <span class="aur">${esc(h.discord.title)}</span>
-      ${F('home.discord.title', h.discord.title, 'h3', '', 'Title')}
-      ${F('home.discord.eyebrow', h.discord.eyebrow, 'span', 'eyebrow', 'Subtitle')}
-      <span class="urlrow"><input class="ein" data-v="home.discord.url" value="${esc(h.discord.url)}" placeholder="Discord invite link"></span>
-      <span class="foot"><span>Comms</span><span>&#8599;</span></span>
-    </a>
+    ${h.order.map((k,n) => {
+      const t = h[k], dz = `data-drag="home.order|${n}"`;
+      const body = `${bg(t.img)}${tools(`home.${k}.img`, null, true)}
+        <span class="aur">${esc(t.title)}</span>
+        ${F(`home.${k}.title`, t.title, 'h3', '', 'Title')}
+        ${F(`home.${k}.eyebrow`, t.eyebrow, 'span', 'eyebrow', 'Subtitle')}
+        ${k === 'discord' ? `<span class="urlrow"><input class="ein" data-v="home.discord.url" value="${esc(t.url)}" placeholder="Discord invite link"></span>` : ''}
+        ${foot(`home.${k}`, t)}`;
+      return k === 'discord'
+        ? `<a class="tile" ${dz} href="${esc(t.url)}" target="_blank" rel="noopener">${body}</a>`
+        : `<div class="tile" ${dz} tabindex="0" data-go="${k}">${body}</div>`;
+    }).join('')}
   </div>`;
 }
 
 function campaignsView(){
-  return `<div class="camprow">${Object.entries(SITE.campaigns).map(([id,c]) => `
-    <div class="tile" tabindex="0" data-go="campaigns/${id}">
-      ${bg(c.img)}${tools(`campaigns.${id}.img`)}
+  return `<div class="camprow">${Object.entries(SITE.campaigns).map(([id,c],n) => `
+    <div class="tile" tabindex="0" data-go="campaigns/${id}" data-drag="campaigns|${n}">
+      ${bg(c.img)}${tools(`campaigns.${id}.img`, null, true)}
       <span class="tags">${F(`campaigns.${id}.tag`, c.tag, 'span', 'tag', 'Tag')}</span>
       <span class="aur">${esc(c.title)}</span>
       ${F(`campaigns.${id}.title`, c.title, 'h3', '', 'Title')}
       ${F(`campaigns.${id}.eyebrow`, c.eyebrow, 'span', 'eyebrow', 'Subtitle')}
       ${F(`campaigns.${id}.blurb`, c.blurb, 'p', '', 'Description')}
-      <span class="foot">${F(`campaigns.${id}.footL`, c.footL, 'span', '', 'Left')}${F(`campaigns.${id}.footR`, c.footR, 'span', '', 'Right')}</span>
+      ${foot(`campaigns.${id}`, c)}
     </div>`).join('')}</div>`;
 }
 
 function card(path, name, eyebrow, img, imgKey, delPath){
-  return `<div class="pc still">
-    ${bg(img)}${tools(`${path}.${imgKey}`, delPath)}
+  const i = path.lastIndexOf('.'), list = path.slice(0, i), n = path.slice(i + 1);
+  return `<div class="pc still" data-drag="${list}|${n}">
+    ${bg(img)}${tools(`${path}.${imgKey}`, delPath, true)}
     <span class="txt">
       <span class="aur">${esc(name)}</span>
       ${F(`${path}.name`, name, 'h3', '', 'Name')}
@@ -586,7 +594,7 @@ function campaignPage(id){
 
 function charactersView(){
   return `<div class="groups"><section>
-    <div class="grouphead"><h2>Player characters</h2></div>
+    <div class="grouphead"><h2>Characters</h2></div>
     <div class="roster">
       ${SITE.characters.map((i,n) => card(`characters.${n}`, i.name, i.eyebrow, i.portrait, 'portrait', `characters.${n}`)).join('')}
       <button class="addcard" data-add="characters">+ Add character</button>
@@ -607,7 +615,9 @@ function render(){
     tab === 'characters' ? charactersView() : homeView();
   const name = id && SITE.campaigns[id] ? SITE.campaigns[id].title : TABS.find(t => t[0] === tab)[1];
   document.title = `${name} — Star Wars`;
-  document.getElementById('clock').textContent = `${SITE.characters.length} RECORDS ON FILE`;
+  const pr = document.getElementById('prompt');
+  pr.style.display = (SITE.footer || editing()) ? '' : 'none';
+  pr.innerHTML = `<i>&#9679;</i>${F('footer', SITE.footer, 'span', '', 'Footer text')}`;
 }
 
 /* ---------- data paths: "campaigns.the-mando-ade.title" ---------- */
@@ -620,7 +630,8 @@ function setAt(path, v){
 function markDirty(){ dirty = true; document.getElementById('editFlag').textContent = 'Unsaved changes · Publish when ready'; }
 
 /* ---------- clicks ---------- */
-view.addEventListener('click', e => {
+const root = document.querySelector('.wrap');
+root.addEventListener('click', e => {
   const t = e.target;
   if (editing()){
     const img = t.closest('[data-img]');
@@ -643,18 +654,19 @@ view.addEventListener('click', e => {
     }
     // typing in a field never follows the tile it sits on
     if (t.closest('[data-f],[data-v],.tools')){ e.preventDefault(); return; }
+    if (justDropped){ e.preventDefault(); return; }
   }
   const el = t.closest('[data-go]'); if (!el) return;
   const [tab, id] = el.dataset.go.split('/');
   go(tab, id); window.scrollTo(0, 0);
 });
-view.addEventListener('keydown', e => {
+root.addEventListener('keydown', e => {
   if (e.target.matches('[data-f]')){ if (e.key === 'Enter'){ e.preventDefault(); e.target.blur(); } return; }
   if (e.key === 'Enter' && e.target.matches('[data-go]')) e.target.click();
 });
 
 /* ---------- typing ---------- */
-view.addEventListener('input', e => {
+root.addEventListener('input', e => {
   const t = e.target;
   if (t.matches('[data-f]')){
     setAt(t.dataset.f, t.textContent.trim());
@@ -667,9 +679,62 @@ view.addEventListener('input', e => {
     setAt(t.dataset.v, t.value.trim()); markDirty();
   }
 });
-view.addEventListener('change', e => {
+root.addEventListener('change', e => {
   if (e.target.matches('select[data-v]')) render();
   if (e.target.matches('[data-v="home.discord.url"]')) e.target.closest('a').href = e.target.value;
+});
+
+/* ---------- drag to reorder: grab a card by its Move button ---------- */
+let dragFrom = null, justDropped = false;
+const VERTICAL = ['campaigns', 'home.order'];
+const clearDrop = () => view.querySelectorAll('.dropL,.dropR,.dropT,.dropB').forEach(x => x.classList.remove('dropL','dropR','dropT','dropB'));
+function dropSide(el, e, list){
+  const r = el.getBoundingClientRect();
+  return VERTICAL.includes(list) ? (e.clientY - r.top > r.height / 2) : (e.clientX - r.left > r.width / 2);
+}
+function moveItem(list, from, to){
+  if (list === 'campaigns'){
+    const keys = Object.keys(SITE.campaigns), old = SITE.campaigns;
+    keys.splice(to, 0, keys.splice(from, 1)[0]);
+    SITE.campaigns = Object.fromEntries(keys.map(k => [k, old[k]]));
+  } else {
+    const arr = getAt(list); arr.splice(to, 0, arr.splice(from, 1)[0]);
+  }
+}
+// the Move button is the handle; the whole card travels with it
+view.addEventListener('dragstart', e => {
+  if (!editing()) return;
+  const g = e.target.closest && e.target.closest('[data-grip]');
+  if (!g){ e.preventDefault(); return; }      // no stray link or text drags while editing
+  const it = g.closest('[data-drag]');
+  dragFrom = it.dataset.drag; it.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  try { e.dataTransfer.setData('text/plain', dragFrom); e.dataTransfer.setDragImage(it, 30, 30); } catch(err) {}
+});
+view.addEventListener('dragover', e => {
+  if (!dragFrom) return;
+  const it = e.target.closest('[data-drag]'); if (!it) return;
+  const list = dragFrom.split('|')[0];
+  if (it.dataset.drag.split('|')[0] !== list || it.dataset.drag === dragFrom) { clearDrop(); return; }
+  e.preventDefault(); e.dataTransfer.dropEffect = 'move';
+  const after = dropSide(it, e, list), v = VERTICAL.includes(list);
+  clearDrop(); it.classList.add(v ? (after ? 'dropB' : 'dropT') : (after ? 'dropR' : 'dropL'));
+});
+view.addEventListener('drop', e => {
+  if (!dragFrom) return;
+  const it = e.target.closest('[data-drag]'); e.preventDefault();
+  const [list, f] = dragFrom.split('|'), from = +f;
+  if (it && it.dataset.drag.split('|')[0] === list){
+    let to = +it.dataset.drag.split('|')[1] + (dropSide(it, e, list) ? 1 : 0);
+    if (from < to) to--;
+    if (to !== from){ moveItem(list, from, to); markDirty(); }
+  }
+  dragFrom = null; justDropped = true; setTimeout(() => justDropped = false, 50);
+  render();
+});
+view.addEventListener('dragend', () => {
+  dragFrom = null; clearDrop();
+  view.querySelectorAll('.dragging').forEach(x => x.classList.remove('dragging'));
 });
 
 /* ---------- images: picked, shrunk, kept in the page until publish moves them to images/ ---------- */
@@ -727,7 +792,8 @@ window.addEventListener('beforeunload', e => { if (dirty){ e.preventDefault(); e
 function buildFile(){
   const a = SRC.indexOf('/*DATA*/'), b = SRC.indexOf('/*END DATA*/');
   if (a < 0 || b < 0) throw new Error('Could not find the data block in the page.');
-  return SRC.slice(0, a) + '/*DATA*/\nconst SITE = ' + JSON.stringify(SITE, null, 2) + ';\n' + SRC.slice(b);
+  const clean = t => t.replace(/<script[^>]*src="(?:chrome|moz|safari-web)-extension:[^"]*"[^>]*><\/script>/g, '');
+  return clean(SRC.slice(0, a)) + '/*DATA*/\nconst SITE = ' + JSON.stringify(SITE, null, 2) + ';\n' + clean(SRC.slice(b));
 }
 document.getElementById('dlBtn').onclick = () => {
   const a = document.createElement('a');
