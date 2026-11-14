@@ -172,13 +172,17 @@ body.editing .sheetview .lede:empty{display:block}
 /* ---------- campaign tiles ---------- */
 .camprow .tile{min-height:310px}
 .tile.still{cursor:default}
-.gmicon{position:absolute;right:26px;bottom:26px;z-index:6;width:64px;height:64px}
-.camprow .tile h3,.camprow .tile .aur{max-width:calc(100% - 100px)}   /* clear of the GM icon */
+.camprow .addcard{aspect-ratio:auto;min-height:96px}
+.gmrow{position:absolute;right:26px;bottom:26px;z-index:6;display:flex;align-items:center;gap:8px}
+.gmicon{position:relative;display:block;flex:none;width:48px;height:48px}
 .gmicon .bgimg{position:absolute;inset:0;border-radius:50%;background-size:contain;background-repeat:no-repeat;
   background-position:center;opacity:1!important}
 .gmicon .bgimg::after{display:none}
-body.editing .gmicon{outline:1px dashed rgba(255,176,32,.38);outline-offset:3px;border-radius:50%}
-.gmicon .tbtn{position:absolute;right:0;bottom:calc(100% + 8px);white-space:nowrap}
+body.editing .gmicon{cursor:pointer;outline:1px dashed rgba(255,176,32,.38);outline-offset:3px;border-radius:50%}
+.gmx{position:absolute;top:-7px;right:-7px;width:18px;height:18px;border-radius:50%;background:#000;border:1px solid var(--edge);
+  color:var(--gray);font-size:13px;line-height:16px;text-align:center;cursor:pointer;z-index:2}
+.gmx:hover{color:var(--gold-hi);border-color:var(--gold)}
+.camprow .tile h3,.camprow .tile .aur{max-width:calc(100% - var(--gmw, 0px))}   /* clear of the GM icons */
 
 /* footer prompt bar */
 .prompt{display:flex;align-items:center;gap:12px;margin-top:26px;padding-top:16px;border-top:1px solid var(--edge);
@@ -206,7 +210,8 @@ body.editing .gmicon{outline:1px dashed rgba(255,176,32,.38);outline-offset:3px;
   .sheetview h2{font-size:32px}
   .sheetview .aur{padding-right:0}
   .camprow .tile{min-height:240px}
-  .gmicon{right:14px;bottom:14px;width:48px;height:48px}
+  .gmrow{right:14px;bottom:14px}
+  .gmicon{width:38px;height:38px}
   .flag{position:static;display:block;margin-bottom:10px}
 }
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
@@ -245,7 +250,7 @@ body.editing .pc .txt{padding-top:40px}
 /* every editable line: a faint dashed edge, solid gold while typing */
 body.editing [data-f]{outline:1px dashed rgba(255,176,32,.38);outline-offset:3px;cursor:text;min-width:2ch;position:relative;z-index:4}
 body.editing [data-f]:focus{outline:1px solid var(--gold);background:rgba(0,0,0,.6)}
-body.editing [data-f]:empty::before{content:attr(data-ph);color:var(--dim);opacity:.7}
+body.editing [data-f]:empty{min-width:6ch;min-height:1em;display:inline-block}
 .tile p:empty{display:none}
 body.editing .tile p:empty{display:block}
 body.editing .tags{z-index:5}
@@ -291,9 +296,6 @@ body.editing .addcard{display:flex}
 .cropping .tools{display:flex}
 .cropping .tools .tbtn:not([data-crop]){display:none}
 .cropping [data-crop]{color:var(--gold-hi);border-color:var(--gold)}
-.crophint{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);z-index:6;pointer-events:none;
-  font-family:'Barlow Semi Condensed',sans-serif;font-size:12px;letter-spacing:.16em;text-transform:uppercase;
-  color:var(--gold-hi);background:#000;border:1px solid var(--gold);padding:4px 10px;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -310,7 +312,7 @@ body.editing .addcard{display:flex}
   </header>
 
   <div class="editbar">
-    <span class="editflag" id="editFlag">Edit mode · click any outlined text to change it</span>
+    <span class="editflag" id="editFlag"></span>
     <form id="pubForm" class="pubform" method="post" action="#" autocomplete="on">
       <input class="sr" type="text" name="username" autocomplete="username" value="GitHub token" tabindex="-1" aria-hidden="true" readonly>
       <input type="password" id="tok" name="password" placeholder="GitHub token" autocomplete="current-password">
@@ -449,11 +451,11 @@ let dirty = false;
 // An editable line. In edit mode it becomes typeable in place.
 function F(path, value, tag, cls, ph){
   const ed = editing();
-  return `<${tag}${cls ? ` class="${cls}"` : ''}${ed ? ` data-f="${path}" data-ph="${esc(ph || '')}" contenteditable="plaintext-only" spellcheck="false"` : ''}>${esc(value)}</${tag}>`;
+  return `<${tag}${cls ? ` class="${cls}"` : ''}${ed ? ` data-f="${path}" contenteditable="plaintext-only" spellcheck="false"` : ''}>${esc(value)}</${tag}>`;
 }
 const tools = (img, del, drag, extra = '') => `<span class="tools">
   ${img && imgSrc(img) ? `<span class="tbtn" data-crop>Crop</span>` : ''}
-  ${drag ? `<span class="tbtn grip" data-grip draggable="true" title="Drag to reorder">Move</span>` : ''}
+  ${drag ? `<span class="tbtn grip" data-grip draggable="true">Move</span>` : ''}
   ${img ? `<span class="tbtn" data-img="${img}">Image</span>` : ''}
   ${del ? `<span class="tbtn" data-del="${del}">Remove</span>` : ''}${extra}</span>`;
 
@@ -466,8 +468,9 @@ for (const c of Object.values(SITE.campaigns)){
   if (!c.status) c.status = /upcoming/i.test((c.eyebrow || '') + (c.footL || '')) ? 'upcoming' : 'ongoing';
   if (c.levels == null) c.levels = (c.footR || '').replace(/\s*level\s*$/i, '');
   delete c.eyebrow; delete c.footL; delete c.footR;
-  if (!c.gm || typeof c.gm !== 'object') c.gm = { img: '' };
-  delete c.gm.name;
+  if (!Array.isArray(c.gms)) c.gms = (c.gm && c.gm.img) ? [{ img: c.gm.img }] : [];
+  c.gms = c.gms.filter(g => g && g.img);
+  delete c.gm;
 }
 for (const k of ['campaigns','characters','discord']) if (SITE.home[k]){ delete SITE.home[k].footL; delete SITE.home[k].footR; }
 SITE.home.order = (SITE.home.order || ['campaigns','characters','discord']).filter(k => SITE.home[k]);
@@ -563,6 +566,18 @@ function homeView(){
 }
 
 const STATUS = [['ongoing','Ongoing'], ['upcoming','Upcoming']];
+// GM icons, lower-right of a campaign tile. In edit mode: click an icon to replace it, × to remove, + GM to add.
+function gmRow(id, c){
+  const ed = editing();
+  if (!c.gms.length && !ed) return '';
+  return `<span class="gmrow">
+    ${ed ? `<span class="tbtn" data-addgm="${id}">+ GM</span>` : ''}
+    ${c.gms.map((g, n) => `<span class="gmicon"${ed ? ` data-img="campaigns.${id}.gms.${n}.img"` : ''}>
+      ${bg(`campaigns.${id}.gms.${n}.img`)}
+      ${ed ? `<span class="gmx" data-gmx="campaigns.${id}.gms.${n}">&times;</span>` : ''}
+    </span>`).join('')}
+  </span>`;
+}
 function campaignsView(){
   const all = Object.entries(SITE.campaigns);
   return `<div class="groups">${STATUS.map(([st, label]) => {
@@ -572,13 +587,13 @@ function campaignsView(){
     return `<section>
       <div class="grouphead"><h2>${label}</h2></div>
       <div class="camprow" data-group="${st}">${list.map(([id, c, n]) => `
-        <div class="tile still" data-drag="campaigns|${n}" data-group="${st}">
-          ${bg(`campaigns.${id}.img`)}${tools(`campaigns.${id}.img`, null, true, `<span class="tbtn" data-status="${id}|${other[0]}">Move to ${other[1]}</span>`)}
+        <div class="tile still" data-drag="campaigns|${n}" data-group="${st}" style="--gmw:${c.gms.length * 58 + (editing() ? 90 : 0) + (c.gms.length || editing() ? 20 : 0)}px">
+          ${bg(`campaigns.${id}.img`)}${tools(`campaigns.${id}.img`, null, true, `<span class="tbtn" data-status="${id}|${other[0]}">Move to ${other[1]}</span><span class="tbtn" data-delcamp="${id}">Remove</span>`)}
           <span class="aur">${esc(c.title)}</span>
           ${F(`campaigns.${id}.title`, c.title, 'h3', '', 'Title')}
-          ${(c.gm.img || editing()) ? `<span class="gmicon">${bg(`campaigns.${id}.gm.img`)}${editing()
-            ? `<span class="tbtn" data-img="campaigns.${id}.gm.img">GM icon</span>` : ''}</span>` : ''}
-        </div>`).join('') || '<div class="blankslate">Nothing here yet. Use “Move to” on a campaign.</div>'}
+          ${gmRow(id, c)}
+        </div>`).join('')}
+        <button class="addcard" data-addcamp="${st}">+ Add campaign</button>
       </div>
     </section>`;
   }).join('')}</div>`;
@@ -627,7 +642,7 @@ function render(){
 function getAt(path){ return path.split('.').reduce((o,k) => o == null ? o : o[k], SITE); }
 function setAt(path, v){
   const ks = path.split('.'), last = ks.pop();
-  const o = ks.reduce((o,k) => o[k], SITE);
+  const o = ks.reduce((o,k) => (o[k] == null ? (o[k] = {}) : o[k]), SITE);
   o[last] = v;
 }
 function markDirty(){ dirty = true; document.getElementById('editFlag').textContent = 'Unsaved changes · Publish when ready'; }
@@ -642,6 +657,35 @@ root.addEventListener('click', e => {
     const sb = t.closest('[data-status]');
     if (sb){ e.preventDefault(); const [cid, st] = sb.dataset.status.split('|'); SITE.campaigns[cid].status = st; markDirty(); render(); return; }
     if (t.closest('.cropping')){ e.preventDefault(); return; }
+    const ac = t.closest('[data-addcamp]');
+    if (ac){
+      e.preventDefault();
+      const id = 'campaign-' + Date.now().toString(36);
+      SITE.campaigns[id] = { title: '', status: ac.dataset.addcamp, levels: '', blurb: '', tag: '', img: '', homeImg: '', sessions: [], gms: [] };
+      markDirty(); render();
+      view.querySelector(`[data-f="campaigns.${id}.title"]`)?.focus();
+      return;
+    }
+    const dc = t.closest('[data-delcamp]');
+    if (dc){
+      e.preventDefault();
+      const id = dc.dataset.delcamp, c = SITE.campaigns[id];
+      if (confirm(`Remove "${c.title || 'this campaign'}"?`)){
+        delete SITE.campaigns[id];
+        if (SITE.next.campaign === id) SITE.next.campaign = Object.keys(SITE.campaigns)[0] || '';
+        markDirty(); render();
+      }
+      return;
+    }
+    const ag = t.closest('[data-addgm]');
+    if (ag){ e.preventDefault(); pickImage(`campaigns.${ag.dataset.addgm}.gms.${SITE.campaigns[ag.dataset.addgm].gms.length}.img`); return; }
+    const gx = t.closest('[data-gmx]');
+    if (gx){
+      e.preventDefault();
+      const ks = gx.dataset.gmx.split('.'), n = +ks.pop();
+      if (confirm('Remove this GM?')){ getAt(ks.join('.')).splice(n, 1); markDirty(); render(); }
+      return;
+    }
     const img = t.closest('[data-img]');
     if (img){ e.preventDefault(); pickImage(img.dataset.img); return; }
     const del = t.closest('[data-del]');
@@ -697,12 +741,11 @@ function toggleCrop(btn){
   const host = btn.closest('.tile,.pc'), frame = host && host.querySelector('.bgimg')?.parentElement;
   if (!frame) return;
   const on = !frame.classList.contains('cropping');
-  view.querySelectorAll('.cropping').forEach(c => { c.classList.remove('cropping'); c.querySelector('.crophint')?.remove(); });
+  view.querySelectorAll('.cropping').forEach(c => { c.classList.remove('cropping'); });
   view.querySelectorAll('[data-crop]').forEach(b => b.textContent = 'Crop');
   if (!on) return;
   frame.classList.add('cropping');
   btn.textContent = 'Done';
-  frame.insertAdjacentHTML('beforeend', '<span class="crophint">Drag</span>');
 }
 let crop = null;
 view.addEventListener('pointerdown', e => {
@@ -804,7 +847,7 @@ imgPick.onchange = () => {
     const sc = Math.min(1, 1400 / im.width), c = document.createElement('canvas');
     c.width = Math.round(im.width * sc); c.height = Math.round(im.height * sc);
     c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
-    const png = /\.gm\.img$/.test(imgTarget) || f.type === 'image/png';
+    const png = /\.gms\.\d+\.img$/.test(imgTarget) || f.type === 'image/png';
     setAt(imgTarget, png ? c.toDataURL('image/png') : c.toDataURL('image/jpeg', .82));
     setAt(imgTarget + 'Pos', '');
     URL.revokeObjectURL(im.src); markDirty(); render();
