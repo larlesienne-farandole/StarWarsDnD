@@ -162,6 +162,7 @@ body.images-on .tile .bgimg,body.images-on .pc .bgimg{opacity:1}
   text-transform:uppercase;color:var(--dim);font-weight:500;display:block;margin-top:10px}
 .sheetview .lede{font-size:17px;color:var(--gray);line-height:1.6;margin:24px 0 0;max-width:70ch}
 .sheetview .lede:empty{display:none}
+body.editing .sheetview .lede:empty{display:block}
 .flag{position:absolute;top:38px;right:40px;font-family:'Barlow Semi Condensed',sans-serif;font-weight:600;
   font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
 .blankslate{margin-top:34px;padding-top:26px;border-top:1px solid var(--edge);
@@ -214,6 +215,9 @@ body.editing .editbar{display:flex}
   font-family:'Barlow',sans-serif;font-size:14px;padding:8px 11px;outline:none;color-scheme:dark}
 .editbar input:focus,.lock input:focus,.tile .ein:focus{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}
 .editbar input{width:220px}
+.pubform{display:contents}
+.sr{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;border:0!important;
+  opacity:0;overflow:hidden;clip:rect(0 0 0 0);pointer-events:none}
 .tbtn{all:unset;cursor:pointer;padding:3px 10px;border:1px solid var(--edge);background:#000;
   font-family:'Barlow Semi Condensed',sans-serif;font-size:12px;letter-spacing:.16em;
   text-transform:uppercase;color:var(--dim);transition:color .12s,border-color .12s}
@@ -293,8 +297,11 @@ body.editing .addcard{display:flex}
 
   <div class="editbar">
     <span class="editflag" id="editFlag">Edit mode · click any outlined text to change it</span>
-    <input type="password" id="tok" placeholder="GitHub token" autocomplete="off">
-    <button class="ebtn" id="pubBtn">Publish</button>
+    <form id="pubForm" class="pubform" method="post" action="#" autocomplete="on">
+      <input class="sr" type="text" name="username" autocomplete="username" value="GitHub token" tabindex="-1" aria-hidden="true" readonly>
+      <input type="password" id="tok" name="password" placeholder="GitHub token" autocomplete="current-password">
+      <button class="ebtn" id="pubBtn" type="submit">Publish</button>
+    </form>
     <button class="ebtn ghost" id="dlBtn">Download file</button>
     <button class="ebtn ghost" id="lockBtn">Lock</button>
   </div>
@@ -539,7 +546,6 @@ function campaignsView(){
       <span class="aur">${esc(c.title)}</span>
       ${F(`campaigns.${id}.title`, c.title, 'h3', '', 'Title')}
       ${F(`campaigns.${id}.eyebrow`, c.eyebrow, 'span', 'eyebrow', 'Subtitle')}
-      ${F(`campaigns.${id}.blurb`, c.blurb, 'p', '', 'Description')}
     </div>`).join('')}</div>`;
 }
 
@@ -565,7 +571,7 @@ function campaignPage(id){
       <span class="aur">${esc(c.title)}</span>
       <h2>${esc(c.title)}</h2>
       <span class="eyebrow">${esc(c.eyebrow)}</span>
-      <p class="lede">${esc(c.blurb)}</p>
+      ${F(`campaigns.${id}.blurb`, c.blurb, 'p', 'lede', 'Description')}
       ${(ss.length || editing()) ? `<div class="groups"><section>
         <div class="grouphead"><h2>Sessions</h2></div>
         <div class="roster">
@@ -799,7 +805,7 @@ function promptUnlock(){
   veil.classList.add('open');
   const pw = document.getElementById('pw'); pw.focus();
   const tryIt = async () => {
-    if (await sha256(pw.value) === PASS_HASH){ document.body.classList.add('editing'); closeVeil(); render(); }
+    if (await sha256(pw.value) === PASS_HASH){ document.body.classList.add('editing'); closeVeil(); render(); recallToken(); }
     else document.getElementById('pwErr').textContent = 'Password not recognised.';
   };
   document.getElementById('pwGo').onclick = tryIt;
@@ -857,7 +863,21 @@ function embeddedImages(){
   })(SITE, '');
   return out;
 }
-document.getElementById('pubBtn').onclick = async () => {
+// ask the browser's password manager for the saved token (Chrome, Edge); other browsers autofill the field
+async function recallToken(){
+  if (tokIn.value || !window.PasswordCredential || !navigator.credentials) return;
+  try {
+    const c = await navigator.credentials.get({ password: true, mediation: 'optional' });
+    if (c && c.password) tokIn.value = c.password;
+  } catch(e) {}
+}
+async function rememberToken(tok){
+  sessionStorage.setItem('ghToken', tok);
+  if (!window.PasswordCredential || !navigator.credentials) return;
+  try { await navigator.credentials.store(new PasswordCredential({ id: 'GitHub token', password: tok, name: 'GitHub token' })); } catch(e) {}
+}
+document.getElementById('pubForm').onsubmit = async e => {
+  e.preventDefault();
   const btn = document.getElementById('pubBtn'), flag = document.getElementById('editFlag');
   const tok = tokIn.value.trim();
   if (!tok){ tokIn.focus(); flag.textContent = 'Paste your GitHub token first'; return; }
@@ -871,7 +891,7 @@ document.getElementById('pubBtn').onclick = async () => {
     }
     flag.textContent = 'Saving page…';
     await commit(tok, FILE_PATH, b64(new TextEncoder().encode(buildFile())), 'Update site');
-    sessionStorage.setItem('ghToken', tok);
+    await rememberToken(tok);
     dirty = false; flag.textContent = 'Published · live in about a minute';
   } catch(err){ flag.textContent = err.message; }
   btn.disabled = false;
